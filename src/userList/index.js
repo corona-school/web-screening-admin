@@ -16,7 +16,7 @@ const UserList = ({ userData }) => {
   const [expandIconPosition, setExpandIconPosition] = useState();
   const [isAccepted, setIsAccepted] = useState(true);
   const { control, register, handleSubmit, watch, errors } = useForm();
-
+  
   const genExtra = even => {
     switch (even) {
       case 1:
@@ -41,37 +41,6 @@ const UserList = ({ userData }) => {
     // );
     console.log(link);
   };
-
-  userData = [
-    {
-      name: "Leon",
-      status: 1,
-      link: "jitsi.com/leonerathi1",
-      comment: "Test",
-      id: 1234
-    },
-    {
-      name: "Leon",
-      status: 2,
-      link: "jitsi.com/leonerathi2",
-      comment: "Test",
-      id: 3456
-    },
-    {
-      name: "Leon",
-      status: 3,
-      link: "jitsi.com/leonerathi3",
-      comment: "Test",
-      id: 2346
-    },
-    {
-      name: "Leon",
-      status: 4,
-      link: "jitsi.com/leonerathi4",
-      comment: "Test",
-      id: 2344
-    }
-  ];
 
   return (
     <div>

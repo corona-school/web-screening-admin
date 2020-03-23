@@ -28,7 +28,7 @@ const App = () => (
           className="site-layout-background"
           style={{ padding: 24, minHeight: 380 }}
         >
-          <UserList />
+          <UserList userData={userData} />
         </div>
       </Content>
     </Layout>

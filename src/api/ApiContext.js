@@ -1,7 +1,8 @@
-import { Children } from "react";
+import React, { Children, useEffect } from "react";
 import axios from "axios";
+import { baseUrl, jobs } from "./urls.js";
 
-const apiContext = React.createContext();
+const ApiContext = React.createContext();
 
 const userData = [
   {
@@ -34,17 +35,19 @@ const userData = [
   }
 ];
 
-const ApiContext = ({ children }) => {
+const ApiContextComponent = ({ children }) => {
+  useEffect(() => {
+    getContiousUserData();
+  });
+
   const getContiousUserData = () => {
     return axios
-      .get()
-      .then()
-      .catch(() => userData);
+      .post(baseUrl + jobs)
+      .catch(() => console.log("An Error accured."));
   };
 
-  return (
-    <apiContext.Provider value={getContiousUserData}>
-      {children}
-    </apiContext.Provider>
-  );
+  return <ApiContext.Provider value={userData}>{children}</ApiContext.Provider>;
 };
+
+export default ApiContextComponent;
+export { ApiContext };

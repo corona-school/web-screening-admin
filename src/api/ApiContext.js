@@ -7,28 +7,36 @@ const ApiContext = React.createContext();
 const userData = [
   {
     name: "Leon",
-    status: 1,
+    status: "waiting",
     link: "jitsi.com/leonerathi1",
     comment: "Test",
     id: 1234
   },
   {
     name: "Leon",
-    status: 2,
+    status: "active",
     link: "jitsi.com/leonerathi2",
     comment: "Test",
     id: 3456
   },
   {
     name: "Leon",
-    status: 3,
+    status: "completed",
     link: "jitsi.com/leonerathi3",
     comment: "Test",
     id: 2346
   },
   {
     name: "Leon",
-    status: 4,
+    status: "rejected",
+    link: "jitsi.com/leonerathi4",
+    comment: "Test",
+    id: 2344
+  }
+  ,
+  {
+    name: "Leon",
+    status: "foobla",
     link: "jitsi.com/leonerathi4",
     comment: "Test",
     id: 2344

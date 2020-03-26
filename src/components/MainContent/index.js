@@ -7,7 +7,7 @@ const { Header, Content, Footer } = Layout;
 const { Title } = Typography;
 
 const MainContent = () => {
-  const userData = useContext(ApiContext);
+  const { userData } = useContext(ApiContext);
 
   return (
     <>

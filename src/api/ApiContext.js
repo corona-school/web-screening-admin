@@ -1,6 +1,6 @@
 import React, { Children, useEffect } from "react";
 import axios from "axios";
-import { baseUrl, jobs } from "./urls.js";
+import { baseUrl, getJobs, postChangeStatus } from "./urls.js";
 
 const ApiContext = React.createContext();
 
@@ -37,16 +37,28 @@ const userData = [
 
 const ApiContextComponent = ({ children }) => {
   useEffect(() => {
-    getContiousUserData();
+    getJobsCall();
   });
 
-  const getContiousUserData = () => {
+  const getJobsCall = () => {
     return axios
-      .post(baseUrl + jobs)
-      .catch(() => console.log("An Error accured."));
+      .post(baseUrl + getJobs)
+      .then(res => console.log(res))
+      .catch(() => console.log("An Error occurred."));
   };
 
-  return <ApiContext.Provider value={userData}>{children}</ApiContext.Provider>;
+  const postChangeStatusCall = (email, isVerified) => {
+    return axios
+      .post(baseUrl + postChangeStatus, { email, isVerified })
+      .then(res => (res ? true : false))
+      .catch(console.log("An Error occurred"));
+  };
+
+  return (
+    <ApiContext.Provider value={{ userData, postChangeStatusCall }}>
+      {children}
+    </ApiContext.Provider>
+  );
 };
 
 export default ApiContextComponent;

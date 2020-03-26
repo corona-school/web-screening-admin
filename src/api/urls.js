@@ -1,5 +1,5 @@
-const baseUrl = "https://corona-screening-backend.herokuapp.com/";
+export const baseUrl = "https://corona-screening-backend.herokuapp.com/";
 
-const jobs = "queue/jobs";
-
-export { jobs, baseUrl };
+export const getJobs = "queue/jobs";
+export const postChangeStatus = "Student/changeStatus";
+export const postVerifyStudent = "Student/complete";

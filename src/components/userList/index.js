@@ -16,17 +16,20 @@ const UserList = ({ userData }) => {
   const [expandIconPosition, setExpandIconPosition] = useState();
   const [isAccepted, setIsAccepted] = useState(true);
   const { control, register, handleSubmit, watch, errors } = useForm();
-  
-  const genExtra = even => {
-    switch (even) {
-      case 1:
-        return <ExclamationCircleFilled style={{ color: "orange" }} />;
-      case 2:
-        return <CloseCircleFilled style={{ color: "red" }} />;
-      case 3:
-        return <CheckCircleFilled style={{ color: "green" }} />;
-      default:
+
+  const genExtra = status => {
+    switch (status) {
+      case "waiting":
         return <QuestionCircleFilled style={{ color: "gray" }} />;
+      case "active":
+        return <ExclamationCircleFilled style={{ color: "orange" }} />;
+      case "completed":
+        return <CheckCircleFilled style={{ color: "green" }} />;
+      case "rejected":
+        return <CloseCircleFilled style={{ color: "red" }} />;
+      default:
+        console.error('unhandled user state', status);
+        return;
     }
   };
 

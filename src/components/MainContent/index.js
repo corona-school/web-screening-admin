@@ -7,7 +7,7 @@ const { Header, Content, Footer } = Layout;
 const { Title } = Typography;
 
 const MainContent = () => {
-  const { userData } = useContext(ApiContext);
+  const { userData, currentStudentKey } = useContext(ApiContext);
 
   return (
     <>
@@ -30,7 +30,10 @@ const MainContent = () => {
             className="site-layout-background"
             style={{ padding: 24, minHeight: 380 }}
           >
-            <UserList userData={userData} />
+            <UserList
+              currentStudentKey={currentStudentKey}
+              userData={userData}
+            />
           </div>
         </Content>
       </Layout>

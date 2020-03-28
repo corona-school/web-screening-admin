@@ -1,69 +1,87 @@
-import React, { Children, useEffect } from "react";
+import React, { Children, useState, useEffect } from "react";
 import axios from "axios";
-import { baseUrl, getJobs, postChangeStatus } from "./urls.js";
+import {
+  baseUrl,
+  getJobs,
+  postChangeStatus,
+  postVerifyStudent
+} from "./urls.js";
+import useInterval from "./interval.js";
 
 const ApiContext = React.createContext();
 
-const userData = [
-  {
-    name: "Leon",
-    status: "waiting",
-    link: "jitsi.com/leonerathi1",
-    comment: "Test",
-    id: 1234
-  },
-  {
-    name: "Leon",
-    status: "active",
-    link: "jitsi.com/leonerathi2",
-    comment: "Test",
-    id: 3456
-  },
-  {
-    name: "Leon",
-    status: "completed",
-    link: "jitsi.com/leonerathi3",
-    comment: "Test",
-    id: 2346
-  },
-  {
-    name: "Leon",
-    status: "rejected",
-    link: "jitsi.com/leonerathi4",
-    comment: "Test",
-    id: 2344
-  }
-  ,
-  {
-    name: "Leon",
-    status: "foobla",
-    link: "jitsi.com/leonerathi4",
-    comment: "Test",
-    id: 2344
-  }
-];
-
 const ApiContextComponent = ({ children }) => {
+  let [userData, setUserData] = useState([]);
+  const [timer, setTimer] = useState(true);
+  let [currentStudentKey, setCurrentStudentKey] = useState([]);
+  useInterval(() => getJobsCall(), 10000);
   useEffect(() => {
     getJobsCall();
-  });
+  }, []);
 
   const getJobsCall = () => {
-    return axios
-      .post(baseUrl + getJobs)
-      .then(res => console.log(res))
-      .catch(() => console.log("An Error occurred."));
+    // axios
+    //   .get(baseUrl + getJobs)
+    //   .then(({ data }) => setUserData(data))
+    //   .catch(() => console.log("An Error occurred."));
+    timer
+      ? setUserData([
+          {
+            firstname: "Mateo",
+            lastname: "Feicks",
+            email: "m@feicks.de",
+            time: 1585161353718,
+            jitsi: "https://meet.jit.si/Mateo_Feicks_1585161353718",
+            status: "completed",
+            position: 0
+          }
+        ])
+      : setUserData([
+          {
+            firstname: "Urlich",
+            lastname: "Feicks",
+            email: "m@feicks.de",
+            time: 1585161353718,
+            jitsi: "https://meet.jit.si/Mateo_Feicsdf",
+            status: "waiting",
+            position: 0
+          },
+          {
+            firstname: "Leon",
+            lastname: "Feicks",
+            email: "m@feicks.de",
+            time: 1585161353718,
+            jitsi: "https://meet.jit.si/Mateo_Feicks_1585161353718",
+            status: "completed",
+            position: 0
+          }
+        ]);
+    setTimer(!timer);
   };
 
-  const postChangeStatusCall = (email, isVerified) => {
+  const postChangeStatusCall = data => {
+    console.log(data);
     return axios
-      .post(baseUrl + postChangeStatus, { email, isVerified })
-      .then(res => (res ? true : false))
+      .post(baseUrl + postChangeStatus, data)
+      .then(({ data: resp }) => setUserData(resp))
       .catch(console.log("An Error occurred"));
   };
 
+  const postVerifyStudentCall = data => {
+    console.log(data);
+    axios.post(baseUrl + postVerifyStudent, data).then(getJobsCall());
+  };
+
   return (
-    <ApiContext.Provider value={{ userData, postChangeStatusCall }}>
+    <ApiContext.Provider
+      value={{
+        userData,
+        postChangeStatusCall,
+        postVerifyStudentCall,
+        setCurrentStudentKey,
+        currentStudentKey
+      }}
+    >
       {children}
     </ApiContext.Provider>
   );

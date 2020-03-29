@@ -15,16 +15,12 @@ const { Panel } = Collapse;
 const { Text } = Typography;
 const { TextArea } = Input;
 
-const UserList = ({ userData, currentStudentKey }) => {
+const UserList = ({ studentData, currentStudentKey }) => {
   const [activeKey, setActiveKey] = useState(currentStudentKey);
   const [isAccepted, setIsAccepted] = useState(true);
   const { control, register, handleSubmit, watch, errors } = useForm();
 
-  const {
-    postVerifyStudentCall,
-    setCurrentStudentKey,
-    postChangeStatusCall
-  } = useContext(ApiContext);
+  const { setCurrentStudentKey, postChangeStatusCall } = useContext(ApiContext);
 
   const genExtra = status => {
     switch (status) {
@@ -43,13 +39,21 @@ const UserList = ({ userData, currentStudentKey }) => {
   };
 
   const callLink = link => {
-    // if (
-    //   userData[index].status !== "completed" &&
-    //   userData[index].status !== "rejected"
-    // )
-    // window.open(userData[index].jitsi, "_blank");
-    postChangeStatusCall();
-    setCurrentStudentKey(link);
+    console.log(link);
+    const studentIndex = studentData.findIndex(
+      student => student.jitsi === link
+    );
+    console.log(studentIndex);
+    if (
+      studentIndex >= 0 &&
+      (studentData[studentIndex].status === "waiting" ||
+        studentData[studentIndex].status === "active")
+    ) {
+      const { email } = studentData[studentIndex];
+      window.open(link, "_blank");
+      postChangeStatusCall({ email, status: "active" });
+      setCurrentStudentKey(link);
+    }
   };
 
   return (
@@ -59,10 +63,11 @@ const UserList = ({ userData, currentStudentKey }) => {
         onChange={callLink}
         accordion={true}
       >
-        {userData.map(student => {
+        {studentData.map(student => {
+          const { firstname, lastname, email } = student;
           return (
             <Panel
-              header={`${student.firstname} ${student.lastname}`}
+              header={firstname ? `${firstname} ${lastname}` : email}
               key={student.jitsi}
               extra={genExtra(student.status)}
             >

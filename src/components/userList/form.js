@@ -12,10 +12,11 @@ const Form = ({ student }) => {
   const {
     postVerifyStudentCall,
     setCurrentStudentKey,
-    postChangeStatusCall
+    getJobsCall
   } = useContext(ApiContext);
 
   const onSubmit = formData => {
+    console.log(formData);
     let isVerified = false;
     const {
       isRealPerson,
@@ -29,6 +30,7 @@ const Form = ({ student }) => {
     }
     postVerifyStudentCall({ comment, isVerified, email: student.email });
     setCurrentStudentKey([]);
+    getJobsCall();
   };
 
   return (
@@ -71,7 +73,7 @@ const Form = ({ student }) => {
             style={{ marginLeft: "1rem" }}
             type="checkbox"
             placeholder="isStudent"
-            name="istStudent"
+            name="isStudent"
             ref={register}
             defaultChecked={false}
           />

@@ -1,13 +1,13 @@
 import React, { useContext } from "react";
 import { Layout, Typography } from "antd";
 import { ApiContext } from "../../api/ApiContext";
-import UserList from "../userList";
+import Routes from "../../routing/Routes";
 
 const { Header, Content, Footer } = Layout;
 const { Title } = Typography;
 
 const MainContent = () => {
-  const { userData, currentStudentKey } = useContext(ApiContext);
+  const { studentData, currentStudentKey } = useContext(ApiContext);
 
   return (
     <>
@@ -22,20 +22,7 @@ const MainContent = () => {
         >
           <Title style={{ color: "white" }}>Corona School Screening</Title>
         </Header>
-        <Content
-          className="site-layout"
-          style={{ padding: "0 50px", marginTop: 64 }}
-        >
-          <div
-            className="site-layout-background"
-            style={{ padding: 24, minHeight: 380 }}
-          >
-            <UserList
-              currentStudentKey={currentStudentKey}
-              userData={userData}
-            />
-          </div>
-        </Content>
+        <Routes />
       </Layout>
     </>
   );

@@ -1,85 +1,76 @@
 import React, { Children, useState, useEffect } from "react";
+import { withRouter } from "react-router-dom";
 import axios from "axios";
 import {
   baseUrl,
   getJobs,
+  login,
   postChangeStatus,
   postVerifyStudent
 } from "./urls.js";
 import useInterval from "./interval.js";
 
 const ApiContext = React.createContext();
+axios.defaults.withCredentials = true;
 
-const ApiContextComponent = ({ children }) => {
-  let [userData, setUserData] = useState([]);
+const ApiContextComponent = ({ children, history }) => {
+  const [userIsLoggedIn, setUserIsLoggedIn] = useState(true);
+  const [studentData, setStudentData] = useState([]);
   const [timer, setTimer] = useState(true);
   let [currentStudentKey, setCurrentStudentKey] = useState([]);
-  useInterval(() => getJobsCall(), 10000);
+  // useInterval(() => getJobsCall(), 10000);
   useEffect(() => {
     getJobsCall();
   }, []);
 
+  const loginCall = data => {
+    console.log(data);
+    axios
+      .post(baseUrl + login, data)
+      .then(test => {
+        console.log("logged in");
+        setUserIsLoggedIn(true);
+        history.push("/screening");
+      })
+      .catch(() => {
+        console.log("login Failed");
+      });
+  };
+
   const getJobsCall = () => {
-    // axios
-    //   .get(baseUrl + getJobs)
-    //   .then(({ data }) => setUserData(data))
-    //   .catch(() => console.log("An Error occurred."));
-    timer
-      ? setUserData([
-          {
-            firstname: "Mateo",
-            lastname: "Feicks",
-            email: "m@feicks.de",
-            time: 1585161353718,
-            jitsi: "https://meet.jit.si/Mateo_Feicks_1585161353718",
-            status: "completed",
-            position: 0
-          }
-        ])
-      : setUserData([
-          {
-            firstname: "Urlich",
-            lastname: "Feicks",
-            email: "m@feicks.de",
-            time: 1585161353718,
-            jitsi: "https://meet.jit.si/Mateo_Feicsdf",
-            status: "waiting",
-            position: 0
-          },
-          {
-            firstname: "Leon",
-            lastname: "Feicks",
-            email: "m@feicks.de",
-            time: 1585161353718,
-            jitsi: "https://meet.jit.si/Mateo_Feicks_1585161353718",
-            status: "completed",
-            position: 0
-          }
-        ]);
-    setTimer(!timer);
+    console.log("get jobs");
+    axios
+      .get(baseUrl + getJobs)
+      .then(({ data }) => setStudentData(data))
+      .catch(() => console.log("Get Jobs failed."));
   };
 
   const postChangeStatusCall = data => {
-    console.log(data);
-    return axios
+    axios
       .post(baseUrl + postChangeStatus, data)
-      .then(({ data: resp }) => setUserData(resp))
-      .catch(console.log("An Error occurred"));
+      .then(resp => console.log(resp))
+      .catch(console.log("Change Status failed"));
   };
 
   const postVerifyStudentCall = data => {
     console.log(data);
-    axios.post(baseUrl + postVerifyStudent, data).then(getJobsCall());
+    axios
+      .post(baseUrl + postVerifyStudent, data)
+      .then(getJobsCall())
+      .catch(() => console.log("verify failed"));
   };
 
   return (
     <ApiContext.Provider
       value={{
-        userData,
+        getJobsCall,
+        studentData,
         postChangeStatusCall,
         postVerifyStudentCall,
         setCurrentStudentKey,
-        currentStudentKey
+        currentStudentKey,
+        userIsLoggedIn,
+        loginCall
       }}
     >
       {children}
@@ -87,5 +78,5 @@ const ApiContextComponent = ({ children }) => {
   );
 };
 
-export default ApiContextComponent;
+export default withRouter(ApiContextComponent);
 export { ApiContext };

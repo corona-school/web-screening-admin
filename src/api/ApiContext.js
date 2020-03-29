@@ -1,81 +1,85 @@
-import React, { Children, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
 import {
-  baseUrl,
-  getJobs,
-  login,
-  postChangeStatus,
-  postVerifyStudent
+	baseUrl,
+	getJobs,
+	login,
+	postChangeStatus,
+	postVerifyStudent
 } from "./urls.js";
-import useInterval from "./interval.js";
+import useInterval from "./interval";
 
 const ApiContext = React.createContext();
 axios.defaults.withCredentials = true;
 
 const ApiContextComponent = ({ children, history }) => {
-  const [userIsLoggedIn, setUserIsLoggedIn] = useState(true);
-  const [studentData, setStudentData] = useState([]);
-  const [timer, setTimer] = useState(true);
-  let [currentStudentKey, setCurrentStudentKey] = useState([]);
-  // useInterval(() => getJobsCall(), 10000);
-  useEffect(() => {
-    getJobsCall();
-  }, []);
+	const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
+	const [studentData, setStudentData] = useState([]);
+	let [currentStudentKey, setCurrentStudentKey] = useState([]);
 
-  const loginCall = data => {
-    console.log(data);
-    axios
-      .post(baseUrl + login, data)
-      .then(test => {
-        console.log("logged in");
-        setUserIsLoggedIn(true);
-        history.push("/screening");
-      })
-      .catch(() => {
-        console.log("login Failed");
-      });
-  };
+	useInterval(() => {
+		if (userIsLoggedIn) {
+			getJobsCall();
+		}
+	}, 10000);
 
-  const getJobsCall = () => {
-    console.log("get jobs");
-    axios
-      .get(baseUrl + getJobs)
-      .then(({ data }) => setStudentData(data))
-      .catch(() => console.log("Get Jobs failed."));
-  };
+	useEffect(() => {
+		if (userIsLoggedIn) {
+			getJobsCall();
+		}
+	}, [userIsLoggedIn]);
 
-  const postChangeStatusCall = data => {
-    axios
-      .post(baseUrl + postChangeStatus, data)
-      .then(resp => console.log(resp))
-      .catch(console.log("Change Status failed"));
-  };
+	const loginCall = data => {
+		axios
+			.post(baseUrl + login, data)
+			.then(data => {
+				setUserIsLoggedIn(true);
+				history.push("/screening");
+			})
+			.catch(err => {
+				console.log("login Failed", err);
+			});
+	};
 
-  const postVerifyStudentCall = data => {
-    console.log(data);
-    axios
-      .post(baseUrl + postVerifyStudent, data)
-      .then(getJobsCall())
-      .catch(() => console.log("verify failed"));
-  };
+	const getJobsCall = () => {
+		console.log("get jobs");
+		axios
+			.get(baseUrl + getJobs)
+			.then(({ data }) => setStudentData(data))
+			.catch(err => console.log("Get Jobs failed.", err));
+	};
 
-  return (
-    <ApiContext.Provider
-      value={{
-        getJobsCall,
-        studentData,
-        postChangeStatusCall,
-        postVerifyStudentCall,
-        setCurrentStudentKey,
-        currentStudentKey,
-        userIsLoggedIn,
-        loginCall
-      }}
-    >
-      {children}
-    </ApiContext.Provider>
-  );
+	const postChangeStatusCall = data => {
+		axios
+			.post(baseUrl + postChangeStatus, data)
+			.then(resp => console.log(resp))
+			.catch(console.log("Change Status failed"));
+	};
+
+	const postVerifyStudentCall = data => {
+		console.log(data);
+		axios
+			.post(baseUrl + postVerifyStudent, data)
+			.then(getJobsCall())
+			.catch(() => console.log("verify failed"));
+	};
+
+	return (
+		<ApiContext.Provider
+			value={{
+				getJobsCall,
+				studentData,
+				postChangeStatusCall,
+				postVerifyStudentCall,
+				setCurrentStudentKey,
+				currentStudentKey,
+				userIsLoggedIn,
+				loginCall
+			}}>
+			{children}
+		</ApiContext.Provider>
+	);
 };
 
 export default withRouter(ApiContextComponent);

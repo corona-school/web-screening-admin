@@ -30,7 +30,7 @@ const UserList = ({ studentData }) => {
 		if (!selectedJob) {
 			return;
 		}
-		// window.open(selectedJob.jitsi, "_blank");
+		window.open(selectedJob.jitsi, "_blank");
 		postChangeStatusCall({ email: selectedJob.email, status: "active" });
 	};
 

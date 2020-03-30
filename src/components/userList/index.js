@@ -1,33 +1,54 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Table, Tag, Tabs, Button } from "antd";
+import { Table, Tag, Tabs, Button, Modal } from "antd";
 import moment from "moment";
-import {
-	ExclamationCircleFilled,
-	CloseCircleFilled,
-	CheckCircleFilled,
-	QuestionCircleFilled
-} from "@ant-design/icons";
 
 import { ApiContext } from "../../api/ApiContext";
 
 const { TabPane } = Tabs;
 
-const UserList = ({ studentData, currentStudentKey }) => {
-	const { setCurrentStudentKey, postChangeStatusCall } = useContext(ApiContext);
+const UserList = ({ studentData }) => {
+	const { postChangeStatusCall } = useContext(ApiContext);
 	const [selectedJob, setSelectedJob] = useState(null);
+	const [isModalOpen, setModalOpen] = useState(false);
 	const [filterType, setFilterType] = useState(1);
+
+	useEffect(() => {
+		if (selectedJob !== null) {
+			const job = studentData.find(job => job.email === selectedJob.email);
+			if (job) {
+				if (job.status !== selectedJob.status) {
+					setSelectedJob(job);
+					if (job.status === "active") {
+						setModalOpen(true);
+					}
+				}
+			}
+		}
+	}, [studentData, selectedJob]);
 
 	const startVideoCall = () => {
 		if (!selectedJob) {
 			return;
 		}
-		window.open(selectedJob.jitsi, "_blank");
+		// window.open(selectedJob.jitsi, "_blank");
 		postChangeStatusCall({ email: selectedJob.email, status: "active" });
 	};
 
 	const renderSelectedJob = () => {
 		if (!selectedJob) {
 			return;
+		}
+		if (selectedJob.status === "active") {
+			return (
+				<div>
+					<Button
+						style={{ width: "200px" }}
+						type="primary"
+						onClick={() => setModalOpen(true)}>
+						Feedback
+					</Button>
+				</div>
+			);
 		}
 		if (selectedJob.status === "waiting") {
 			return (
@@ -111,9 +132,7 @@ const UserList = ({ studentData, currentStudentKey }) => {
 			}
 			return true;
 		})
-		.sort((a, b) => b.time - a.time);
-
-	console.log(filterType, data);
+		.sort((a, b) => a.time - b.time);
 
 	const T = (
 		<Table
@@ -134,7 +153,10 @@ const UserList = ({ studentData, currentStudentKey }) => {
 			{selectedJob !== null && renderSelectedJob()}
 			<Tabs
 				defaultActiveKey={"1"}
-				onChange={key => setFilterType(parseInt(key))}>
+				onChange={key => {
+					setFilterType(parseInt(key));
+					// setSelectedJob(null);
+				}}>
 				{[1, 2, 3, 4, 5].map(index => {
 					return (
 						<TabPane tab={keyMap.get(index)} key={index}>
@@ -143,6 +165,28 @@ const UserList = ({ studentData, currentStudentKey }) => {
 					);
 				})}
 			</Tabs>
+			<Modal
+				visible={isModalOpen}
+				title="Kennenlerngespräch"
+				onOk={() => setModalOpen(false)}
+				onCancel={() => setModalOpen(false)}
+				footer={[
+					<Button key="back" onClick={() => setModalOpen(false)}>
+						Rejected
+					</Button>,
+					<Button
+						key="submit"
+						type="primary"
+						onClick={() => setModalOpen(false)}>
+						Completed
+					</Button>
+				]}>
+				<p>Some contents...</p>
+				<p>Some contents...</p>
+				<p>Some contents...</p>
+				<p>Some contents...</p>
+				<p>Some contents...</p>
+			</Modal>
 		</div>
 	);
 };

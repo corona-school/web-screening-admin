@@ -16,7 +16,6 @@ axios.defaults.withCredentials = true;
 const ApiContextComponent = ({ children, history }) => {
 	const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
 	const [studentData, setStudentData] = useState([]);
-	let [currentStudentKey, setCurrentStudentKey] = useState([]);
 
 	useInterval(() => {
 		if (userIsLoggedIn) {
@@ -71,8 +70,6 @@ const ApiContextComponent = ({ children, history }) => {
 				studentData,
 				postChangeStatusCall,
 				postVerifyStudentCall,
-				setCurrentStudentKey,
-				currentStudentKey,
 				userIsLoggedIn,
 				loginCall
 			}}>

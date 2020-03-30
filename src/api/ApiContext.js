@@ -22,7 +22,7 @@ const ApiContextComponent = ({ children, history }) => {
 		if (userIsLoggedIn) {
 			getJobsCall();
 		}
-	}, 10000);
+	}, 1000);
 
 	useEffect(() => {
 		if (userIsLoggedIn) {
@@ -33,7 +33,7 @@ const ApiContextComponent = ({ children, history }) => {
 	const loginCall = data => {
 		axios
 			.post(baseUrl + login, data)
-			.then(data => {
+			.then(() => {
 				setUserIsLoggedIn(true);
 				history.push("/screening");
 			})
@@ -43,7 +43,6 @@ const ApiContextComponent = ({ children, history }) => {
 	};
 
 	const getJobsCall = () => {
-		console.log("get jobs");
 		axios
 			.get(baseUrl + getJobs)
 			.then(({ data }) => setStudentData(data))

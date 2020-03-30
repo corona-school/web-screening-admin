@@ -1,71 +1,148 @@
-import React, { useContext } from "react";
-import { Collapse } from "antd";
+import React, { useContext, useState, useEffect } from "react";
+import { Table, Tag, Tabs, Button } from "antd";
+import moment from "moment";
 import {
 	ExclamationCircleFilled,
 	CloseCircleFilled,
 	CheckCircleFilled,
 	QuestionCircleFilled
 } from "@ant-design/icons";
-import Form from "./form";
+
 import { ApiContext } from "../../api/ApiContext";
 
-const { Panel } = Collapse;
+const { TabPane } = Tabs;
 
 const UserList = ({ studentData, currentStudentKey }) => {
 	const { setCurrentStudentKey, postChangeStatusCall } = useContext(ApiContext);
+	const [selectedJob, setSelectedJob] = useState(null);
+	const [filterType, setFilterType] = useState(1);
 
-	const genExtra = status => {
-		switch (status) {
-			case "waiting":
-				return <QuestionCircleFilled style={{ color: "gray" }} />;
-			case "active":
-				return <ExclamationCircleFilled style={{ color: "orange" }} />;
-			case "completed":
-				return <CheckCircleFilled style={{ color: "green" }} />;
-			case "rejected":
-				return <CloseCircleFilled style={{ color: "red" }} />;
-			default:
-				console.error("unhandled user state", status);
-				return;
+	const startVideoCall = () => {
+		if (!selectedJob) {
+			return;
 		}
+		window.open(selectedJob.jitsi, "_blank");
+		postChangeStatusCall({ email: selectedJob.email, status: "active" });
 	};
 
-	const callLink = link => {
-		console.log(link);
-		const studentIndex = studentData.findIndex(
-			student => student.jitsi === link
-		);
-		console.log(studentIndex);
-		if (
-			studentIndex >= 0 &&
-			(studentData[studentIndex].status === "waiting" ||
-				studentData[studentIndex].status === "active")
-		) {
-			const { email } = studentData[studentIndex];
-			window.open(link, "_blank");
-			postChangeStatusCall({ email, status: "active" });
-			setCurrentStudentKey(link);
+	const renderSelectedJob = () => {
+		if (!selectedJob) {
+			return;
 		}
+		if (selectedJob.status === "waiting") {
+			return (
+				<div>
+					<Button
+						style={{ width: "200px" }}
+						type="primary"
+						onClick={startVideoCall}>
+						Starte Video-Call
+					</Button>
+				</div>
+			);
+		}
+
+		return <div>tbd</div>;
 	};
+
+	const StatusMap = new Map([
+		["waiting", "orange"],
+		["active", "geekblue"],
+		["completed", "green"],
+		["rejected", "red"]
+	]);
+
+	const columns = [
+		{
+			title: "Vorname",
+			dataIndex: "firstname",
+			key: "firstname"
+		},
+		{
+			title: "Nachname",
+			dataIndex: "lastname",
+			key: "lastname"
+		},
+		{
+			title: "E-Mail",
+			dataIndex: "email",
+			key: "email"
+		},
+		{
+			title: "Status",
+			dataIndex: "status",
+			key: "status",
+			render: tag => (
+				<Tag color={StatusMap.get(tag)} key={tag}>
+					{tag.toUpperCase()}
+				</Tag>
+			)
+		},
+		{
+			title: "Zeit",
+			dataIndex: "time",
+			key: "time",
+			render: time => <span>{moment(time).fromNow()}</span>
+		},
+		{
+			title: "Video-Link",
+			dataIndex: "jitsi",
+			key: "jitsi",
+			render: link => (
+				<a href={link} target="blank">
+					Link
+				</a>
+			)
+		}
+	];
+
+	const keyMap = new Map([
+		[1, "All"],
+		[2, "Waiting"],
+		[3, "Active"],
+		[4, "Completed"],
+		[5, "Rejected"]
+	]);
+	const data = studentData
+		.map((data, index) => ({ key: index, ...data }))
+		.filter(data => {
+			if (filterType !== 1) {
+				return data.status === keyMap.get(filterType).toLowerCase();
+			}
+			return true;
+		})
+		.sort((a, b) => b.time - a.time);
+
+	console.log(filterType, data);
+
+	const T = (
+		<Table
+			rowSelection={{
+				type: "radio",
+				onChange: (selectedRowKeys, selectedRows) => {
+					const job = selectedRows[0];
+					setSelectedJob(job);
+				}
+			}}
+			columns={columns}
+			dataSource={data}
+		/>
+	);
 
 	return (
 		<div>
-			<Collapse
-				activeKey={currentStudentKey}
-				onChange={callLink}
-				accordion={true}>
-				{studentData.map(student => {
-					const { firstname, lastname, email } = student;
+			{selectedJob !== null && renderSelectedJob()}
+			<Tabs
+				defaultActiveKey={"1"}
+				onChange={key => setFilterType(parseInt(key))}>
+				{[1, 2, 3, 4, 5].map(index => {
 					return (
-						<Panel
-							header={firstname ? `${firstname} ${lastname}` : email}
-							key={student.jitsi}
-							extra={genExtra(student.status)}>
-							<Form student={student} />
-						</Panel>
+						<TabPane tab={keyMap.get(index)} key={index}>
+							{T}
+						</TabPane>
 					);
 				})}
-			</Collapse>
+			</Tabs>
 		</div>
 	);
 };

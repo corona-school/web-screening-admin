@@ -14,7 +14,7 @@ const ApiContext = React.createContext();
 axios.defaults.withCredentials = true;
 
 const ApiContextComponent = ({ children, history }) => {
-	const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
+	const [userIsLoggedIn, setUserIsLoggedIn] = useState(true);
 	const [studentData, setStudentData] = useState([]);
 
 	useInterval(() => {
@@ -24,15 +24,15 @@ const ApiContextComponent = ({ children, history }) => {
 	}, 1000);
 
 	useEffect(() => {
-		if (userIsLoggedIn) {
-			getJobsCall();
-		}
-	}, [userIsLoggedIn]);
+		getJobsCall();
+	}, []);
 
 	const loginCall = data => {
 		axios
 			.post(baseUrl + login, data)
-			.then(() => {
+			.then(resp => {
+				console.log(resp);
+
 				setUserIsLoggedIn(true);
 				history.push("/screening");
 			})
@@ -45,7 +45,10 @@ const ApiContextComponent = ({ children, history }) => {
 		axios
 			.get(baseUrl + getJobs)
 			.then(({ data }) => setStudentData(data))
-			.catch(err => console.log("Get Jobs failed.", err));
+			.catch(err => {
+				console.log("Get Jobs failed.", err);
+				setUserIsLoggedIn(false);
+			});
 	};
 
 	const postChangeStatusCall = data => {

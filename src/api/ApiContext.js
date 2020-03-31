@@ -6,7 +6,8 @@ import {
 	getJobs,
 	login,
 	postChangeStatus,
-	postVerifyStudent
+	postVerifyStudent,
+	getLoginStatus
 } from "./urls.js";
 import useInterval from "./interval";
 
@@ -14,7 +15,7 @@ const ApiContext = React.createContext();
 axios.defaults.withCredentials = true;
 
 const ApiContextComponent = ({ children, history }) => {
-	const [userIsLoggedIn, setUserIsLoggedIn] = useState(true);
+	const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
 	const [studentData, setStudentData] = useState([]);
 
 	useInterval(() => {
@@ -51,6 +52,10 @@ const ApiContextComponent = ({ children, history }) => {
 			});
 	};
 
+	const checkLoginStatus = () => {
+		return axios.get(baseUrl + getLoginStatus);
+	};
+
 	const postChangeStatusCall = data => {
 		axios
 			.post(baseUrl + postChangeStatus, data)
@@ -71,9 +76,11 @@ const ApiContextComponent = ({ children, history }) => {
 			value={{
 				getJobsCall,
 				studentData,
+				checkLoginStatus,
 				postChangeStatusCall,
 				postVerifyStudentCall,
 				userIsLoggedIn,
+				setUserIsLoggedIn,
 				loginCall
 			}}>
 			{children}

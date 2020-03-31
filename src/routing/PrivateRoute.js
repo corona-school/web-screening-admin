@@ -19,17 +19,22 @@ const PrivateRoute = () => {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		checkLoginStatus()
-			.then(() => {
-				setUserIsLoggedIn(true);
-				setLoading(false);
-			})
-			.catch(err => {
-				console.error(err);
+		if (!userIsLoggedIn) {
+			setLoading(true);
+			checkLoginStatus()
+				.then(() => {
+					setUserIsLoggedIn(true);
+					setLoading(false);
+				})
+				.catch(err => {
+					console.error(err);
 
-				setUserIsLoggedIn(false);
-				setLoading(false);
-			});
+					setUserIsLoggedIn(false);
+					setLoading(false);
+				});
+		} else {
+			setLoading(false);
+		}
 	});
 
 	if (loading) {
@@ -42,7 +47,7 @@ const PrivateRoute = () => {
 
 	return (
 		<Route path="/screening">
-			{userIsLoggedIn ? (
+			{userIsLoggedIn && !loading ? (
 				<Content
 					className="site-layout"
 					style={{ padding: "0 50px", marginTop: 64 }}>

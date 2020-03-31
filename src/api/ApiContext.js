@@ -25,7 +25,9 @@ const ApiContextComponent = ({ children, history }) => {
 	}, 1000);
 
 	useEffect(() => {
-		getJobsCall();
+		if (userIsLoggedIn) {
+			getJobsCall();
+		}
 	}, []);
 
 	const loginCall = data => {
@@ -48,7 +50,6 @@ const ApiContextComponent = ({ children, history }) => {
 			.then(({ data }) => setStudentData(data))
 			.catch(err => {
 				console.log("Get Jobs failed.", err);
-				setUserIsLoggedIn(false);
 			});
 	};
 
@@ -60,15 +61,14 @@ const ApiContextComponent = ({ children, history }) => {
 		axios
 			.post(baseUrl + postChangeStatus, data)
 			.then(resp => console.log(resp))
-			.catch(console.log("Change Status failed"));
+			.catch(err => console.error(err));
 	};
 
 	const postVerifyStudentCall = data => {
-		console.log(data);
 		axios
 			.post(baseUrl + postVerifyStudent, data)
 			.then(getJobsCall())
-			.catch(() => console.log("verify failed"));
+			.catch(err => console.error(err));
 	};
 
 	return (

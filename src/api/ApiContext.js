@@ -48,18 +48,7 @@ const ApiContextComponent = ({ children, history }) => {
 		axios
 			.get(baseUrl + getJobs)
 			.then(({ data }) => {
-				const jobs = data.map(job => ({
-					firstname: job.firstname,
-					lastname: job.lastname,
-					email: job.lastname,
-					status: job.status,
-					jitsi: job.jitsi,
-					time: job.time,
-					comment: job.comment || "",
-					feedback: job.feedback || "",
-					classes: job.classes || []
-				}));
-				setStudentData(jobs);
+				setStudentData(data);
 			})
 			.catch(err => {
 				console.log("Get Jobs failed.", err);
@@ -71,16 +60,11 @@ const ApiContextComponent = ({ children, history }) => {
 	};
 
 	const postChangeStatusCall = data => {
+		console.log(baseUrl + postChangeStatus);
+
 		axios
 			.post(baseUrl + postChangeStatus, data)
 			.then(resp => console.log(resp))
-			.catch(err => console.error(err));
-	};
-
-	const postVerifyStudentCall = data => {
-		axios
-			.post(baseUrl + postVerifyStudent, data)
-			.then(getJobsCall())
 			.catch(err => console.error(err));
 	};
 
@@ -91,7 +75,6 @@ const ApiContextComponent = ({ children, history }) => {
 				studentData,
 				checkLoginStatus,
 				postChangeStatusCall,
-				postVerifyStudentCall,
 				userIsLoggedIn,
 				setUserIsLoggedIn,
 				loginCall,

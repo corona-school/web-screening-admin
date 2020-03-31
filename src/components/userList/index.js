@@ -25,9 +25,9 @@ const UserList = ({ studentData }) => {
 
 	const startVideoCall = () => {
 		setFilterType(3);
-		postChangeStatusCall({ email: selectedJob.email, status: "active" });
 		let job = selectedJob;
 		job.status = "active";
+		postChangeStatusCall({ ...selectedJob, status: "active" });
 		setSelectedJob(job);
 		setModalOpen(true);
 	};

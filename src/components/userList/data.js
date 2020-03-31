@@ -44,3 +44,23 @@ export const StatusMap = new Map([
 	["completed", "green"],
 	["rejected", "red"]
 ]);
+export const tagColors = [
+	"magenta",
+	"red",
+	"volcano",
+	"orange",
+	"gold",
+	"lime",
+	"green",
+	"cyan",
+	"blue",
+	"geekblue",
+	"purple"
+];
+
+export const SubjectsMap = new Map(
+	SchoolSubjects.map((subject, index) => [
+		subject,
+		tagColors[index % tagColors.length]
+	])
+);

@@ -1,6 +1,6 @@
 import React from "react";
 import moment from "moment";
-import { StatusMap } from "./data";
+import { StatusMap, SubjectsMap } from "./data";
 import { Button, Tag, Table } from "antd";
 
 const JobTable = ({ data, handleColumnClick }) => {
@@ -51,6 +51,16 @@ const JobTable = ({ data, handleColumnClick }) => {
 			)
 		},
 		{
+			title: "Screener",
+			dataIndex: "screener",
+			key: "screener",
+			render: screener => (
+				<span>
+					{screener ? `${screener.firstname} ${screener.lastname}` : ""}
+				</span>
+			)
+		},
+		{
 			title: "Action",
 			dataIndex: "action",
 			key: "action",
@@ -62,6 +72,27 @@ const JobTable = ({ data, handleColumnClick }) => {
 		}
 	];
 
-	return <Table columns={columns} dataSource={data} />;
+	return (
+		<Table
+			expandable={{
+				expandedRowRender: job => {
+					return (
+						<div>
+							<p style={{ margin: "4px" }}>"{job.msg}"</p>
+							<div style={{ margin: "4px" }}>
+								{job.subjects.map(subject => (
+									<Tag style={{ margin: "4px" }} key={subject}>
+										{subject}
+									</Tag>
+								))}
+							</div>
+						</div>
+					);
+				}
+			}}
+			columns={columns}
+			dataSource={data}
+		/>
+	);
 };
 export default JobTable;

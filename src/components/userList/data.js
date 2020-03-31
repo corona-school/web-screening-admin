@@ -22,6 +22,14 @@ export const SchoolClasses = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 export const Keys = [1, 2, 3, 4, 5];
 
+export const TabMap = new Map([
+	[1, "Alles"],
+	[2, "In der Warteschlange"],
+	[3, "Im Video-Call"],
+	[4, "Freigeschaltet"],
+	[5, "Abgelehnt"]
+]);
+
 export const KeyMap = new Map([
 	[1, "All"],
 	[2, "Waiting"],

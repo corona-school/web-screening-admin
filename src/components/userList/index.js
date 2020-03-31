@@ -1,41 +1,35 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { Tabs, Button } from "antd";
 
 import { ApiContext } from "../../api/ApiContext";
-import { Keys, KeyMap } from "./data";
+import { Keys, KeyMap, TabMap } from "./data";
 import JobTable from "./JobTable";
 import FeedbackModal from "./FeedbackModal";
+import useInterval from "../../api/interval";
 
 const { TabPane } = Tabs;
 
 const UserList = ({ studentData }) => {
-	const { postChangeStatusCall } = useContext(ApiContext);
+	const { postChangeStatusCall, getJobsCall, userIsLoggedIn } = useContext(
+		ApiContext
+	);
 	const [selectedJob, setSelectedJob] = useState(null);
 	const [isModalOpen, setModalOpen] = useState(false);
 	const [filterType, setFilterType] = useState(2);
-	const [selectedClasses, setSelectedClasses] = useState([]);
 
-	useEffect(() => {
-		if (!selectedJob) {
-			return;
+	useInterval(() => {
+		if (userIsLoggedIn) {
+			getJobsCall();
 		}
-
-		const job = studentData.find(job => job.email === selectedJob.email);
-		if (!job) {
-			return;
-		}
-
-		if (job.status !== selectedJob.status) {
-			setSelectedJob(job);
-			if (job.status === "active") {
-				setModalOpen(true);
-			}
-		}
-	}, [studentData, selectedJob]);
+	}, 1000);
 
 	const startVideoCall = () => {
 		setFilterType(3);
 		postChangeStatusCall({ email: selectedJob.email, status: "active" });
+		let job = selectedJob;
+		job.status = "active";
+		setSelectedJob(job);
+		setModalOpen(true);
 	};
 
 	const completeJob = isVerified => {
@@ -109,7 +103,7 @@ const UserList = ({ studentData }) => {
 				}}>
 				{Keys.map(index => {
 					return (
-						<TabPane tab={KeyMap.get(index)} key={index}>
+						<TabPane tab={TabMap.get(index)} key={index}>
 							<JobTable data={data} handleColumnClick={handleColumnClick} />;
 						</TabPane>
 					);
@@ -121,8 +115,7 @@ const UserList = ({ studentData }) => {
 					closeModal={() => setModalOpen(false)}
 					completeJob={completeJob}
 					selectedJob={selectedJob}
-					selectedClasses={selectedClasses}
-					setSelectedClasses={setSelectedClasses}
+					setSelectedJob={setSelectedJob}
 				/>
 			)}
 		</div>

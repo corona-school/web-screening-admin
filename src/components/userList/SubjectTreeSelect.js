@@ -5,17 +5,17 @@ import { SchoolSubjects, SchoolClasses } from "./data";
 const { SHOW_CHILD } = TreeSelect;
 
 const SubjectTreeSelect = ({ setSelectedClasses, selectedClasses }) => {
-	const treeData = SchoolSubjects.map((subject, i) => {
+	const treeData = SchoolSubjects.map(subject => {
 		return {
 			title: subject,
-			value: `0-${i}`,
+			value: `${subject}`,
 			checkable: false,
-			key: `0-${i}`,
-			children: SchoolClasses.map((schoolClass, k) => {
+			key: `${subject}`,
+			children: SchoolClasses.map(schoolClass => {
 				return {
 					title: `${subject}: ${schoolClass} Klasse`,
-					value: `0-${i}-${k}`,
-					key: `0-${i}-${k}`
+					value: `${subject}:${schoolClass}`,
+					key: `${subject}:${schoolClass}`
 				};
 			})
 		};

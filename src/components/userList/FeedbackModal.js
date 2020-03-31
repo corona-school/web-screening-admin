@@ -7,10 +7,15 @@ const FeedbackModal = ({
 	isModalOpen,
 	completeJob,
 	selectedJob,
-	selectedClasses,
-	setSelectedClasses,
+	setSelectedJob,
 	closeModal
 }) => {
+	const changeJob = (key, value) => {
+		const job = { ...selectedJob, [key]: value };
+		setSelectedJob(job);
+		console.log(job);
+	};
+
 	return (
 		<Modal
 			visible={isModalOpen}
@@ -39,15 +44,22 @@ const FeedbackModal = ({
 				layout="horizontal"
 				style={{ marginTop: "16px" }}
 			/>
-			<TextArea rows={4} placeholder="Hier Feedback geben..." />
+			<TextArea
+				rows={4}
+				placeholder="Hier Feedback geben..."
+				value={selectedJob.feedback}
+				onChange={e => changeJob("feedback", e.target.value)}
+			/>
 			<TextArea
 				style={{ marginTop: "16px", marginBottom: "16px" }}
 				rows={2}
+				value={selectedJob.comment}
 				placeholder="Hier ein Kommentar (Optional)"
+				onChange={e => changeJob("comment", e.target.value)}
 			/>
 			<SubjectTreeSelect
-				selectedClasses={selectedClasses}
-				setSelectedClasses={setSelectedClasses}
+				selectedClasses={selectedJob.classes}
+				setSelectedClasses={classes => changeJob("classes", classes)}
 			/>
 		</Modal>
 	);

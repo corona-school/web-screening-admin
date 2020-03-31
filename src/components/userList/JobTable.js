@@ -14,14 +14,10 @@ const JobTable = ({ data, handleColumnClick }) => {
 
 	const columns = [
 		{
-			title: "Vorname",
-			dataIndex: "firstname",
-			key: "firstname"
-		},
-		{
-			title: "Nachname",
+			title: "Name",
 			dataIndex: "lastname",
-			key: "lastname"
+			key: "lastname",
+			render: (lastname, job) => `${job.firstname} ${job.lastname}`
 		},
 		{
 			title: "E-Mail",

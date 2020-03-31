@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
 import {
 	baseUrl,
 	getJobs,
 	login,
+	logout,
 	postChangeStatus,
 	postVerifyStudent,
 	getLoginStatus
 } from "./urls.js";
-import useInterval from "./interval";
 
 const ApiContext = React.createContext();
 axios.defaults.withCredentials = true;
@@ -17,18 +17,6 @@ axios.defaults.withCredentials = true;
 const ApiContextComponent = ({ children, history }) => {
 	const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
 	const [studentData, setStudentData] = useState([]);
-
-	useInterval(() => {
-		if (userIsLoggedIn) {
-			getJobsCall();
-		}
-	}, 1000);
-
-	useEffect(() => {
-		if (userIsLoggedIn) {
-			getJobsCall();
-		}
-	}, []);
 
 	const loginCall = data => {
 		axios
@@ -44,10 +32,35 @@ const ApiContextComponent = ({ children, history }) => {
 			});
 	};
 
+	const logoutCall = () => {
+		axios
+			.get(baseUrl + logout)
+			.then(() => {
+				setUserIsLoggedIn(false);
+				history.push("/");
+			})
+			.catch(err => {
+				console.error("Logout Failed", err);
+			});
+	};
+
 	const getJobsCall = () => {
 		axios
 			.get(baseUrl + getJobs)
-			.then(({ data }) => setStudentData(data))
+			.then(({ data }) => {
+				const jobs = data.map(job => ({
+					firstname: job.firstname,
+					lastname: job.lastname,
+					email: job.lastname,
+					status: job.status,
+					jitsi: job.jitsi,
+					time: job.time,
+					comment: job.comment || "",
+					feedback: job.feedback || "",
+					classes: job.classes || []
+				}));
+				setStudentData(jobs);
+			})
 			.catch(err => {
 				console.log("Get Jobs failed.", err);
 			});
@@ -81,7 +94,8 @@ const ApiContextComponent = ({ children, history }) => {
 				postVerifyStudentCall,
 				userIsLoggedIn,
 				setUserIsLoggedIn,
-				loginCall
+				loginCall,
+				logoutCall
 			}}>
 			{children}
 		</ApiContext.Provider>

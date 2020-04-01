@@ -12,6 +12,7 @@ const PrivateRoute = () => {
 	const {
 		userIsLoggedIn,
 		setUserIsLoggedIn,
+		setUser,
 		checkLoginStatus,
 		currentStudentKey,
 		studentData
@@ -22,13 +23,14 @@ const PrivateRoute = () => {
 		if (!userIsLoggedIn) {
 			setLoading(true);
 			checkLoginStatus()
-				.then(() => {
+				.then(({ data }) => {
+					setUser(data);
 					setUserIsLoggedIn(true);
 					setLoading(false);
 				})
 				.catch(err => {
 					console.error(err);
-
+					setUser(null);
 					setUserIsLoggedIn(false);
 					setLoading(false);
 				});

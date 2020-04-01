@@ -54,20 +54,42 @@ const JobTable = ({ data, handleColumnClick, user }) => {
 			title: "Screener",
 			dataIndex: "screener",
 			key: "screener",
-			render: screener => (
-				<span>
-					{screener ? `${screener.firstname} ${screener.lastname}` : ""}
-				</span>
-			)
+			render: screener => {
+				if (screener && screener.email === user.email) {
+					return (
+						<Tag color={"blue"} key={screener.email}>
+							Du
+						</Tag>
+					);
+				}
+				return (
+					<span>
+						{screener ? `${screener.firstname} ${screener.lastname}` : ""}
+					</span>
+				);
+			}
 		},
 		{
 			title: "Action",
 			dataIndex: "action",
 			key: "action",
 			render: (text, job) => {
+				if (job.screener && job.screener.email === user.email) {
+					return (
+						<Button onClick={() => handleColumnClick(job)}>
+							{getTextFromJob(job)}
+						</Button>
+					);
+				}
+
 				if (
-					(job.screener && job.screener.email === user.email) ||
-					job.status === "waiting"
+					job.status === "waiting" &&
+					!data.some(
+						job =>
+							job.status === "active" &&
+							job.screener &&
+							job.screener.email === user.email
+					)
 				) {
 					return (
 						<Button onClick={() => handleColumnClick(job)}>

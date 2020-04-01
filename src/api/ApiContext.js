@@ -16,15 +16,16 @@ axios.defaults.withCredentials = true;
 const ApiContextComponent = ({ children, history }) => {
 	const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
 	const [studentData, setStudentData] = useState([]);
-	const [user, setUser] = useState({ email: "leon-erath@hotmail.de" });
+	const [user, setUser] = useState(null);
 
 	const loginCall = data => {
 		axios
 			.post(baseUrl + login, data)
-			.then(resp => {
-				console.log(resp);
-
+			.then(({ data }) => {
 				setUserIsLoggedIn(true);
+				setUser(data);
+				console.log(data);
+
 				history.push("/screening");
 			})
 			.catch(err => {
@@ -37,6 +38,7 @@ const ApiContextComponent = ({ children, history }) => {
 			.get(baseUrl + logout)
 			.then(() => {
 				setUserIsLoggedIn(false);
+				setUser(null);
 				history.push("/");
 			})
 			.catch(err => {

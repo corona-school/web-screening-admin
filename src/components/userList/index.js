@@ -108,6 +108,7 @@ const UserList = ({ studentData }) => {
 					return (
 						<TabPane tab={TabMap.get(index)} key={index}>
 							<JobTable
+								allJobs={studentData}
 								data={data}
 								handleColumnClick={handleColumnClick}
 								user={user}

@@ -3,13 +3,57 @@ import moment from "moment";
 import { StatusMap } from "./data";
 import { Button, Tag, Table } from "antd";
 
-const JobTable = ({ data, handleColumnClick, user }) => {
+const JobTable = ({ data, handleColumnClick, user, allJobs }) => {
 	const getTextFromJob = job => {
 		if (job.status === "waiting") {
 			return "Verifizieren";
 		}
 
 		return "Feedback";
+	};
+
+	const hasActiveStudent = () =>
+		allJobs.some(
+			job =>
+				job.status === "active" &&
+				job.screener &&
+				job.screener.email === user.email
+		);
+
+	const renderActions = job => {
+		if (job.screener && job.screener.email === user.email) {
+			return (
+				<Button onClick={() => handleColumnClick(job)}>
+					{getTextFromJob(job)}
+				</Button>
+			);
+		}
+
+		if (!job.screener && job.status === "waiting" && !hasActiveStudent()) {
+			return (
+				<Button onClick={() => handleColumnClick(job)}>
+					{getTextFromJob(job)}
+				</Button>
+			);
+		}
+	};
+
+	const renderScreener = screener => {
+		if (!screener) {
+			return;
+		}
+		if (screener.email === user.email) {
+			return (
+				<Tag color={"blue"} key={screener.email}>
+					Du
+				</Tag>
+			);
+		}
+		return (
+			<span>
+				{screener.firstname} {screener.lastname}
+			</span>
+		);
 	};
 
 	const columns = [
@@ -54,51 +98,13 @@ const JobTable = ({ data, handleColumnClick, user }) => {
 			title: "Screener",
 			dataIndex: "screener",
 			key: "screener",
-			render: screener => {
-				if (screener && screener.email === user.email) {
-					return (
-						<Tag color={"blue"} key={screener.email}>
-							Du
-						</Tag>
-					);
-				}
-				return (
-					<span>
-						{screener ? `${screener.firstname} ${screener.lastname}` : ""}
-					</span>
-				);
-			}
+			render: screener => renderScreener(screener)
 		},
 		{
 			title: "Action",
 			dataIndex: "action",
 			key: "action",
-			render: (text, job) => {
-				if (job.screener && job.screener.email === user.email) {
-					return (
-						<Button onClick={() => handleColumnClick(job)}>
-							{getTextFromJob(job)}
-						</Button>
-					);
-				}
-
-				if (
-					job.status === "waiting" &&
-					!data.some(
-						job =>
-							job.status === "active" &&
-							job.screener &&
-							job.screener.email === user.email
-					)
-				) {
-					return (
-						<Button onClick={() => handleColumnClick(job)}>
-							{getTextFromJob(job)}
-						</Button>
-					);
-				}
-				return null;
-			}
+			render: (text, job) => renderActions(job)
 		}
 	];
 

@@ -10,9 +10,13 @@ import useInterval from "../../api/interval";
 const { TabPane } = Tabs;
 
 const UserList = ({ studentData }) => {
-	const { postChangeStatusCall, getJobsCall, userIsLoggedIn } = useContext(
-		ApiContext
-	);
+	const {
+		postChangeStatusCall,
+		getJobsCall,
+		userIsLoggedIn,
+		user,
+		setUser
+	} = useContext(ApiContext);
 	const [selectedJob, setSelectedJob] = useState(null);
 	const [isModalOpen, setModalOpen] = useState(false);
 	const [filterType, setFilterType] = useState(2);
@@ -32,13 +36,13 @@ const UserList = ({ studentData }) => {
 		setModalOpen(true);
 	};
 
-	const completeJob = isVerified => {
+	const completeJob = (selectedJob, isVerified) => {
 		setModalOpen(false);
 		setFilterType(isVerified ? 4 : 5);
-		postChangeStatusCall({
-			email: selectedJob.email,
-			status: isVerified ? "completed" : "rejected"
-		});
+		let job = selectedJob;
+		job.status = isVerified ? "completed" : "rejected";
+
+		postChangeStatusCall(job);
 	};
 
 	const handleColumnClick = job => {
@@ -104,7 +108,12 @@ const UserList = ({ studentData }) => {
 				{Keys.map(index => {
 					return (
 						<TabPane tab={TabMap.get(index)} key={index}>
-							<JobTable data={data} handleColumnClick={handleColumnClick} />;
+							<JobTable
+								data={data}
+								handleColumnClick={handleColumnClick}
+								user={user}
+							/>
+							;
 						</TabPane>
 					);
 				})}

@@ -1,9 +1,9 @@
 import React from "react";
 import moment from "moment";
-import { StatusMap, SubjectsMap } from "./data";
+import { StatusMap } from "./data";
 import { Button, Tag, Table } from "antd";
 
-const JobTable = ({ data, handleColumnClick }) => {
+const JobTable = ({ data, handleColumnClick, user }) => {
 	const getTextFromJob = job => {
 		if (job.status === "waiting") {
 			return "Verifizieren";
@@ -64,11 +64,19 @@ const JobTable = ({ data, handleColumnClick }) => {
 			title: "Action",
 			dataIndex: "action",
 			key: "action",
-			render: (text, job) => (
-				<Button onClick={() => handleColumnClick(job)}>
-					{getTextFromJob(job)}
-				</Button>
-			)
+			render: (text, job) => {
+				if (
+					(job.screener && job.screener.email === user.email) ||
+					job.status === "waiting"
+				) {
+					return (
+						<Button onClick={() => handleColumnClick(job)}>
+							{getTextFromJob(job)}
+						</Button>
+					);
+				}
+				return null;
+			}
 		}
 	];
 

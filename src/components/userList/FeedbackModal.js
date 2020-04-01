@@ -13,7 +13,6 @@ const FeedbackModal = ({
 	const changeJob = (key, value) => {
 		const job = { ...selectedJob, [key]: value };
 		setSelectedJob(job);
-		console.log(job);
 	};
 
 	return (
@@ -22,10 +21,16 @@ const FeedbackModal = ({
 			onCancel={closeModal}
 			title="Kennenlerngespräch"
 			footer={[
-				<Button danger key="back" onClick={() => completeJob(false)}>
+				<Button
+					danger
+					key="back"
+					onClick={() => completeJob(selectedJob, false)}>
 					Ablehen
 				</Button>,
-				<Button key="submit" type="primary" onClick={() => completeJob(true)}>
+				<Button
+					key="submit"
+					type="primary"
+					onClick={() => completeJob(selectedJob, true)}>
 					{selectedJob.status === "waiting" || selectedJob.status === "active"
 						? "Freischalten"
 						: "Ändern"}
@@ -53,13 +58,13 @@ const FeedbackModal = ({
 			<TextArea
 				style={{ marginTop: "16px", marginBottom: "16px" }}
 				rows={2}
-				value={selectedJob.comment}
+				value={selectedJob.commentScreener}
 				placeholder="Hier ein Kommentar (Optional)"
-				onChange={e => changeJob("comment", e.target.value)}
+				onChange={e => changeJob("commentScreener", e.target.value)}
 			/>
 			<SubjectTreeSelect
-				selectedClasses={selectedJob.classes}
-				setSelectedClasses={classes => changeJob("classes", classes)}
+				selectedClasses={selectedJob.subjects}
+				setSelectedClasses={subjects => changeJob("subjects", subjects)}
 			/>
 		</Modal>
 	);

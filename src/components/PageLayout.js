@@ -14,7 +14,11 @@ const PageLayout = () => {
 			<div className="pageContainer">
 				<div className="header">
 					<Title className="title">Corona School Screening</Title>
-					{userIsLoggedIn && <Button onClick={logoutCall}>Logout</Button>}
+					{userIsLoggedIn && (
+						<Button style={{ marginRight: "32px" }} onClick={logoutCall}>
+							Logout
+						</Button>
+					)}
 				</div>
 
 				<Routes />

@@ -14,7 +14,7 @@ const SubjectTreeSelect = ({ setSelectedClasses, selectedClasses }) => {
 			children: SchoolClasses.map(schoolClass => {
 				return {
 					title: `${subject}: ${schoolClass} Klasse`,
-					value: `${subject}:${schoolClass}`,
+					value: `${subject}1:${schoolClass}`,
 					key: `${subject}:${schoolClass}`
 				};
 			})

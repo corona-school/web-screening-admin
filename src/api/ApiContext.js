@@ -7,7 +7,6 @@ import {
 	login,
 	logout,
 	postChangeStatus,
-	postVerifyStudent,
 	getLoginStatus
 } from "./urls.js";
 
@@ -17,6 +16,7 @@ axios.defaults.withCredentials = true;
 const ApiContextComponent = ({ children, history }) => {
 	const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
 	const [studentData, setStudentData] = useState([]);
+	const [user, setUser] = useState({ email: "leon-erath@hotmail.de" });
 
 	const loginCall = data => {
 		axios
@@ -60,8 +60,6 @@ const ApiContextComponent = ({ children, history }) => {
 	};
 
 	const postChangeStatusCall = data => {
-		console.log(baseUrl + postChangeStatus);
-
 		axios
 			.post(baseUrl + postChangeStatus, data)
 			.then(resp => console.log(resp))
@@ -78,7 +76,9 @@ const ApiContextComponent = ({ children, history }) => {
 				userIsLoggedIn,
 				setUserIsLoggedIn,
 				loginCall,
-				logoutCall
+				logoutCall,
+				user,
+				setUser
 			}}>
 			{children}
 		</ApiContext.Provider>

@@ -1,4 +1,5 @@
-export const baseUrl = "https://corona-screening-backend-dev.herokuapp.com/";
+export const baseUrl =
+	process.env.REACT_APP_BACKEND_URL || "http://localhost:3001/";
 
 export const getJobs = "queue/jobs";
 export const postChangeStatus = "student/changeJob";

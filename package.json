@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^4.0.5",
     "antd": "^4.0.3",
     "axios": "^0.19.2",
     "babel-plugin-import": "^1.13.0",
@@ -20,7 +21,8 @@
     "react-lottie": "^1.2.3",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
-    "react-spinners": "^0.8.1"
+    "react-spinners": "^0.8.1",
+    "recompose": "^0.30.0"
   },
   "scripts": {
     "dev": "react-app-rewired start",

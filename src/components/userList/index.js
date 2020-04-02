@@ -14,9 +14,11 @@ const UserList = ({ studentData }) => {
 		postChangeStatusCall,
 		getJobsCall,
 		userIsLoggedIn,
+		selectedJob,
+		setSelectedJob,
 		user
 	} = useContext(ApiContext);
-	const [selectedJob, setSelectedJob] = useState(null);
+
 	const [isModalOpen, setModalOpen] = useState(false);
 	const [filterType, setFilterType] = useState(2);
 

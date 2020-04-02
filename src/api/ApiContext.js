@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
 import {
@@ -15,7 +15,9 @@ axios.defaults.withCredentials = true;
 
 const ApiContextComponent = ({ children, history }) => {
 	const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
+
 	const [studentData, setStudentData] = useState([]);
+	const [selectedJob, setSelectedJob] = useState(null);
 	const [user, setUser] = useState(null);
 
 	const loginCall = data => {
@@ -80,7 +82,10 @@ const ApiContextComponent = ({ children, history }) => {
 				loginCall,
 				logoutCall,
 				user,
-				setUser
+				setUser,
+
+				selectedJob,
+				setSelectedJob
 			}}>
 			{children}
 		</ApiContext.Provider>

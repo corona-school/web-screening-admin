@@ -1,7 +1,10 @@
 import React from "react";
-import { Modal, Button, Descriptions } from "antd";
-import TextArea from "antd/lib/input/TextArea";
-import SubjectTreeSelect from "./SubjectTreeSelect";
+import { Modal, Button, Descriptions, Input } from "antd";
+import moment from "moment";
+import "./FeedbackModal.less";
+import SubjectList from "./SubjectList";
+
+const { TextArea } = Input;
 
 const FeedbackModal = ({
 	isModalOpen,
@@ -11,8 +14,7 @@ const FeedbackModal = ({
 	closeModal
 }) => {
 	const changeJob = (key, value) => {
-		const job = { ...selectedJob, [key]: value };
-		setSelectedJob(job);
+		setSelectedJob(oldJob => ({ ...oldJob, [key]: value }));
 	};
 
 	return (
@@ -36,35 +38,52 @@ const FeedbackModal = ({
 						: "Ändern"}
 				</Button>
 			]}>
-			<Descriptions title="Studenten-Information" layout="horizontal">
+			<Descriptions
+				title="Studenten-Information"
+				layout="horizontal"
+				column={2}>
 				<Descriptions.Item label="Name">
 					{selectedJob.firstname} {selectedJob.lastname}
 				</Descriptions.Item>
 				<Descriptions.Item label="E-Mail">
 					{selectedJob.email}
 				</Descriptions.Item>
+				<Descriptions.Item label="Message">
+					{selectedJob.msg ? selectedJob.msg : "-"}
+				</Descriptions.Item>
+				<Descriptions.Item label="Alter">
+					{selectedJob.birthday
+						? moment().diff(selectedJob.birthday, "years")
+						: "keine Angabe"}
+				</Descriptions.Item>
 			</Descriptions>
-			<Descriptions
-				title="Screener Angaben"
-				layout="horizontal"
-				style={{ marginTop: "16px" }}
-			/>
+			<div className="title">Screening Angaben</div>
+			<div className="label">Feedback des Studenten: </div>
 			<TextArea
 				rows={4}
-				placeholder="Hier Feedback geben..."
+				placeholder="Feedback des Studenten"
 				value={selectedJob.feedback}
 				onChange={e => changeJob("feedback", e.target.value)}
 			/>
+			<div className="label">Wie hat der Student von uns erfahren?</div>
 			<TextArea
-				style={{ marginTop: "16px", marginBottom: "16px" }}
+				rows={2}
+				placeholder="Wie hat der Student von uns erfahren?"
+				value={selectedJob.knowcsfrom}
+				onChange={e => changeJob("knowcsfrom", e.target.value)}
+			/>
+			<div className="label">Kommentar: </div>
+			<TextArea
+				style={{ marginBottom: "16px" }}
 				rows={2}
 				value={selectedJob.commentScreener}
 				placeholder="Hier ein Kommentar (Optional)"
 				onChange={e => changeJob("commentScreener", e.target.value)}
 			/>
-			<SubjectTreeSelect
-				selectedClasses={selectedJob.subjects}
-				setSelectedClasses={subjects => changeJob("subjects", subjects)}
+			<div className="label">Fächer: </div>
+			<SubjectList
+				subjects={selectedJob.subjects}
+				setSubjects={subjects => changeJob("subjects", subjects)}
 			/>
 		</Modal>
 	);

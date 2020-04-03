@@ -1,44 +1,82 @@
 import React from "react";
 import moment from "moment";
 import { StatusMap } from "./data";
-import { Button, Tag, Table } from "antd";
+import { Button, Tag, Table, Modal } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 
-const JobTable = ({ data, handleColumnClick, user, allJobs }) => {
-	const getTextFromJob = job => {
+const { confirm } = Modal;
+
+const JobTable = ({
+	data,
+	handleColumnClick,
+	user,
+	allJobs,
+	handleRemoveJob,
+}) => {
+	const getTextFromJob = (job) => {
 		if (job.status === "waiting") {
 			return "Verifizieren";
 		}
 
-		return "Feedback";
+		return "Ergebnis";
+	};
+
+	const showDeleteConfirm = (email) => {
+		confirm({
+			title: "Willst du diesen Job wirklich löschen?",
+			content:
+				"Der Job wird von der Warteschalgen entfernt und der Student muss sich neu anmelden, um sich verifizieren zu lassen.",
+			okText: "Ja",
+			okType: "danger",
+			cancelText: "Nein",
+			onOk() {
+				handleRemoveJob(email);
+			},
+			onCancel() {},
+		});
 	};
 
 	const hasActiveStudent = () =>
 		allJobs.some(
-			job =>
+			(job) =>
 				job.status === "active" &&
 				job.screener &&
 				job.screener.email === user.email
 		);
 
-	const renderActions = job => {
+	const renderActions = (job) => {
 		if (job.screener && job.screener.email === user.email) {
 			return (
-				<Button onClick={() => handleColumnClick(job)}>
-					{getTextFromJob(job)}
-				</Button>
+				<>
+					<Button onClick={() => handleColumnClick(job)}>
+						{getTextFromJob(job)}
+					</Button>
+					<Button
+						style={{ width: "36px" }}
+						icon={<DeleteOutlined />}
+						onClick={() => showDeleteConfirm(job.email)}
+					/>
+				</>
 			);
 		}
 
 		if (!job.screener && job.status === "waiting" && !hasActiveStudent()) {
 			return (
-				<Button onClick={() => handleColumnClick(job)}>
-					{getTextFromJob(job)}
-				</Button>
+				<>
+					<Button onClick={() => handleColumnClick(job)}>
+						{getTextFromJob(job)}
+					</Button>
+					<Button
+						style={{ width: "36px" }}
+						icon={<DeleteOutlined />}
+						onClick={() => showDeleteConfirm(job.email)}
+					/>
+				</>
 			);
 		}
 	};
 
-	const renderScreener = screener => {
+	const renderScreener = (screener) => {
 		if (!screener) {
 			return;
 		}
@@ -61,62 +99,62 @@ const JobTable = ({ data, handleColumnClick, user, allJobs }) => {
 			title: "Name",
 			dataIndex: "lastname",
 			key: "lastname",
-			render: (lastname, job) => `${job.firstname} ${job.lastname}`
+			render: (lastname, job) => `${job.firstname} ${job.lastname}`,
 		},
 		{
 			title: "E-Mail",
 			dataIndex: "email",
-			key: "email"
+			key: "email",
 		},
 		{
 			title: "Status",
 			dataIndex: "status",
 			key: "status",
-			render: tag => (
+			render: (tag) => (
 				<Tag color={StatusMap.get(tag)} key={tag}>
 					{tag.toUpperCase()}
 				</Tag>
-			)
+			),
 		},
 		{
 			title: "Zeit",
 			dataIndex: "time",
 			key: "time",
-			render: time => <span>{moment(time).fromNow()}</span>
+			render: (time) => <span>{moment(time).fromNow()}</span>,
 		},
 		{
 			title: "Video-Link",
 			dataIndex: "jitsi",
 			key: "jitsi",
-			render: link => (
+			render: (link) => (
 				<a href={link} target="blank">
 					Link
 				</a>
-			)
+			),
 		},
 		{
 			title: "Screener",
 			dataIndex: "screener",
 			key: "screener",
-			render: screener => renderScreener(screener)
+			render: (screener) => renderScreener(screener),
 		},
 		{
 			title: "Action",
 			dataIndex: "action",
 			key: "action",
-			render: (text, job) => renderActions(job)
-		}
+			render: (text, job) => renderActions(job),
+		},
 	];
 
 	return (
 		<Table
 			expandable={{
-				expandedRowRender: job => {
+				expandedRowRender: (job) => {
 					return (
 						<div>
 							<p style={{ margin: "4px" }}>"{job.msg}"</p>
 							<div style={{ margin: "4px" }}>
-								{job.subjects.map(subject => (
+								{job.subjects.map((subject) => (
 									<Tag style={{ margin: "4px" }} key={subject}>
 										{subject}
 									</Tag>
@@ -124,7 +162,7 @@ const JobTable = ({ data, handleColumnClick, user, allJobs }) => {
 							</div>
 						</div>
 					);
-				}
+				},
 			}}
 			columns={columns}
 			dataSource={data}

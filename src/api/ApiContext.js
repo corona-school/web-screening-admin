@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
 import {
@@ -7,8 +7,10 @@ import {
 	login,
 	logout,
 	postChangeStatus,
-	getLoginStatus
+	getLoginStatus,
+	remove,
 } from "./urls.js";
+import { message } from "antd";
 
 const ApiContext = React.createContext();
 axios.defaults.withCredentials = true;
@@ -20,7 +22,7 @@ const ApiContextComponent = ({ children, history }) => {
 	const [selectedJob, setSelectedJob] = useState(null);
 	const [user, setUser] = useState(null);
 
-	const loginCall = data => {
+	const loginCall = (data) => {
 		axios
 			.post(baseUrl + login, data)
 			.then(({ data }) => {
@@ -30,7 +32,7 @@ const ApiContextComponent = ({ children, history }) => {
 
 				history.push("/screening");
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.log("login Failed", err);
 			});
 	};
@@ -43,9 +45,16 @@ const ApiContextComponent = ({ children, history }) => {
 				setUser(null);
 				history.push("/");
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.error("Logout Failed", err);
 			});
+	};
+
+	const handleRemoveJob = (email) => {
+		axios
+			.post(baseUrl + remove, { email })
+			.then((resp) => message.success("Job wurde erfolgreich entfernt!"))
+			.catch((err) => message.error("Job konnte nicht entfernt werden."));
 	};
 
 	const getJobsCall = () => {
@@ -54,7 +63,7 @@ const ApiContextComponent = ({ children, history }) => {
 			.then(({ data }) => {
 				setStudentData(data);
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.log("Get Jobs failed.", err);
 			});
 	};
@@ -63,11 +72,15 @@ const ApiContextComponent = ({ children, history }) => {
 		return axios.get(baseUrl + getLoginStatus);
 	};
 
-	const postChangeStatusCall = data => {
+	const postChangeStatusCall = (data) => {
 		axios
 			.post(baseUrl + postChangeStatus, data)
-			.then(resp => console.log(resp))
-			.catch(err => console.error(err));
+			.then((resp) =>
+				message.success("Änderungen wurden erfolgreich gespeichert.")
+			)
+			.catch((err) =>
+				message.error("Änderungen konnten nicht gespeichert werden")
+			);
 	};
 
 	return (
@@ -83,9 +96,9 @@ const ApiContextComponent = ({ children, history }) => {
 				logoutCall,
 				user,
 				setUser,
-
+				handleRemoveJob,
 				selectedJob,
-				setSelectedJob
+				setSelectedJob,
 			}}>
 			{children}
 		</ApiContext.Provider>

@@ -15,8 +15,9 @@ const UserList = ({ studentData }) => {
 		getJobsCall,
 		userIsLoggedIn,
 		selectedJob,
+		handleRemoveJob,
 		setSelectedJob,
-		user
+		user,
 	} = useContext(ApiContext);
 
 	const [isModalOpen, setModalOpen] = useState(false);
@@ -46,7 +47,7 @@ const UserList = ({ studentData }) => {
 		postChangeStatusCall(job);
 	};
 
-	const handleColumnClick = job => {
+	const handleColumnClick = (job) => {
 		setSelectedJob(job);
 		if (job.status !== "waiting") {
 			setModalOpen(true);
@@ -89,7 +90,7 @@ const UserList = ({ studentData }) => {
 
 	const data = studentData
 		.map((data, index) => ({ key: index, ...data }))
-		.filter(data => {
+		.filter((data) => {
 			if (filterType !== 1) {
 				return data.status === KeyMap.get(filterType).toLowerCase();
 			}
@@ -103,13 +104,14 @@ const UserList = ({ studentData }) => {
 			<Tabs
 				defaultActiveKey={`${filterType}`}
 				activeKey={`${filterType}`}
-				onChange={key => {
+				onChange={(key) => {
 					setFilterType(parseInt(key));
 				}}>
-				{Keys.map(index => {
+				{Keys.map((index) => {
 					return (
 						<TabPane tab={TabMap.get(index)} key={index}>
 							<JobTable
+								handleRemoveJob={handleRemoveJob}
 								allJobs={studentData}
 								data={data}
 								handleColumnClick={handleColumnClick}

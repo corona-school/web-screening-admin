@@ -1,5 +1,5 @@
 import React from "react";
-import { Select, Button } from "antd";
+import { Button } from "antd";
 import { pure } from "recompose";
 import { SchoolSubjects } from "./data";
 import SubjectItem from "./SubjectItem";
@@ -7,7 +7,7 @@ import SubjectItem from "./SubjectItem";
 const SubjectList = ({ subjects, setSubjects }) => {
 	const changeSubject = (oldSubject, newSubject) => {
 		setSubjects(
-			subjects.map(s => {
+			subjects.map((s) => {
 				if (s.subject === oldSubject.subject) {
 					return { ...oldSubject, subject: newSubject };
 				}
@@ -18,7 +18,7 @@ const SubjectList = ({ subjects, setSubjects }) => {
 
 	const changeSubjectRange = (obj, [min, max]) => {
 		setSubjects(
-			subjects.map(s => {
+			subjects.map((s) => {
 				if (s.subject === obj.subject) {
 					return { ...obj, min, max };
 				}
@@ -29,31 +29,19 @@ const SubjectList = ({ subjects, setSubjects }) => {
 
 	const addSubject = () => {
 		const remainingSubject = SchoolSubjects.find(
-			n => !subjects.find(i => i.subject === n)
+			(n) => !subjects.find((i) => i.subject === n)
 		);
 		if (remainingSubject) {
 			setSubjects([
 				...subjects,
-				{ subject: remainingSubject, min: 1, max: 13 }
+				{ subject: remainingSubject, min: 1, max: 13 },
 			]);
 		}
 	};
 
-	const removeSubject = obj => {
-		const newList = subjects.filter(s => obj.subject !== s.subject);
+	const removeSubject = (obj) => {
+		const newList = subjects.filter((s) => obj.subject !== s.subject);
 		setSubjects([...newList]);
-	};
-
-	console.log(subjects);
-
-	const sortyMagic = (a, b) => {
-		if (a.subject < b.subject) {
-			return -1;
-		}
-		if (a.subject > b.subject) {
-			return 1;
-		}
-		return 0;
 	};
 
 	return (
@@ -66,7 +54,7 @@ const SubjectList = ({ subjects, setSubjects }) => {
 					subject={obj}
 					removeSubject={removeSubject}
 					options={SchoolSubjects.filter(
-						n => !subjects.find(i => i.subject === n)
+						(n) => !subjects.find((i) => i.subject === n)
 					)}
 				/>
 			))}

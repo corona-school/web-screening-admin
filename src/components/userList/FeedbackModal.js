@@ -19,6 +19,7 @@ const FeedbackModal = ({
 
 	return (
 		<Modal
+			style={{ top: 20, maxHeight: "90%" }}
 			visible={isModalOpen}
 			onCancel={closeModal}
 			title="Kennenlerngespräch"

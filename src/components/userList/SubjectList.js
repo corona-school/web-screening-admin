@@ -6,17 +6,25 @@ import SubjectItem from "./SubjectItem";
 
 const SubjectList = ({ subjects, setSubjects }) => {
 	const changeSubject = (oldSubject, newSubject) => {
-		const newList = subjects.filter(s => s.subject !== oldSubject.subject);
-		setSubjects([
-			...newList,
-			{ subject: newSubject, min: oldSubject.min, max: oldSubject.max }
-		]);
+		setSubjects(
+			subjects.map(s => {
+				if (s.subject === oldSubject.subject) {
+					return { ...oldSubject, subject: newSubject };
+				}
+				return s;
+			})
+		);
 	};
 
 	const changeSubjectRange = (obj, [min, max]) => {
-		const newList = subjects.filter(s => obj.subject !== s.subject);
-
-		setSubjects([...newList, { subject: obj.subject, min, max }]);
+		setSubjects(
+			subjects.map(s => {
+				if (s.subject === obj.subject) {
+					return { ...obj, min, max };
+				}
+				return s;
+			})
+		);
 	};
 
 	const addSubject = () => {
@@ -50,7 +58,7 @@ const SubjectList = ({ subjects, setSubjects }) => {
 
 	return (
 		<div>
-			{subjects.sort(sortyMagic).map((obj, index) => (
+			{subjects.map((obj, index) => (
 				<SubjectItem
 					key={obj.subject + "-" + index}
 					changeSubjectRange={changeSubjectRange}

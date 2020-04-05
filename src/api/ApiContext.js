@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
+import io from "socket.io-client";
 import axios from "axios";
 import {
 	baseUrl,
@@ -17,10 +18,43 @@ axios.defaults.withCredentials = true;
 
 const ApiContextComponent = ({ children, history }) => {
 	const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
-
 	const [studentData, setStudentData] = useState([]);
 	const [selectedJob, setSelectedJob] = useState(null);
+	const [isSocketConnected, setSocketConnected] = useState(false);
 	const [user, setUser] = useState(null);
+
+	const socket = io(baseUrl);
+
+	useEffect(() => {
+		if (
+			selectedJob &&
+			studentData.every((job) => job.email !== selectedJob.email)
+		) {
+			setSelectedJob(null);
+			message.error(
+				"Stundent konnte nicht mehr in der Warteschlange gefunden werden."
+			);
+		}
+	}, [studentData, selectedJob]);
+
+	useEffect(() => {
+		if (userIsLoggedIn) {
+			socket.on("connect", () => {
+				setSocketConnected(true);
+				console.log("connected");
+				socket.emit("loginScreener", user);
+			});
+			socket.on("updateQueue", (queue) => {
+				if (queue) {
+					console.log(queue);
+					setStudentData(queue);
+				}
+			});
+			socket.on("disconnect", () => {
+				setSocketConnected(false);
+			});
+		}
+	}, [userIsLoggedIn]);
 
 	const loginCall = (data) => {
 		axios
@@ -73,14 +107,7 @@ const ApiContextComponent = ({ children, history }) => {
 	};
 
 	const postChangeStatusCall = (data) => {
-		axios
-			.post(baseUrl + postChangeStatus, data)
-			.then((resp) =>
-				message.success("Änderungen wurden erfolgreich gespeichert.")
-			)
-			.catch((err) =>
-				message.error("Änderungen konnten nicht gespeichert werden")
-			);
+		return axios.post(baseUrl + postChangeStatus, data);
 	};
 
 	return (
@@ -99,6 +126,7 @@ const ApiContextComponent = ({ children, history }) => {
 				handleRemoveJob,
 				selectedJob,
 				setSelectedJob,
+				isSocketConnected,
 			}}>
 			{children}
 		</ApiContext.Provider>

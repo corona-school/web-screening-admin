@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { Tabs, Button } from "antd";
+import React, { useContext, useState, useEffect } from "react";
+import { Tabs, Button, message } from "antd";
 
 import { ApiContext } from "../../api/ApiContext";
 import { Keys, KeyMap, TabMap } from "./data";
@@ -17,25 +17,38 @@ const UserList = ({ studentData }) => {
 		selectedJob,
 		handleRemoveJob,
 		setSelectedJob,
+		isSocketConnected,
 		user,
 	} = useContext(ApiContext);
 
 	const [isModalOpen, setModalOpen] = useState(false);
 	const [filterType, setFilterType] = useState(2);
 
+	useEffect(() => {
+		if (!selectedJob) {
+			setModalOpen(false);
+		}
+	}, selectedJob);
+
 	useInterval(() => {
-		if (userIsLoggedIn) {
+		if (userIsLoggedIn && !isSocketConnected) {
 			getJobsCall();
 		}
 	}, 1000);
 
 	const startVideoCall = () => {
-		setFilterType(3);
-		let job = selectedJob;
-		job.status = "active";
-		postChangeStatusCall({ ...selectedJob, status: "active" });
-		setSelectedJob(job);
-		setModalOpen(true);
+		postChangeStatusCall({ ...selectedJob, status: "active" })
+			.then((resp) => {
+				setSelectedJob(resp.data);
+				setModalOpen(true);
+				setFilterType(3);
+				message.success("Der Student wurde zum VideoCall eingeladen.");
+			})
+			.catch((err) => {
+				setSelectedJob(null);
+				setModalOpen(false);
+				message.error("Der VideoCall konnte nicht gestartet werden.");
+			});
 	};
 
 	const completeJob = (selectedJob, isVerified) => {
@@ -44,14 +57,33 @@ const UserList = ({ studentData }) => {
 		let job = selectedJob;
 		job.status = isVerified ? "completed" : "rejected";
 
-		postChangeStatusCall(job);
+		postChangeStatusCall(job)
+			.then((resp) =>
+				message.success("Änderungen wurden erfolgreich gespeichert.")
+			)
+			.catch((err) =>
+				message.error("Änderungen konnten nicht gespeichert werden")
+			);
 	};
 
 	const handleColumnClick = (job) => {
-		setSelectedJob(job);
 		if (job.status !== "waiting") {
+			setSelectedJob(job);
 			setModalOpen(true);
+			return;
 		}
+
+		const hide = message.loading("Daten werden geladen..", 0);
+		postChangeStatusCall({ ...job, screener: user })
+			.then((resp) => {
+				setSelectedJob(job);
+				setModalOpen(true);
+				hide();
+				message.success("Du wurdest als Screener eingetragen.");
+			})
+			.catch((err) =>
+				message.error("Du konntest nicht als Screener eingetragen werden.")
+			);
 	};
 
 	const renderSelectedJob = () => {
@@ -66,20 +98,6 @@ const UserList = ({ studentData }) => {
 						type="primary"
 						onClick={() => setModalOpen(true)}>
 						Feedback
-					</Button>
-				</div>
-			);
-		}
-		if (selectedJob.status === "waiting") {
-			return (
-				<div>
-					<Button
-						style={{ width: "200px" }}
-						type="primary"
-						onClick={startVideoCall}>
-						<a href={selectedJob.jitsi} target="blank" rel="noopener">
-							Starte Video-Call
-						</a>
 					</Button>
 				</div>
 			);
@@ -127,6 +145,7 @@ const UserList = ({ studentData }) => {
 					isModalOpen={isModalOpen}
 					closeModal={() => setModalOpen(false)}
 					completeJob={completeJob}
+					startVideoCall={startVideoCall}
 					selectedJob={selectedJob}
 					setSelectedJob={setSelectedJob}
 				/>

@@ -15,6 +15,9 @@ const JobTable = ({
 }) => {
 	const getTextFromJob = (job) => {
 		if (job.status === "waiting") {
+			if (job.screener && job.screener.email !== user.email) {
+				return "Übernehmen";
+			}
 			return "Verifizieren";
 		}
 
@@ -44,26 +47,37 @@ const JobTable = ({
 				job.screener.email === user.email
 		);
 
-	const renderActions = (job) => {
-		if (job.screener && job.screener.email === user.email) {
-			return (
-				<>
-					<Button onClick={() => handleColumnClick(job)}>
-						{getTextFromJob(job)}
-					</Button>
-					<Button
-						style={{ width: "36px" }}
-						icon={<DeleteOutlined />}
-						onClick={() => showDeleteConfirm(job.email)}
-					/>
-				</>
-			);
-		}
+	const showConfirm = (job) => {
+		confirm({
+			title: "Willst du diesen Job übernehemen?",
+			content: "Ein andere Screener ist bereits eingetragen für diesen Job.",
+			okText: "Ja",
+			cancelText: "Abbrechen",
+			onOk() {
+				handleColumnClick(job);
+			},
+			onCancel() {
+				console.log("Abbrechen");
+			},
+		});
+	};
 
-		if (!job.screener && job.status === "waiting" && !hasActiveStudent()) {
+	const renderActions = (job) => {
+		const isSelfAssignedJob = job.screener && job.screener.email === user.email;
+
+		const isWaitingAndHasNoActiveJob =
+			job.status === "waiting" && !hasActiveStudent();
+
+		const isNotMyJob = job.screener && job.screener.email !== user.email;
+
+		if (isSelfAssignedJob || isWaitingAndHasNoActiveJob) {
 			return (
 				<>
-					<Button onClick={() => handleColumnClick(job)}>
+					<Button
+						style={{ width: "116px" }}
+						onClick={() =>
+							isNotMyJob ? showConfirm(job) : handleColumnClick(job)
+						}>
 						{getTextFromJob(job)}
 					</Button>
 					<Button

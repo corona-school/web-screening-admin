@@ -48,13 +48,11 @@ const ApiContextComponent = ({ children, history }) => {
 			});
 			socket.on("updateQueue", (queue) => {
 				if (queue) {
-					console.log(queue);
 					setStudentData(queue);
 				}
 			});
 			socket.on("screenerUpdate", (data) => {
 				if (data) {
-					console.log("screenerUpdate", data);
 					setScreenerOnline(data);
 				}
 			});

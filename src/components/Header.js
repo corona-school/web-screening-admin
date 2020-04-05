@@ -39,7 +39,7 @@ const Header = () => {
 			<Dropdown overlay={menu}>
 				<Button className="dropdownButton" style={{ width: "140px" }}>
 					<Badge color="green" />
-					<span classname="username">
+					<span>
 						{user.firstname} {user.lastname}
 					</span>
 					<DownOutlined />
@@ -51,7 +51,7 @@ const Header = () => {
 	return (
 		<div className="header">
 			<div className="logo">
-				<img src="/corona-school.svg" />
+				<img src="/corona-school.svg" alt="logo" />
 				<Title className="title">Screener</Title>
 			</div>
 			{userIsLoggedIn && user && renderProfileMenu()}

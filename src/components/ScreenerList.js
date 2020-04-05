@@ -13,22 +13,23 @@ const ScreenerList = () => {
 		<div className="screenerList">
 			<Title level={4}>Screener Online</Title>
 			{screenerOnline.map((screener, index) => {
-				return (
-					<>
-						<div className="item">
-							<Badge color="green" style={{ margin: "1px" }} />
-							<div className="itemText">
-								<Text className="name">
-									{screener.firstname} {screener.lastname}
-								</Text>
-								<Text className="secondary" type="secondary">
-									{screener.email}
-								</Text>
-							</div>
+				return [
+					<div className="item" key={screener.email}>
+						<Badge color="green" style={{ margin: "1px" }} />
+						<div className="itemText">
+							<Text className="name">
+								{screener.firstname} {screener.lastname}
+							</Text>
+							<Text className="secondary" type="secondary">
+								{screener.email}
+							</Text>
 						</div>
-						<Divider style={{ margin: "8px 0px" }} />
-					</>
-				);
+					</div>,
+					<Divider
+						key={screener.email + "-divider"}
+						style={{ margin: "8px 0px" }}
+					/>,
+				];
 			})}
 		</div>
 	);

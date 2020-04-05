@@ -50,7 +50,10 @@ const Header = () => {
 
 	return (
 		<div className="header">
-			<Title className="title">Corona School Screening</Title>
+			<div className="logo">
+				<img src="/corona-school.svg" />
+				<Title className="title">Admin</Title>
+			</div>
 			{userIsLoggedIn && user && renderProfileMenu()}
 		</div>
 	);

@@ -129,6 +129,7 @@ const UserList = ({ studentData }) => {
 					return (
 						<TabPane tab={TabMap.get(index)} key={index}>
 							<JobTable
+								reverse={filterType === 2 ? false : true}
 								handleRemoveJob={handleRemoveJob}
 								allJobs={studentData}
 								data={data}

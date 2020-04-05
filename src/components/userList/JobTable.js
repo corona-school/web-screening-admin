@@ -12,6 +12,7 @@ const JobTable = ({
 	user,
 	allJobs,
 	handleRemoveJob,
+	reverse,
 }) => {
 	const getTextFromJob = (job) => {
 		if (job.status === "waiting") {
@@ -135,6 +136,8 @@ const JobTable = ({
 			dataIndex: "time",
 			key: "time",
 			render: (time) => <span>{moment(time).fromNow()}</span>,
+			defaultSortOrder: reverse ? "descend" : "ascend",
+			sorter: (a, b) => a.time - b.time,
 		},
 		{
 			title: "Video-Link",

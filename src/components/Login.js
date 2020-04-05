@@ -10,7 +10,7 @@ const Login = () => {
 	const { register, handleSubmit, control } = useForm();
 	const { loginCall } = useContext(ApiContext);
 
-	const onSubmit = data => {
+	const onSubmit = (data) => {
 		loginCall(data);
 	};
 

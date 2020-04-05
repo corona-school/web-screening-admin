@@ -117,7 +117,7 @@ const UserList = ({ studentData }) => {
 		.sort((a, b) => a.time - b.time);
 
 	return (
-		<div>
+		<div className="userlist">
 			{selectedJob !== null && renderSelectedJob()}
 			<Tabs
 				defaultActiveKey={`${filterType}`}

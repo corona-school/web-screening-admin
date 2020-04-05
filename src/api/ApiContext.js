@@ -21,6 +21,8 @@ const ApiContextComponent = ({ children, history }) => {
 	const [studentData, setStudentData] = useState([]);
 	const [selectedJob, setSelectedJob] = useState(null);
 	const [isSocketConnected, setSocketConnected] = useState(false);
+	const [screenerOnline, setScreenerOnline] = useState([]);
+	const [isScreenerListOpen, setScreenerListOpen] = useState(false);
 	const [user, setUser] = useState(null);
 
 	const socket = io(baseUrl);
@@ -38,7 +40,7 @@ const ApiContextComponent = ({ children, history }) => {
 	}, [studentData, selectedJob]);
 
 	useEffect(() => {
-		if (userIsLoggedIn) {
+		if (userIsLoggedIn && user) {
 			socket.on("connect", () => {
 				setSocketConnected(true);
 				console.log("connected");
@@ -50,11 +52,17 @@ const ApiContextComponent = ({ children, history }) => {
 					setStudentData(queue);
 				}
 			});
+			socket.on("screenerUpdate", (data) => {
+				if (data) {
+					console.log("screenerUpdate", data);
+					setScreenerOnline(data);
+				}
+			});
 			socket.on("disconnect", () => {
 				setSocketConnected(false);
 			});
 		}
-	}, [userIsLoggedIn]);
+	}, [userIsLoggedIn, user]);
 
 	const loginCall = (data) => {
 		axios
@@ -72,6 +80,9 @@ const ApiContextComponent = ({ children, history }) => {
 	};
 
 	const logoutCall = () => {
+		if (isSocketConnected) {
+			socket.emit("logoutScreener", user);
+		}
 		axios
 			.get(baseUrl + logout)
 			.then(() => {
@@ -126,7 +137,11 @@ const ApiContextComponent = ({ children, history }) => {
 				handleRemoveJob,
 				selectedJob,
 				setSelectedJob,
+				screenerOnline,
+				setScreenerOnline,
 				isSocketConnected,
+				isScreenerListOpen,
+				setScreenerListOpen,
 			}}>
 			{children}
 		</ApiContext.Provider>

@@ -5,6 +5,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import UserList from "../components/userList";
 import { ApiContext } from "../api/ApiContext";
 import "./PrivateRoute.less";
+import ScreenerList from "../components/ScreenerList";
 
 const { Content } = Layout;
 
@@ -15,7 +16,8 @@ const PrivateRoute = () => {
 		setUser,
 		checkLoginStatus,
 		currentStudentKey,
-		studentData
+		studentData,
+		isScreenerListOpen,
 	} = useContext(ApiContext);
 	const [loading, setLoading] = useState(true);
 
@@ -28,7 +30,7 @@ const PrivateRoute = () => {
 					setUserIsLoggedIn(true);
 					setLoading(false);
 				})
-				.catch(err => {
+				.catch((err) => {
 					console.error(err);
 					setUser(null);
 					setUserIsLoggedIn(false);
@@ -50,18 +52,13 @@ const PrivateRoute = () => {
 	return (
 		<Route path="/screening">
 			{userIsLoggedIn && !loading ? (
-				<Content
-					className="site-layout"
-					style={{ padding: "0 50px", marginTop: 64 }}>
-					<div
-						className="site-layout-background"
-						style={{ padding: 24, minHeight: 380 }}>
-						<UserList
-							currentStudentKey={currentStudentKey}
-							studentData={studentData}
-						/>
-					</div>
-				</Content>
+				<div className="main">
+					<UserList
+						currentStudentKey={currentStudentKey}
+						studentData={studentData}
+					/>
+					{isScreenerListOpen && <ScreenerList />}
+				</div>
 			) : (
 				<Redirect to="/" />
 			)}

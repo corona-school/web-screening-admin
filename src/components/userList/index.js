@@ -114,11 +114,16 @@ const UserList = ({ studentData }) => {
 			}
 			return true;
 		})
-		.sort((a, b) => a.time - b.time);
+		.sort((a, b) => a.time - b.time)
+		.filter((job) => {
+			if (job.status !== "waiting" && job.status !== "active") {
+				return job.email === user.email;
+			}
+			return true;
+		});
 
 	return (
 		<div className="userlist">
-			{selectedJob !== null && renderSelectedJob()}
 			<Tabs
 				defaultActiveKey={`${filterType}`}
 				activeKey={`${filterType}`}

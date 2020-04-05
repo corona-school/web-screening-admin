@@ -116,8 +116,8 @@ const UserList = ({ studentData }) => {
 		})
 		.sort((a, b) => a.time - b.time)
 		.filter((job) => {
-			if (job.status !== "waiting" && job.status !== "active") {
-				return job.email === user.email;
+			if (job.status !== "waiting" && job.status !== "active" && job.screener) {
+				return job.screener.email === user.email;
 			}
 			return true;
 		});

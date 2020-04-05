@@ -52,7 +52,7 @@ const Header = () => {
 		<div className="header">
 			<div className="logo">
 				<img src="/corona-school.svg" />
-				<Title className="title">Admin</Title>
+				<Title className="title">Screener</Title>
 			</div>
 			{userIsLoggedIn && user && renderProfileMenu()}
 		</div>

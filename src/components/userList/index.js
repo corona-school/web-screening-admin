@@ -133,7 +133,7 @@ const UserList = ({ studentData }) => {
 					completeJob={completeJob}
 					startVideoCall={startVideoCall}
 					selectedJob={selectedJob}
-					setSelectedJob={setSelectedJob}
+					setSelectedJob={(job) => setSelectedJob(job)}
 				/>
 			)}
 		</div>

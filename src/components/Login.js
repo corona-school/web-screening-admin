@@ -24,7 +24,6 @@ const Login = () => {
 					name="email"
 					control={control}
 					placeholder="email"
-					ref={register({ required: true, pattern: /^\S+@\S+$/i })}
 				/>
 				<Controller
 					className="customInput"

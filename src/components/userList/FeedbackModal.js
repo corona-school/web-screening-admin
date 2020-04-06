@@ -16,7 +16,7 @@ const FeedbackModal = ({
 	closeModal,
 }) => {
 	const changeJob = (key, value) => {
-		setSelectedJob((oldJob) => ({ ...oldJob, [key]: value }));
+		setSelectedJob({ ...selectedJob, [key]: value });
 	};
 
 	return (

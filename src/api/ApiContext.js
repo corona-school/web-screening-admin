@@ -39,28 +39,28 @@ const ApiContextComponent = ({ children, history }) => {
 		}
 	}, [studentData, selectedJob]);
 
-	useEffect(() => {
-		if (userIsLoggedIn && user) {
-			socket.on("connect", () => {
-				setSocketConnected(true);
-				console.log("connected");
-				socket.emit("loginScreener", user);
-			});
-			socket.on("updateQueue", (queue) => {
-				if (queue) {
-					setStudentData(queue);
-				}
-			});
-			socket.on("screenerUpdate", (data) => {
-				if (data) {
-					setScreenerOnline(data);
-				}
-			});
-			socket.on("disconnect", () => {
-				setSocketConnected(false);
-			});
-		}
-	}, [userIsLoggedIn, user]);
+	// useEffect(() => {
+	// 	if (userIsLoggedIn && user) {
+	// 		socket.on("connect", () => {
+	// 			setSocketConnected(true);
+	// 			console.log("connected");
+	// 			socket.emit("loginScreener", user);
+	// 		});
+	// 		socket.on("updateQueue", (queue) => {
+	// 			if (queue) {
+	// 				setStudentData(queue);
+	// 			}
+	// 		});
+	// 		socket.on("screenerUpdate", (data) => {
+	// 			if (data) {
+	// 				setScreenerOnline(data);
+	// 			}
+	// 		});
+	// 		socket.on("disconnect", () => {
+	// 			setSocketConnected(false);
+	// 		});
+	// 	}
+	// }, [userIsLoggedIn, user]);
 
 	const loginCall = (data) => {
 		axios

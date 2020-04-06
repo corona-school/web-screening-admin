@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Tabs, Button, message } from "antd";
+import { Tabs, message } from "antd";
 
 import { ApiContext } from "../../api/ApiContext";
 import { Keys, KeyMap, TabMap } from "./data";
@@ -28,7 +28,7 @@ const UserList = ({ studentData }) => {
 		if (!selectedJob) {
 			setModalOpen(false);
 		}
-	}, selectedJob);
+	}, [selectedJob]);
 
 	useInterval(() => {
 		if (userIsLoggedIn && !isSocketConnected) {
@@ -84,26 +84,6 @@ const UserList = ({ studentData }) => {
 			.catch((err) =>
 				message.error("Du konntest nicht als Screener eingetragen werden.")
 			);
-	};
-
-	const renderSelectedJob = () => {
-		if (!selectedJob) {
-			return;
-		}
-		if (selectedJob.status === "active") {
-			return (
-				<div>
-					<Button
-						style={{ width: "200px" }}
-						type="primary"
-						onClick={() => setModalOpen(true)}>
-						Feedback
-					</Button>
-				</div>
-			);
-		}
-
-		return;
 	};
 
 	const data = studentData

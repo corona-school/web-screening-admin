@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { withRouter } from "react-router-dom";
 import io from "socket.io-client";
 import axios from "axios";
@@ -16,135 +16,132 @@ import { message } from "antd";
 const ApiContext = React.createContext();
 axios.defaults.withCredentials = true;
 
-const ApiContextComponent = ({ children, history }) => {
-	const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
-	const [studentData, setStudentData] = useState([]);
-	const [selectedJob, setSelectedJob] = useState(null);
-	const [isSocketConnected, setSocketConnected] = useState(false);
-	const [screenerOnline, setScreenerOnline] = useState([]);
-	const [isScreenerListOpen, setScreenerListOpen] = useState(false);
-	const [user, setUser] = useState(null);
+const socket = io(baseUrl);
 
-	// const socket = io(baseUrl);
+class ApiContextComponent extends React.Component {
+	state = {
+		userIsLoggedIn: false,
+		studentData: [],
+		selectedJob: null,
+		isSocketConnected: false,
+		screenerOnline: [],
+		isScreenerListOpen: false,
+		user: null,
+	};
 
-	useEffect(() => {
-		if (
-			selectedJob &&
-			studentData.every((job) => job.email !== selectedJob.email)
-		) {
-			setSelectedJob(null);
-			message.error(
-				"Stundent konnte nicht mehr in der Warteschlange gefunden werden."
-			);
-		}
-	}, [studentData, selectedJob]);
+	componentDidMount() {
+		socket.on("connect", () => {
+			this.setState({ isSocketConnected: true });
+		});
 
-	// useEffect(() => {
-	// 	if (userIsLoggedIn && user) {
-	// 		socket.on("connect", () => {
-	// 			setSocketConnected(true);
-	// 			console.log("connected");
-	// 			socket.emit("loginScreener", user);
-	// 		});
-	// 		socket.on("updateQueue", (queue) => {
-	// 			if (queue) {
-	// 				setStudentData(queue);
-	// 			}
-	// 		});
-	// 		socket.on("screenerUpdate", (data) => {
-	// 			if (data) {
-	// 				setScreenerOnline(data);
-	// 			}
-	// 		});
-	// 		socket.on("disconnect", () => {
-	// 			setSocketConnected(false);
-	// 		});
-	// 	}
-	// }, [userIsLoggedIn, user]);
+		socket.on("updateQueue", (queue) => {
+			if (queue) {
+				this.setState({ studentData: queue });
+			}
+		});
+		socket.on("screenerUpdate", (data) => {
+			if (data) {
+				this.setState({ screenerOnline: data });
+			}
+		});
+		socket.on("disconnect", () => {
+			this.setState({ isSocketConnected: false });
+			socket.close();
+		});
+	}
 
-	const loginCall = (data) => {
+	componentWillUnmount() {
+		socket.close();
+	}
+
+	loginCall = (data) => {
 		axios
 			.post(baseUrl + login, data)
 			.then(({ data }) => {
-				setUserIsLoggedIn(true);
-				setUser(data);
-				console.log(data);
-
-				history.push("/screening");
+				this.setState({ userIsLoggedIn: true, user: data });
+				if (this.state.isSocketConnected) {
+					socket.emit("loginScreener", data);
+				}
+				this.props.history.push("/screening");
 			})
 			.catch((err) => {
+				message.error("Du konntest nicht eingelogt werden.");
 				console.log("login Failed", err);
 			});
 	};
 
-	const logoutCall = () => {
-		// if (isSocketConnected) {
-		// 	socket.emit("logoutScreener", user);
-		// }
+	logoutCall = () => {
 		axios
 			.get(baseUrl + logout)
 			.then(() => {
-				setUserIsLoggedIn(false);
-				setUser(null);
-				history.push("/");
+				this.setState({ userIsLoggedIn: false, user: null });
+				this.props.history.push("/");
 			})
 			.catch((err) => {
 				console.error("Logout Failed", err);
 			});
 	};
 
-	const handleRemoveJob = (email) => {
+	handleRemoveJob = (email) => {
 		axios
 			.post(baseUrl + remove, { email })
-			.then((resp) => message.success("Job wurde erfolgreich entfernt!"))
-			.catch((err) => message.error("Job konnte nicht entfernt werden."));
+			.then(() => message.success("Job wurde erfolgreich entfernt!"))
+			.catch(() => message.error("Job konnte nicht entfernt werden."));
 	};
 
-	const getJobsCall = () => {
+	getJobsCall = () => {
 		axios
 			.get(baseUrl + getJobs)
 			.then(({ data }) => {
-				setStudentData(data);
+				this.setState({ studentData: data });
 			})
 			.catch((err) => {
 				console.log("Get Jobs failed.", err);
 			});
 	};
 
-	const checkLoginStatus = () => {
+	checkLoginStatus = () => {
 		return axios.get(baseUrl + getLoginStatus);
 	};
 
-	const postChangeStatusCall = (data) => {
+	postChangeStatusCall = (data) => {
 		return axios.post(baseUrl + postChangeStatus, data);
 	};
-
-	return (
-		<ApiContext.Provider
-			value={{
-				getJobsCall,
-				studentData,
-				checkLoginStatus,
-				postChangeStatusCall,
-				userIsLoggedIn,
-				setUserIsLoggedIn,
-				loginCall,
-				logoutCall,
-				user,
-				setUser,
-				handleRemoveJob,
-				selectedJob,
-				setSelectedJob,
-				screenerOnline,
-				setScreenerOnline,
-				isSocketConnected,
-				isScreenerListOpen,
-				setScreenerListOpen,
-			}}>
-			{children}
-		</ApiContext.Provider>
-	);
-};
+	render() {
+		const value = {
+			getJobsCall: this.getJobsCall,
+			studentData: this.state.studentData,
+			checkLoginStatus: this.checkLoginStatus,
+			postChangeStatusCall: this.postChangeStatusCall,
+			userIsLoggedIn: this.state.userIsLoggedIn,
+			setUserIsLoggedIn: (loggedIn) =>
+				this.setState({ userIsLoggedIn: loggedIn }),
+			loginCall: this.loginCall,
+			logoutCall: this.logoutCall,
+			user: this.state.user,
+			setUser: (user) => {
+				this.setState({ user });
+				if (this.state.isSocketConnected && user) {
+					socket.emit("loginScreener", user);
+				}
+			},
+			handleRemoveJob: this.handleRemoveJob,
+			selectedJob: this.state.selectedJob,
+			setSelectedJob: (job) => this.setState({ selectedJob: job }),
+			screenerOnline: this.state.screenerOnline,
+			setScreenerOnline: (list) => this.setState({ screenerOnline: list }),
+			isSocketConnected: this.state.isSocketConnected,
+			isScreenerListOpen: this.state.isScreenerListOpen,
+			setScreenerListOpen: (value) =>
+				this.setState({ isScreenerListOpen: value }),
+		};
+		return (
+			<ApiContext.Provider value={value}>
+				{this.props.children}
+			</ApiContext.Provider>
+		);
+	}
+}
 
 export default withRouter(ApiContextComponent);
 export { ApiContext };

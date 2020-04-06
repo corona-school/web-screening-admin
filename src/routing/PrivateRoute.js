@@ -1,13 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Route, Redirect } from "react-router-dom";
-import { Layout } from "antd";
 import ClipLoader from "react-spinners/ClipLoader";
 import UserList from "../components/userList";
 import { ApiContext } from "../api/ApiContext";
 import "./PrivateRoute.less";
 import ScreenerList from "../components/ScreenerList";
-
-const { Content } = Layout;
 
 const PrivateRoute = () => {
 	const {

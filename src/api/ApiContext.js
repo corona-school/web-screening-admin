@@ -25,7 +25,7 @@ const ApiContextComponent = ({ children, history }) => {
 	const [isScreenerListOpen, setScreenerListOpen] = useState(false);
 	const [user, setUser] = useState(null);
 
-	const socket = io(baseUrl);
+	// const socket = io(baseUrl);
 
 	useEffect(() => {
 		if (
@@ -78,9 +78,9 @@ const ApiContextComponent = ({ children, history }) => {
 	};
 
 	const logoutCall = () => {
-		if (isSocketConnected) {
-			socket.emit("logoutScreener", user);
-		}
+		// if (isSocketConnected) {
+		// 	socket.emit("logoutScreener", user);
+		// }
 		axios
 			.get(baseUrl + logout)
 			.then(() => {

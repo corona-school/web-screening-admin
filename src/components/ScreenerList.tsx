@@ -7,12 +7,12 @@ import "./ScreenerList.less";
 const { Text, Title } = Typography;
 
 const ScreenerList = () => {
-	const { screenerOnline } = useContext(ApiContext);
+	const context = useContext(ApiContext);
 
 	return (
 		<div className="screenerList">
 			<Title level={4}>Screener Online</Title>
-			{screenerOnline.map((screener, index) => {
+			{context?.screenerOnline.map((screener) => {
 				return [
 					<div className="item" key={screener.email}>
 						<Badge color="green" style={{ margin: "1px" }} />

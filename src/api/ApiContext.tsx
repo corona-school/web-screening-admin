@@ -1,5 +1,5 @@
 import React from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import io from "socket.io-client";
 import axios from "axios";
 import {
@@ -13,13 +13,79 @@ import {
 } from "./urls.js";
 import { message } from "antd";
 
-const ApiContext = React.createContext();
+const ApiContext = React.createContext<IProviderProps | null>(null);
 axios.defaults.withCredentials = true;
+axios.defaults.timeout = 60 * 1000;
 
 const socket = io(baseUrl);
 
-class ApiContextComponent extends React.Component {
-	state = {
+interface IJobInfo {
+	firstname: string;
+	lastname: string;
+	email: string;
+	subjects: ISubject[];
+	phone?: string;
+	birthday?: Date;
+	msg?: string;
+	screener?: IScreenerInfo;
+	invited?: boolean;
+	feedback?: string;
+	knowcsfrom: string;
+	commentScreener?: string;
+	time: number;
+	jitsi: string;
+	status: Status;
+	position?: number;
+}
+
+export type Status = "waiting" | "active" | "completed" | "rejected";
+
+export interface IScreenerInfo {
+	firstname: string;
+	lastname: string;
+	email: string;
+	time: number;
+}
+
+export interface ISubject {
+	subject: string;
+	min: number;
+	max: number;
+}
+
+export interface IProviderProps {
+	getJobsCall: () => void;
+	studentData: IJobInfo[];
+	checkLoginStatus: () => void;
+	postChangeStatusCall: (job: IJobInfo) => void;
+	userIsLoggedIn: boolean;
+	setUserIsLoggedIn: (isLoggedIn: boolean) => void;
+	loginCall: (data: { email: string; password: string }) => void;
+	logoutCall: () => void;
+	user: IScreenerInfo | null;
+	setUser: (user: IScreenerInfo) => void;
+	handleRemoveJob: (email: string) => void;
+	selectedJob: IJobInfo | null;
+	setSelectedJob: (job: IJobInfo | null) => void;
+	screenerOnline: IScreenerInfo[];
+	setScreenerOnline: (list: IScreenerInfo[]) => void;
+	isSocketConnected: boolean;
+	isScreenerListOpen: boolean;
+	setScreenerListOpen: (isOpen: boolean) => void;
+}
+
+export interface State {
+	userIsLoggedIn: boolean;
+	studentData: IJobInfo[];
+	selectedJob: IJobInfo | null;
+	isSocketConnected: boolean;
+	screenerOnline: IScreenerInfo[];
+	user: IScreenerInfo | null;
+	isScreenerListOpen: boolean;
+}
+
+class ApiContextComponent extends React.Component<RouteComponentProps> {
+	state: State = {
 		userIsLoggedIn: false,
 		studentData: [],
 		selectedJob: null,
@@ -34,12 +100,12 @@ class ApiContextComponent extends React.Component {
 			this.setState({ isSocketConnected: true });
 		});
 
-		socket.on("updateQueue", (queue) => {
+		socket.on("updateQueue", (queue?: IJobInfo[]) => {
 			if (queue) {
 				this.setState({ studentData: queue });
 			}
 		});
-		socket.on("screenerUpdate", (data) => {
+		socket.on("screenerUpdate", (data?: IScreenerInfo[]) => {
 			if (data) {
 				this.setState({ screenerOnline: data });
 			}
@@ -54,7 +120,7 @@ class ApiContextComponent extends React.Component {
 		socket.close();
 	}
 
-	loginCall = (data) => {
+	loginCall = (data: { email: string; password: string }) => {
 		axios
 			.post(baseUrl + login, data)
 			.then(({ data }) => {
@@ -82,7 +148,7 @@ class ApiContextComponent extends React.Component {
 			});
 	};
 
-	handleRemoveJob = (email) => {
+	handleRemoveJob = (email: string) => {
 		axios
 			.post(baseUrl + remove, { email })
 			.then(() => message.success("Job wurde erfolgreich entfernt!"))
@@ -104,22 +170,22 @@ class ApiContextComponent extends React.Component {
 		return axios.get(baseUrl + getLoginStatus);
 	};
 
-	postChangeStatusCall = (data) => {
+	postChangeStatusCall = (data: IJobInfo) => {
 		return axios.post(baseUrl + postChangeStatus, data);
 	};
 	render() {
-		const value = {
+		const value: IProviderProps = {
 			getJobsCall: this.getJobsCall,
 			studentData: this.state.studentData,
 			checkLoginStatus: this.checkLoginStatus,
 			postChangeStatusCall: this.postChangeStatusCall,
 			userIsLoggedIn: this.state.userIsLoggedIn,
-			setUserIsLoggedIn: (loggedIn) =>
+			setUserIsLoggedIn: (loggedIn: boolean) =>
 				this.setState({ userIsLoggedIn: loggedIn }),
 			loginCall: this.loginCall,
 			logoutCall: this.logoutCall,
 			user: this.state.user,
-			setUser: (user) => {
+			setUser: (user: IScreenerInfo) => {
 				this.setState({ user });
 				if (this.state.isSocketConnected && user) {
 					socket.emit("loginScreener", user);
@@ -127,12 +193,14 @@ class ApiContextComponent extends React.Component {
 			},
 			handleRemoveJob: this.handleRemoveJob,
 			selectedJob: this.state.selectedJob,
-			setSelectedJob: (job) => this.setState({ selectedJob: job }),
+			setSelectedJob: (job: IJobInfo | null) =>
+				this.setState({ selectedJob: job }),
 			screenerOnline: this.state.screenerOnline,
-			setScreenerOnline: (list) => this.setState({ screenerOnline: list }),
+			setScreenerOnline: (list: IScreenerInfo[]) =>
+				this.setState({ screenerOnline: list }),
 			isSocketConnected: this.state.isSocketConnected,
 			isScreenerListOpen: this.state.isScreenerListOpen,
-			setScreenerListOpen: (value) =>
+			setScreenerListOpen: (value: boolean) =>
 				this.setState({ isScreenerListOpen: value }),
 		};
 		return (

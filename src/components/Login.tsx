@@ -7,11 +7,11 @@ import LoginAnimation from "../animatedIllustration/loginAnimation";
 import "./Login.less";
 
 const Login = () => {
-	const { register, handleSubmit, control } = useForm();
-	const { loginCall } = useContext(ApiContext);
+	const { handleSubmit, control } = useForm();
+	const context = useContext(ApiContext);
 
-	const onSubmit = (data) => {
-		loginCall(data);
+	const onSubmit: any = (data: { email: string; password: string }) => {
+		context?.loginCall(data);
 	};
 
 	return (

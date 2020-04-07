@@ -1,18 +1,14 @@
 import React from "react";
 import Routes from "../routing/Routes";
-import "./PageLayout.less";
-
 import Header from "./Header";
+import "./PageLayout.less";
 
 const PageLayout = () => {
 	return (
-		<>
-			<div className="pageContainer">
-				<Header />
-
-				<Routes />
-			</div>
-		</>
+		<div className="pageContainer">
+			<Header />
+			<Routes />
+		</div>
 	);
 };
 

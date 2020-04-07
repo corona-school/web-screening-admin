@@ -6,14 +6,10 @@ import "./Header.less";
 
 const { Title } = Typography;
 const Header = () => {
-	const {
-		logoutCall,
-		userIsLoggedIn,
-		user,
-		screenerOnline,
-		isScreenerListOpen,
-		setScreenerListOpen,
-	} = useContext(ApiContext);
+	const context = useContext(ApiContext);
+	if (!context) {
+		return null;
+	}
 
 	const renderProfileMenu = () => {
 		const menu = (
@@ -22,15 +18,17 @@ const Header = () => {
 					<UserOutlined />
 					Profile
 				</Menu.Item>
-				<Menu.Item onClick={logoutCall}>
+				<Menu.Item onClick={context.logoutCall}>
 					<LogoutOutlined />
 					Logout
 				</Menu.Item>
 				<Menu.Divider />
 				<Menu.Item
 					key="3"
-					onClick={() => setScreenerListOpen(!isScreenerListOpen)}>
-					{screenerOnline.length} Screener Online
+					onClick={() =>
+						context.setScreenerListOpen(!context.isScreenerListOpen)
+					}>
+					{context.screenerOnline.length} Screener Online
 				</Menu.Item>
 			</Menu>
 		);
@@ -40,7 +38,7 @@ const Header = () => {
 				<Button className="dropdownButton" style={{ width: "140px" }}>
 					<Badge color="green" />
 					<span>
-						{user.firstname} {user.lastname}
+						{context.user?.firstname} {context.user?.lastname}
 					</span>
 					<DownOutlined />
 				</Button>
@@ -54,7 +52,7 @@ const Header = () => {
 				<img src="/corona-school.svg" alt="logo" />
 				<Title className="title">Screener</Title>
 			</div>
-			{userIsLoggedIn && user && renderProfileMenu()}
+			{context.userIsLoggedIn && context.user && renderProfileMenu()}
 		</div>
 	);
 };

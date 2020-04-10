@@ -123,7 +123,6 @@ const UserList = () => {
 								handleColumnClick={handleColumnClick}
 								user={user}
 							/>
-							;
 						</TabPane>
 					);
 				})}

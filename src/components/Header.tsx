@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Typography, Dropdown, Menu, Button, Badge } from "antd";
+import { Typography, Dropdown, Menu, Button, Badge, Tag } from "antd";
 import {
 	DownOutlined,
 	LogoutOutlined,
@@ -38,6 +38,9 @@ const Header = (props: RouteComponentProps) => {
 					}}>
 					<DashboardOutlined />
 					Dashboard
+					<Tag color="green" style={{ marginLeft: "8px" }}>
+						new
+					</Tag>
 				</Menu.Item>
 				<Menu.Item onClick={context.logoutCall}>
 					<LogoutOutlined />
@@ -56,7 +59,7 @@ const Header = (props: RouteComponentProps) => {
 
 		return (
 			<Dropdown overlay={menu}>
-				<Button className="dropdownButton" style={{ width: "140px" }}>
+				<Button className="dropdownButton" style={{ width: "160px" }}>
 					<Badge color="green" />
 					<span>
 						{context.user?.firstname} {context.user?.lastname}

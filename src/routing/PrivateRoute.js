@@ -1,24 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Route, Redirect } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
-import UserList from "../components/userList";
 import { ApiContext } from "../api/ApiContext";
 import "./PrivateRoute.less";
-import ScreenerList from "../components/ScreenerList";
 
-const PrivateRoute = () => {
+const PrivateRoute = ({ path, component }) => {
 	const {
 		userIsLoggedIn,
 		setUserIsLoggedIn,
 		setUser,
 		checkLoginStatus,
-		currentStudentKey,
-		studentData,
-		isScreenerListOpen,
 	} = useContext(ApiContext);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
+		console.log(userIsLoggedIn);
+
 		if (!userIsLoggedIn) {
 			setLoading(true);
 			checkLoginStatus()
@@ -36,7 +33,7 @@ const PrivateRoute = () => {
 		} else {
 			setLoading(false);
 		}
-	});
+	}, []);
 
 	if (loading) {
 		return (
@@ -47,19 +44,11 @@ const PrivateRoute = () => {
 	}
 
 	return (
-		<Route path="/screening">
-			{userIsLoggedIn && !loading ? (
-				<div className="main">
-					<UserList
-						currentStudentKey={currentStudentKey}
-						studentData={studentData}
-					/>
-					{isScreenerListOpen && <ScreenerList />}
-				</div>
-			) : (
-				<Redirect to="/" />
-			)}
-		</Route>
+		<>
+			<Route path={path}>
+				{userIsLoggedIn && !loading ? component : <Redirect to="/" />}
+			</Route>
+		</>
 	);
 };
 

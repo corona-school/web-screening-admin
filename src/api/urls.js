@@ -8,3 +8,5 @@ export const login = "screener/login";
 export const remove = "student/remove";
 export const logout = "screener/logout";
 export const getLoginStatus = "screener/status";
+export const queueStatistic = "queue/statistics";
+export const databaseStatistics = "statistics/logs";

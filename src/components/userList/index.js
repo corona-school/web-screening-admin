@@ -9,7 +9,7 @@ import useInterval from "../../api/interval";
 
 const { TabPane } = Tabs;
 
-const UserList = ({ studentData }) => {
+const UserList = () => {
 	const {
 		postChangeStatusCall,
 		getJobsCall,
@@ -18,6 +18,8 @@ const UserList = ({ studentData }) => {
 		handleRemoveJob,
 		setSelectedJob,
 		isSocketConnected,
+		currentStudentKey,
+		studentData,
 		user,
 	} = useContext(ApiContext);
 

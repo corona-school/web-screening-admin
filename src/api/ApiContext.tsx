@@ -10,6 +10,7 @@ import {
 	postChangeStatus,
 	getLoginStatus,
 	remove,
+	databaseStatistics,
 } from "./urls.js";
 import { message } from "antd";
 
@@ -53,6 +54,30 @@ export interface ISubject {
 	max: number;
 }
 
+export interface Screener {
+	id: number;
+	firstname: string;
+	lastname: string;
+	email: string;
+}
+
+export interface Student {
+	firstname: string;
+	lastname: string;
+	email: string;
+}
+
+export interface Statistic {
+	id: number;
+	createdAt: string;
+	finnishedAt: string;
+	completed: boolean;
+	screenerEmail: string;
+	studentEmail: string;
+	screener: Screener;
+	student: Student;
+}
+
 export interface IProviderProps {
 	getJobsCall: () => void;
 	studentData: IJobInfo[];
@@ -72,6 +97,8 @@ export interface IProviderProps {
 	isSocketConnected: boolean;
 	isScreenerListOpen: boolean;
 	setScreenerListOpen: (isOpen: boolean) => void;
+	getDatabaseStats: () => void;
+	statistics: Statistic[];
 }
 
 export interface State {
@@ -82,6 +109,7 @@ export interface State {
 	screenerOnline: IScreenerInfo[];
 	user: IScreenerInfo | null;
 	isScreenerListOpen: boolean;
+	statistics: Statistic[];
 }
 
 class ApiContextComponent extends React.Component<RouteComponentProps> {
@@ -92,6 +120,7 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 		isSocketConnected: false,
 		screenerOnline: [],
 		isScreenerListOpen: false,
+		statistics: [],
 		user: null,
 	};
 
@@ -166,6 +195,17 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 			});
 	};
 
+	getDatabaseStats = () => {
+		axios
+			.get(baseUrl + databaseStatistics)
+			.then(({ data }) => {
+				this.setState({ statistics: data });
+			})
+			.catch((err) => {
+				console.log("Get Database Stats failed.", err);
+			});
+	};
+
 	checkLoginStatus = () => {
 		return axios.get(baseUrl + getLoginStatus);
 	};
@@ -200,6 +240,8 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 				this.setState({ screenerOnline: list }),
 			isSocketConnected: this.state.isSocketConnected,
 			isScreenerListOpen: this.state.isScreenerListOpen,
+			getDatabaseStats: this.getDatabaseStats,
+			statistics: this.state.statistics,
 			setScreenerListOpen: (value: boolean) =>
 				this.setState({ isScreenerListOpen: value }),
 		};

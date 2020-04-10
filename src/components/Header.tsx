@@ -1,11 +1,18 @@
 import React, { useContext } from "react";
 import { Typography, Dropdown, Menu, Button, Badge } from "antd";
-import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
+import {
+	DownOutlined,
+	LogoutOutlined,
+	UserOutlined,
+	DashboardOutlined,
+	CheckCircleOutlined,
+} from "@ant-design/icons";
 import { ApiContext } from "../api/ApiContext";
 import "./Header.less";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 const { Title } = Typography;
-const Header = () => {
+const Header = (props: RouteComponentProps) => {
 	const context = useContext(ApiContext);
 	if (!context) {
 		return null;
@@ -17,6 +24,20 @@ const Header = () => {
 				<Menu.Item>
 					<UserOutlined />
 					Profile
+				</Menu.Item>
+				<Menu.Item
+					onClick={() => {
+						props.history.push("/screening");
+					}}>
+					<CheckCircleOutlined />
+					Studenten
+				</Menu.Item>
+				<Menu.Item
+					onClick={() => {
+						props.history.push("/dashboard");
+					}}>
+					<DashboardOutlined />
+					Dashboard
 				</Menu.Item>
 				<Menu.Item onClick={context.logoutCall}>
 					<LogoutOutlined />
@@ -57,4 +78,4 @@ const Header = () => {
 	);
 };
 
-export default Header;
+export default withRouter(Header);

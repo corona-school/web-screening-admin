@@ -34,7 +34,6 @@ const PrivateRoute = ({ path, component }) => {
 			setLoading(false);
 		}
 	}, []);
-
 	if (loading) {
 		return (
 			<div className="loadingContainer">

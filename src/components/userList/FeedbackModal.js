@@ -3,7 +3,7 @@ import { Modal, Button, Descriptions, Input, Tag, Select } from "antd";
 import moment from "moment";
 import "./FeedbackModal.less";
 import SubjectList from "./SubjectList";
-import { StatusMap } from "./data";
+import { StatusMap, knowsFromMap } from "./data";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -16,7 +16,9 @@ const FeedbackModal = ({
 	startVideoCall,
 	closeModal,
 }) => {
-	const [knowsFrom, setKnowsFrom] = useState(13);
+	const [knowsFrom, setKnowsFrom] = useState(
+		knowsFromMap.has(selectedJob.knowcsfrom) ? selectedJob.knowcsfrom : "13"
+	);
 	const changeJob = (key, value) => {
 		setSelectedJob({ ...selectedJob, [key]: value });
 	};
@@ -91,24 +93,29 @@ const FeedbackModal = ({
 			/>
 			<div className="label">Wie hat der Student von uns erfahren?</div>
 			<Select
-				onChange={(v) => setKnowsFrom(parseInt(v))}
-				defaultValue={`${knowsFrom}`}
+				onChange={(v) => {
+					setKnowsFrom(v);
+					if (v !== "13") {
+						changeJob("knowcsfrom", v);
+					}
+				}}
+				defaultValue={knowsFrom}
 				style={{ marginBottom: "16px", marginTop: "16px", width: "100%" }}>
-				<Option value="1"> Über Bekannte/Familie</Option>
-				<Option value="2"> Über eine Empfehlung</Option>
-				<Option value="3"> Über Lehrer/Schule</Option>
-				<Option value="4"> Über die Universität</Option>
-				<Option value="5"> Über einen Pressebericht</Option>
-				<Option value="6"> Über einen Radiobeitrag</Option>
-				<Option value="7"> Über einen Fernsehbeitrag</Option>
-				<Option value="8"> Über Facebook</Option>
-				<Option value="9"> Über Instagram</Option>
-				<Option value="10"> Über TikTok</Option>
-				<Option value="11"> Über eine Suchmaschinen-Suche</Option>
-				<Option value="12"> Über eine Werbeanzeige</Option>
+				<Option value="Bekannte"> Über Bekannte/Familie</Option>
+				<Option value="Empfehlung"> Über eine Empfehlung</Option>
+				<Option value="Schule"> Über Lehrer/Schule</Option>
+				<Option value="Universität"> Über die Universität</Option>
+				<Option value="Pressebericht"> Über einen Pressebericht</Option>
+				<Option value="Radiobeitrag"> Über einen Radiobeitrag</Option>
+				<Option value="Fernsehbeitrag"> Über einen Fernsehbeitrag</Option>
+				<Option value="Facebook"> Über Facebook</Option>
+				<Option value="Instagram"> Über Instagram</Option>
+				<Option value="TikTok"> Über TikTok</Option>
+				<Option value="Suchmaschine"> Über eine Suchmaschinen-Suche</Option>
+				<Option value="Werbeanzeige"> Über eine Werbeanzeige</Option>
 				<Option value="13"> anders</Option>
 			</Select>
-			{knowsFrom === 13 && (
+			{knowsFrom === "13" && (
 				<TextArea
 					rows={1}
 					placeholder="anderes"

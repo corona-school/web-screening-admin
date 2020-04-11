@@ -18,7 +18,6 @@ const UserList = () => {
 		handleRemoveJob,
 		setSelectedJob,
 		isSocketConnected,
-		currentStudentKey,
 		studentData,
 		user,
 	} = useContext(ApiContext);
@@ -83,9 +82,10 @@ const UserList = () => {
 				hide();
 				message.success("Du wurdest als Screener eingetragen.");
 			})
-			.catch((err) =>
-				message.error("Du konntest nicht als Screener eingetragen werden.")
-			);
+			.catch((err) => {
+				message.error("Du konntest nicht als Screener eingetragen werden.");
+				hide();
+			});
 	};
 
 	const data = studentData

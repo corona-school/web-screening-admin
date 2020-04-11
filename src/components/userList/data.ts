@@ -64,3 +64,19 @@ export const SubjectsMap = new Map(
 		tagColors[index % tagColors.length],
 	])
 );
+
+export const knowsFromMap = new Map([
+	["Bekannte", "Über Bekannte/Familie"],
+	["Empfehlung", "Über eine Empfehlung"],
+	["Schule", "Über Lehrer/Schule"],
+	["Universität", "Über die Universität"],
+	["Pressebericht", "Über einen Pressebericht"],
+	["Radiobeitrag", "Über einen Radiobeitrag"],
+	["Fernsehbeitrag", "Über einen Fernsehbeitrag"],
+	["Facebook", "Über Facebook"],
+	["Instagram", "Über Instagram"],
+	["TikTok", "Über TikTok"],
+	["Suchmaschine", "Über eine Suchmaschinen-Suche"],
+	["Werbeanzeige", "Über eine Werbeanzeige"],
+	["13", "anders"],
+]);

@@ -86,7 +86,6 @@ const FeedbackModal = ({
 			<div className="title">Screening Angaben</div>
 			<div className="label">Feedback des Studenten: </div>
 			<TextArea
-				disabled
 				rows={2}
 				placeholder="Feedback des Studenten"
 				value={selectedJob.feedback}

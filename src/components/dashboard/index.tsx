@@ -196,8 +196,6 @@ const Dashboard = () => {
 				{renderCompletedByHour()}
 				<Title level={3}>Länge der Screenings:</Title>
 				{renderScreeningDuration()}
-				<Title level={3}>Top 10 Screener:</Title>
-				<div className="screenerTopTen">{renderCompletedByScreener()}</div>
 			</div>
 		</div>
 	);

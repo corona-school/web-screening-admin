@@ -1,26 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect } from "react";
 import { ApiContext } from "../../api/ApiContext";
-import { Statistic, Row, Col, Typography } from "antd";
 import { pure } from "recompose";
-import {
-	LineChart,
-	Line,
-	XAxis,
-	YAxis,
-	CartesianGrid,
-	Tooltip,
-	Legend,
-} from "recharts";
-import moment from "moment";
 
 import "./Dashboard.less";
 import OverviewAnalysis from "./OverviewAnalysis";
 import JobPerDay from "./JobPerDay";
 import JobPerTime from "./JobPerTime";
 import OverviewScreenings from "./OverviewScreenings";
-
-const { Title } = Typography;
 
 const Dashboard = () => {
 	const context = useContext(ApiContext);
@@ -61,33 +48,6 @@ const Dashboard = () => {
 				</div>
 			);
 		});
-	};
-
-	const renderScreeningDuration = () => {
-		let stats = context.statistics
-			.map((s) => moment(s.finnishedAt).diff(s.createdAt, "minutes"))
-			.filter((s) => s !== 0);
-
-		const sum = stats.reduce((a, b) => a + b, 0);
-		const avg = sum / stats.length || 0;
-		const abs = Math.round(avg);
-
-		const max = Math.max(...stats);
-		const min = Math.min(...stats);
-
-		return (
-			<Row gutter={18} style={{ margin: "32px" }}>
-				<Col span={6}>
-					<Statistic title="Durchschnitt" value={abs + " Minuten"} />
-				</Col>
-				<Col span={6}>
-					<Statistic title="Max" value={max + " Minuten"} />
-				</Col>
-				<Col span={6}>
-					<Statistic title="Min" value={min + " Minuten"} />
-				</Col>
-			</Row>
-		);
 	};
 
 	return (

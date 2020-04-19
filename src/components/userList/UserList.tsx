@@ -5,7 +5,7 @@ import "./UserList.less";
 
 const UserList = () => {
 	return (
-		<div className="container">
+		<div className="screening-container">
 			<OverviewAnalysis />
 			<Queue />
 		</div>

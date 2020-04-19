@@ -25,6 +25,7 @@ const FeedbackModal = ({
 
 	return (
 		<Modal
+			width="640px"
 			style={{ top: 20, maxHeight: "90%" }}
 			visible={isModalOpen}
 			onCancel={closeModal}

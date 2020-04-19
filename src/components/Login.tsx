@@ -15,7 +15,7 @@ const Login = () => {
 	};
 
 	return (
-		<div className="container">
+		<div className="login-container">
 			<form onSubmit={handleSubmit(onSubmit)} className="formContainer">
 				<LoginAnimation />
 				<Controller

@@ -7,7 +7,7 @@ import JobPerDay from "./JobPerDay";
 import JobPerTime from "./JobPerTime";
 import OverviewScreenings from "./OverviewScreenings";
 
-import "./Dashboard.less";
+import "./dashboard.less";
 
 const Dashboard = () => {
 	const context = useContext(ApiContext);

@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
-import { Typography, Dropdown, Menu, Button, Badge, Tag } from "antd";
+import { Typography, Dropdown, Menu, Tag } from "antd";
 import {
-	DownOutlined,
 	LogoutOutlined,
 	UserOutlined,
 	DashboardOutlined,
@@ -59,13 +58,20 @@ const Header = (props: RouteComponentProps) => {
 
 		return (
 			<Dropdown overlay={menu}>
-				<Button className="dropdownButton" style={{ width: "160px" }}>
-					<Badge color="green" />
-					<span>
-						{context.user?.firstname} {context.user?.lastname}
-					</span>
-					<DownOutlined />
-				</Button>
+				<div className="ProfileMenu">
+					<div className="ProfileImage">
+						<span>
+							{context.user?.firstname[0]}
+							{context.user?.lastname[0]}
+						</span>
+					</div>
+					<div className="ProfileTextContainer">
+						<span className="ProfileName">
+							{context.user?.firstname} {context.user?.lastname}
+						</span>
+						<span className="ProfileJob">Screener</span>
+					</div>
+				</div>
 			</Dropdown>
 		);
 	};
@@ -74,7 +80,12 @@ const Header = (props: RouteComponentProps) => {
 		<div className="header">
 			<div className="logo">
 				<img src="/corona-school.svg" alt="logo" />
-				<Title className="title">Screener</Title>
+				<Title
+					level={4}
+					className="title"
+					style={{ color: "white", paddingLeft: "12px" }}>
+					Screener
+				</Title>
 			</div>
 			{context.userIsLoggedIn && context.user && renderProfileMenu()}
 		</div>

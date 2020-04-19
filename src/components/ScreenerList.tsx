@@ -11,7 +11,9 @@ const ScreenerList = () => {
 
 	return (
 		<div className="screenerList">
-			<Title level={4}>Screener Online</Title>
+			<Title style={{ color: "#6c757d", marginTop: 0 }} level={4}>
+				Screener Online
+			</Title>
 			{context?.screenerOnline.map((screener) => {
 				return [
 					<div className="item" key={screener.email}>

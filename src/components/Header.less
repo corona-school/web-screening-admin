@@ -4,9 +4,9 @@
 	align-items: center;
 	justify-content: space-between;
 	width: 100vw;
-	padding-right: 24px;
-	padding-left: 24px;
-	background: white;
+	padding-right: 32px;
+	padding-left: 32px;
+	background: #313a46;
 	height: 64px;
 	border-bottom: 1px solid #d6d6d6;
 }
@@ -15,7 +15,7 @@
 	display: flex;
 	align-items: center;
 	img {
-		height: 40px;
+		height: 30px;
 	}
 	.title {
 		padding-left: 8px;
@@ -26,4 +26,43 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.ProfileMenu {
+	display: flex;
+	background: #3c4655;
+	height: 100%;
+	justify-content: center;
+	align-items: center;
+	padding: 0px 16px;
+}
+
+.ProfileImage {
+	background: #3d73dd;
+	border-radius: 50%;
+	width: 40px;
+	height: 40px;
+	display: flex;
+	letter-spacing: 2px;
+	padding: 8px;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	margin-right: 16px;
+}
+
+.ProfileTextContainer {
+	display: flex;
+	flex-direction: column;
+}
+
+.ProfileName {
+	font-size: 16px;
+	color: white;
+}
+
+.ProfileJob {
+	font-size: 12px;
+	margin-top: -4px;
+	color: white;
 }

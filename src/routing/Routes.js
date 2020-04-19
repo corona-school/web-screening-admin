@@ -1,15 +1,12 @@
 import React, { useContext } from "react";
 import { Switch, Route } from "react-router-dom";
-import { Layout } from "antd";
-
 import Login from "../components/Login";
 import PrivateRoute from "./PrivateRoute";
-import Dashboard from "../components/dashboard";
-import UserList from "../components/userList";
+import Dashboard from "../components/dashboard/Dashboard";
+import UserList from "../components/userList/UserList";
 import { ApiContext } from "../api/ApiContext";
 import ScreenerList from "../components/ScreenerList";
-
-const { Content } = Layout;
+import Navigation from "../components/navigation/Navigation";
 
 export default function Routes() {
 	const { isScreenerListOpen } = useContext(ApiContext);
@@ -17,22 +14,28 @@ export default function Routes() {
 	return (
 		<Switch>
 			<Route exact path="/">
-				<Content
-					className="site-layout"
-					style={{ padding: "0 50px", marginTop: 64 }}>
-					<Login />
-				</Content>
+				<Login />
 			</Route>
 			<PrivateRoute
 				path="/screening"
 				component={
 					<div className="main">
+						<Navigation />
 						<UserList />
 						{isScreenerListOpen && <ScreenerList />}
 					</div>
 				}
 			/>
-			<PrivateRoute path="/dashboard" component={<Dashboard />} />
+			<PrivateRoute
+				path="/dashboard"
+				component={
+					<div className="main">
+						<Navigation />
+						<Dashboard />
+						{isScreenerListOpen && <ScreenerList />}
+					</div>
+				}
+			/>
 		</Switch>
 	);
 }

@@ -18,9 +18,14 @@ const ApiContext = React.createContext<IProviderProps | null>(null);
 axios.defaults.withCredentials = true;
 axios.defaults.timeout = 60 * 1000;
 
-const socket = io(baseUrl);
+const socket = io(baseUrl, {
+	reconnection: true,
+	reconnectionDelay: 1000,
+	reconnectionDelayMax: 5000,
+	reconnectionAttempts: 99999,
+});
 
-interface IJobInfo {
+export interface IJobInfo {
 	firstname: string;
 	lastname: string;
 	email: string;
@@ -82,7 +87,7 @@ export interface IProviderProps {
 	getJobsCall: () => void;
 	studentData: IJobInfo[];
 	checkLoginStatus: () => void;
-	postChangeStatusCall: (job: IJobInfo) => void;
+	postChangeStatusCall: (job: IJobInfo) => Promise<any>;
 	userIsLoggedIn: boolean;
 	setUserIsLoggedIn: (isLoggedIn: boolean) => void;
 	loginCall: (data: { email: string; password: string }) => void;
@@ -166,10 +171,14 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 	};
 
 	logoutCall = () => {
+		const { user } = this.state;
 		axios
 			.get(baseUrl + logout)
 			.then(() => {
 				this.setState({ userIsLoggedIn: false, user: null });
+				if (this.state.isSocketConnected) {
+					socket.emit("logoutScreener", user);
+				}
 				this.props.history.push("/");
 			})
 			.catch((err) => {

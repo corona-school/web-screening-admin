@@ -2,12 +2,12 @@
 import React, { useContext, useEffect } from "react";
 import { ApiContext } from "../../api/ApiContext";
 import { pure } from "recompose";
-
-import "./Dashboard.less";
 import OverviewAnalysis from "./OverviewAnalysis";
 import JobPerDay from "./JobPerDay";
 import JobPerTime from "./JobPerTime";
 import OverviewScreenings from "./OverviewScreenings";
+
+import "./Dashboard.less";
 
 const Dashboard = () => {
 	const context = useContext(ApiContext);

@@ -8,6 +8,7 @@ import {
 	FireOutlined,
 	TeamOutlined,
 } from "@ant-design/icons";
+import useInterval from "../../api/interval";
 
 const { Title } = Typography;
 
@@ -17,6 +18,10 @@ const OverviewAnalysis = () => {
 	useEffect(() => {
 		context?.getDatabaseStats();
 	}, []);
+
+	useInterval(() => {
+		context?.getDatabaseStats();
+	}, 10000);
 
 	if (!context) {
 		return null;

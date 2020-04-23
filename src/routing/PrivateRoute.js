@@ -3,6 +3,8 @@ import { Route, Redirect } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import { ApiContext } from "../api/ApiContext";
 import "./PrivateRoute.less";
+import * as Sentry from "@sentry/browser";
+import LogRocket from "logrocket";
 
 const PrivateRoute = ({ path, component }) => {
 	const {
@@ -21,6 +23,15 @@ const PrivateRoute = ({ path, component }) => {
 			checkLoginStatus()
 				.then(({ data }) => {
 					setUser(data);
+					Sentry.configureScope((scope) => {
+						scope.setUser({ email: data.email, id: data.email });
+						scope.setTag("user", data.email);
+					});
+					LogRocket.identify("user", {
+						name: data.firstname + " " + data.lastname,
+						email: data.email,
+						subscriptionType: "screener",
+					});
 					setUserIsLoggedIn(true);
 					setLoading(false);
 				})

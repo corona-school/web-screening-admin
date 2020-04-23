@@ -24,6 +24,7 @@
     "express-favicon": "^2.0.1",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
+    "logrocket": "^1.0.7",
     "moment": "^2.24.0",
     "react": "^16.13.1",
     "react-app-rewired": "^2.1.5",

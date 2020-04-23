@@ -3,10 +3,14 @@ import { BrowserRouter as Router } from "react-router-dom";
 import PageLayout from "./components/PageLayout";
 import * as Sentry from "@sentry/browser";
 import ApiContext from "./api/ApiContext";
+import LogRocket from "logrocket";
 
-Sentry.init({
-	dsn: process.env.REACT_APP_SENTRY_URL,
-});
+if (process.env.NODE_ENV === "production") {
+	LogRocket.init(process.env.REACT_APP_LOG_ROCKET || "");
+	Sentry.init({
+		dsn: process.env.REACT_APP_SENTRY_URL,
+	});
+}
 
 const App = () => (
 	<>

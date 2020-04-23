@@ -13,6 +13,8 @@ import {
 	databaseStatistics,
 } from "./urls.js";
 import { message } from "antd";
+import * as Sentry from "@sentry/browser";
+import LogRocket from "logrocket";
 
 const ApiContext = React.createContext<IProviderProps | null>(null);
 axios.defaults.withCredentials = true;
@@ -162,6 +164,15 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 				if (this.state.isSocketConnected) {
 					socket.emit("loginScreener", data);
 				}
+				Sentry.configureScope((scope) => {
+					scope.setUser({ email: data.email, id: data.email });
+					scope.setTag("user", data.email);
+				});
+				LogRocket.identify("user", {
+					name: data.firstname + " " + data.lastname,
+					email: data.email,
+					subscriptionType: "screener",
+				});
 				this.props.history.push("/screening");
 			})
 			.catch((err) => {

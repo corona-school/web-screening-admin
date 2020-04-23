@@ -141,6 +141,7 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 				this.setState({ studentData: queue });
 			}
 		});
+
 		socket.on("screenerUpdate", (data?: IScreenerInfo[]) => {
 			if (data) {
 				this.setState({ screenerOnline: data });
@@ -148,7 +149,21 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 		});
 		socket.on("disconnect", () => {
 			this.setState({ isSocketConnected: false });
-			socket.close();
+		});
+
+		socket.on("connect_error", (error: Error) => {
+			Sentry.captureException(error);
+			console.log("connect_error", error.message);
+		});
+		socket.on("error", (error: Error) => {
+			Sentry.captureException(error);
+			console.log("error", error.message);
+		});
+		socket.on("reconnecting", (attemptNumber: number) => {
+			console.log("reconnecting", attemptNumber);
+		});
+		socket.on("connect_timeout", (data: any) => {
+			console.log("connect_timeout", data.message);
 		});
 	}
 

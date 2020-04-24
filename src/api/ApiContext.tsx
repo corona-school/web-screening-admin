@@ -12,7 +12,7 @@ import {
 	remove,
 	databaseStatistics,
 } from "./urls.js";
-import { message } from "antd";
+import { message, notification } from "antd";
 import * as Sentry from "@sentry/browser";
 import LogRocket from "logrocket";
 
@@ -161,6 +161,17 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 		});
 		socket.on("reconnecting", (attemptNumber: number) => {
 			console.log("reconnecting", attemptNumber);
+			if (attemptNumber % 5 === 0) {
+				notification.warning({
+					message: "Verbindungsprobleme",
+					description:
+						"Du scheinst Verbindungsprobleme zu haben. Damit dieses Problem nicht auftritt, benutz bitte Chrome in der neusten Version auf einem Laptop/PC.",
+				});
+			}
+		});
+		socket.on("reconnect", () => {
+			console.log("reconnected");
+			socket.emit("screener-reconnect", this.state.user);
 		});
 		socket.on("connect_timeout", (data: any) => {
 			console.log("connect_timeout", data.message);

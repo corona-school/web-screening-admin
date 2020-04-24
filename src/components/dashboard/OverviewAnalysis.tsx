@@ -27,8 +27,10 @@ const OverviewAnalysis = () => {
 		return null;
 	}
 
-	const completed = context?.statistics.filter((item) => item.completed).length;
-	const rejected = context?.statistics.filter((item) => !item.completed).length;
+	const completed =
+		context?.statistics.filter((item) => item.completed).length + 1273;
+	const rejected =
+		context?.statistics.filter((item) => !item.completed).length + 185;
 
 	return (
 		<div className="overview-analysis-container">

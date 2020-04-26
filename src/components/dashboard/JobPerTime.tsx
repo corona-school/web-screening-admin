@@ -83,6 +83,7 @@ const JobPerTime = () => {
 			<Title level={4} style={{ color: "#6c757d", marginTop: 0 }}>
 				Anzahl an Jobs pro Stunde:
 			</Title>
+
 			{renderCompletedByHour()}
 		</div>
 	);

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	XAxis,
 	YAxis,
@@ -10,13 +10,14 @@ import {
 } from "recharts";
 import { ApiContext } from "../../api/ApiContext";
 import moment from "moment";
-import { Typography } from "antd";
+import { Typography, Radio } from "antd";
 
 import "./JobPerDay.less";
 
 const { Title } = Typography;
 
 const JobPerDay = () => {
+	const [period, setPeriod] = useState("a");
 	const context = useContext(ApiContext);
 
 	useEffect(() => {
@@ -37,15 +38,29 @@ const JobPerDay = () => {
 			counts[stats[i]] = 1 + (counts[stats[i]] || 0);
 		}
 
-		const data2: { day: string; count: number }[] = Object.keys(counts)
+		const dateFormat = period === "a" ? "dddd" : "DD.MM dddd";
+		let graphData: { day: string; count: number }[] = Object.keys(counts)
 			.map((key) => ({
-				label: moment(key).format("dddd"),
+				label: moment(key).format(dateFormat),
 				day: key,
 				count: counts[key],
 			}))
 			.sort((a, b) => moment(a.day).unix() - moment(b.day).unix());
 
-		const graphData = data2.slice(Math.max(data2.length - 7, 1));
+		let interval = 0;
+
+		if (period === "a") {
+			graphData = graphData.slice(Math.max(graphData.length - 7, 1));
+		}
+
+		if (period === "b") {
+			graphData = graphData.slice(Math.max(graphData.length - 14, 1));
+			interval = 1;
+		}
+
+		if (period === "c") {
+			interval = graphData.length % 7;
+		}
 
 		return (
 			<AreaChart
@@ -65,7 +80,7 @@ const JobPerDay = () => {
 					</linearGradient>
 				</defs>
 				<CartesianGrid strokeDasharray="3 3" />
-				<XAxis dataKey="label" />
+				<XAxis dataKey="label" interval={interval} />
 				<YAxis />
 				<Tooltip />
 				<Legend />
@@ -83,9 +98,18 @@ const JobPerDay = () => {
 	};
 	return (
 		<div className="job-per-day">
-			<Title level={4} style={{ color: "#6c757d", marginTop: 0 }}>
-				Anzahl an Jobs (letzen Woche)
-			</Title>
+			<div className="dashboard-header-jobs">
+				<Title level={4} style={{ color: "#6c757d", marginTop: 0 }}>
+					Anzahl an Jobs
+				</Title>
+				<Radio.Group
+					value={period}
+					onChange={(change) => setPeriod(change.target.value)}>
+					<Radio.Button value="a">1W</Radio.Button>
+					<Radio.Button value="b">2W</Radio.Button>
+					<Radio.Button value="c">Gesamt</Radio.Button>
+				</Radio.Group>
+			</div>
 			<div>{renderCompletedInDay()}</div>
 		</div>
 	);

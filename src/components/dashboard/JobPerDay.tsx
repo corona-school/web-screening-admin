@@ -59,7 +59,7 @@ const JobPerDay = () => {
 		}
 
 		if (period === "c") {
-			interval = graphData.length % 7;
+			interval = Math.round(graphData.length / 7);
 		}
 
 		return (

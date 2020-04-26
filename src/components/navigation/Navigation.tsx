@@ -1,18 +1,19 @@
 import React, { useContext } from "react";
-import { Menu } from "antd";
+import { Menu, Switch, message, Typography } from "antd";
 import {
 	CheckCircleOutlined,
 	DashboardOutlined,
 	TableOutlined,
-	ExportOutlined,
 	UserOutlined,
-	NumberOutlined,
 	BookOutlined,
 	LikeOutlined,
 } from "@ant-design/icons";
+import Push from "push.js";
 import "./Navigation.less";
 import { ApiContext } from "../../api/ApiContext";
 import { withRouter, RouteComponentProps, useLocation } from "react-router-dom";
+
+const { Text } = Typography;
 
 const Navigation = (props: RouteComponentProps) => {
 	const context = useContext(ApiContext);
@@ -36,6 +37,26 @@ const Navigation = (props: RouteComponentProps) => {
 			return;
 		}
 		props.history.push(e.key);
+	};
+
+	const askNotificationPermissions = (checked: boolean) => {
+		if (Push.Permission.get() === Push.Permission.DENIED) {
+			message.info(
+				"Du hast Desktop Benachrichtigungen für diese Seite verboten."
+			);
+			return;
+		}
+		if (checked) {
+			context?.setNotificationEnabled(true);
+			Push.Permission.request(
+				() => context?.setNotificationEnabled(true),
+				() => {
+					context?.setNotificationEnabled(false);
+				}
+			);
+			return;
+		}
+		context?.setNotificationEnabled(false);
 	};
 
 	return (
@@ -93,6 +114,16 @@ const Navigation = (props: RouteComponentProps) => {
 					</Menu.Item>
 				</Menu.ItemGroup>
 			</Menu>
+			<div className="menu-notification">
+				<Text type="secondary">Einstellungen</Text>
+				<div className="notification">
+					<span>Desktop Benachrichtigung</span>
+					<Switch
+						checked={context?.notificationEnabled}
+						onChange={askNotificationPermissions}
+					/>
+				</div>
+			</div>
 		</div>
 	);
 };

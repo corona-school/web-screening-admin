@@ -15,6 +15,7 @@ import {
 import { message, notification } from "antd";
 import * as Sentry from "@sentry/browser";
 import LogRocket from "logrocket";
+import Push from "push.js";
 
 const ApiContext = React.createContext<IProviderProps | null>(null);
 axios.defaults.withCredentials = true;
@@ -106,6 +107,8 @@ export interface IProviderProps {
 	setScreenerListOpen: (isOpen: boolean) => void;
 	getDatabaseStats: () => void;
 	statistics: Statistic[];
+	setNotificationEnabled: (isEnabled: boolean) => void;
+	notificationEnabled: boolean;
 }
 
 export interface State {
@@ -117,6 +120,7 @@ export interface State {
 	user: IScreenerInfo | null;
 	isScreenerListOpen: boolean;
 	statistics: Statistic[];
+	notificationEnabled: boolean;
 }
 
 class ApiContextComponent extends React.Component<RouteComponentProps> {
@@ -129,6 +133,7 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 		isScreenerListOpen: false,
 		statistics: [],
 		user: null,
+		notificationEnabled: Push.Permission.has(),
 	};
 
 	componentDidMount() {
@@ -138,6 +143,19 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 
 		socket.on("updateQueue", (queue?: IJobInfo[]) => {
 			if (queue) {
+				const oldWaitingJobs = this.state.studentData.filter(
+					(j) => j.status === "waiting"
+				).length;
+				const newJobWaitings = queue.filter((j) => j.status === "waiting")
+					.length;
+				if (newJobWaitings > oldWaitingJobs && this.state.notificationEnabled) {
+					Push.create("Neuer Student!", {
+						body: "Ein neuer Student hat sich eingeloogt",
+						onClick: function () {
+							window.focus();
+						},
+					});
+				}
 				this.setState({ studentData: queue });
 			}
 		});
@@ -259,6 +277,7 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 	postChangeStatusCall = (data: IJobInfo) => {
 		return axios.post(baseUrl + postChangeStatus, data);
 	};
+
 	render() {
 		const value: IProviderProps = {
 			getJobsCall: this.getJobsCall,
@@ -290,6 +309,9 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 			statistics: this.state.statistics,
 			setScreenerListOpen: (value: boolean) =>
 				this.setState({ isScreenerListOpen: value }),
+			setNotificationEnabled: (isEnabled: boolean) =>
+				this.setState({ notificationEnabled: isEnabled }),
+			notificationEnabled: this.state.notificationEnabled,
 		};
 		return (
 			<ApiContext.Provider value={value}>

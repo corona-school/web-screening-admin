@@ -21,6 +21,10 @@ const ApiContext = React.createContext<IProviderProps | null>(null);
 axios.defaults.withCredentials = true;
 axios.defaults.timeout = 60 * 1000;
 
+if (process.env.NODE_ENV === "production") {
+	LogRocket.init(process.env.REACT_APP_LOG_ROCKET || "");
+}
+
 const socket = io(baseUrl, {
 	reconnection: true,
 	reconnectionDelay: 1000,

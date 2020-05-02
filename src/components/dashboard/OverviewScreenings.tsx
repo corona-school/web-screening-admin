@@ -1,5 +1,4 @@
-import React, { useContext, useEffect } from "react";
-import { ApiContext } from "../../api/ApiContext";
+import React from "react";
 import { Typography, Divider } from "antd";
 import "./OverviewAnalysis.less";
 import {
@@ -8,21 +7,16 @@ import {
 	HourglassOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
+import { Statistic } from "../../api/useStatistics";
 
 const { Title } = Typography;
 
-const OverviewScreenings = () => {
-	const context = useContext(ApiContext);
+interface Props {
+	statistics: Statistic[];
+}
 
-	useEffect(() => {
-		context?.getDatabaseStats();
-	}, []);
-
-	if (!context) {
-		return null;
-	}
-
-	let stats = context?.statistics
+const OverviewScreenings = ({ statistics }: Props) => {
+	let stats = statistics
 		.map((s) => moment(s.finnishedAt).diff(s.createdAt, "minutes"))
 		.filter((s) => s !== 0);
 

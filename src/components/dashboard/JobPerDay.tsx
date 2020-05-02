@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
 	XAxis,
 	YAxis,
@@ -8,30 +8,23 @@ import {
 	Area,
 	AreaChart,
 } from "recharts";
-import { ApiContext } from "../../api/ApiContext";
 import moment from "moment";
 import { Typography, Radio } from "antd";
 
 import "./JobPerDay.less";
+import { Statistic } from "../../api/useStatistics";
 
 const { Title } = Typography;
 
-const JobPerDay = () => {
+interface Props {
+	statistics: Statistic[];
+}
+
+const JobPerDay = ({ statistics }: Props) => {
 	const [period, setPeriod] = useState("a");
-	const context = useContext(ApiContext);
-
-	useEffect(() => {
-		context?.getDatabaseStats();
-	}, []);
-
-	if (!context) {
-		return null;
-	}
 
 	const renderCompletedInDay = () => {
-		let stats = context.statistics.map((s) =>
-			moment(s.createdAt).format("YYYY-MM-DD")
-		);
+		let stats = statistics.map((s) => moment(s.createdAt).format("YYYY-MM-DD"));
 
 		let counts: any = {};
 		for (let i = 0; i < stats.length; i++) {

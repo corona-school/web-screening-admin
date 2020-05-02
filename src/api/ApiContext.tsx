@@ -15,7 +15,7 @@ import {
 import { message, notification } from "antd";
 import * as Sentry from "@sentry/browser";
 import LogRocket from "logrocket";
-import Push from "push.js";
+import { isNotificationEnabled, notify } from "../utils/notification";
 
 const ApiContext = React.createContext<IProviderProps | null>(null);
 axios.defaults.withCredentials = true;
@@ -76,17 +76,6 @@ export interface Student {
 	email: string;
 }
 
-export interface Statistic {
-	id: number;
-	createdAt: string;
-	finnishedAt: string;
-	completed: boolean;
-	screenerEmail: string;
-	studentEmail: string;
-	screener: Screener;
-	student: Student;
-}
-
 export interface IProviderProps {
 	getJobsCall: () => void;
 	studentData: IJobInfo[];
@@ -106,10 +95,6 @@ export interface IProviderProps {
 	isSocketConnected: boolean;
 	isScreenerListOpen: boolean;
 	setScreenerListOpen: (isOpen: boolean) => void;
-	getDatabaseStats: () => void;
-	statistics: Statistic[];
-	setNotificationEnabled: (isEnabled: boolean) => void;
-	notificationEnabled: boolean;
 }
 
 export interface State {
@@ -120,8 +105,6 @@ export interface State {
 	screenerOnline: IScreenerInfo[];
 	user: IScreenerInfo | null;
 	isScreenerListOpen: boolean;
-	statistics: Statistic[];
-	notificationEnabled: boolean;
 }
 
 class ApiContextComponent extends React.Component<RouteComponentProps> {
@@ -132,9 +115,7 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 		isSocketConnected: false,
 		screenerOnline: [],
 		isScreenerListOpen: false,
-		statistics: [],
 		user: null,
-		notificationEnabled: Push.Permission.has(),
 	};
 
 	componentDidMount() {
@@ -149,13 +130,8 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 				).length;
 				const newJobWaitings = queue.filter((j) => j.status === "waiting")
 					.length;
-				if (newJobWaitings > oldWaitingJobs && this.state.notificationEnabled) {
-					Push.create("Neuer Student!", {
-						body: "Ein neuer Student hat sich eingeloogt",
-						onClick: function () {
-							window.focus();
-						},
-					});
+				if (newJobWaitings > oldWaitingJobs && isNotificationEnabled) {
+					notify();
 				}
 				this.setState({ studentData: queue });
 			}
@@ -306,13 +282,8 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 				this.setState({ screenerOnline: list }),
 			isSocketConnected: this.state.isSocketConnected,
 			isScreenerListOpen: this.state.isScreenerListOpen,
-			getDatabaseStats: this.getDatabaseStats,
-			statistics: this.state.statistics,
 			setScreenerListOpen: (value: boolean) =>
 				this.setState({ isScreenerListOpen: value }),
-			setNotificationEnabled: (isEnabled: boolean) =>
-				this.setState({ notificationEnabled: isEnabled }),
-			notificationEnabled: this.state.notificationEnabled,
 		};
 		return (
 			<ApiContext.Provider value={value}>

@@ -8,29 +8,19 @@ import {
 	FireOutlined,
 	TeamOutlined,
 } from "@ant-design/icons";
-import useInterval from "../../api/interval";
+import { Statistic } from "../../api/useStatistics";
 
 const { Title } = Typography;
 
-const OverviewAnalysis = () => {
+interface Props {
+	statistics: Statistic[];
+}
+
+const OverviewAnalysis = ({ statistics }: Props) => {
 	const context = useContext(ApiContext);
 
-	useEffect(() => {
-		context?.getDatabaseStats();
-	}, []);
-
-	useInterval(() => {
-		context?.getDatabaseStats();
-	}, 10000);
-
-	if (!context) {
-		return null;
-	}
-
-	const completed =
-		context?.statistics.filter((item) => item.completed).length + 1273;
-	const rejected =
-		context?.statistics.filter((item) => !item.completed).length + 185;
+	const completed = statistics.filter((item) => item.completed).length + 1273;
+	const rejected = statistics.filter((item) => !item.completed).length + 185;
 
 	return (
 		<div className="overview-analysis-container">

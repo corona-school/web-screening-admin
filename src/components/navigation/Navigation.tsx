@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Menu, Switch, message, Typography } from "antd";
 import {
 	CheckCircleOutlined,
@@ -12,10 +12,12 @@ import Push from "push.js";
 import "./Navigation.less";
 import { ApiContext } from "../../api/ApiContext";
 import { withRouter, RouteComponentProps, useLocation } from "react-router-dom";
+import { isNotificationEnabled } from "../../utils/notification";
 
 const { Text } = Typography;
 
 const Navigation = (props: RouteComponentProps) => {
+	const [notifyEnabled, setNotifyEnbaled] = useState(isNotificationEnabled);
 	const context = useContext(ApiContext);
 	const location = useLocation();
 	let currentPath = location.pathname;
@@ -47,16 +49,16 @@ const Navigation = (props: RouteComponentProps) => {
 			return;
 		}
 		if (checked) {
-			context?.setNotificationEnabled(true);
+			setNotifyEnbaled(true);
 			Push.Permission.request(
-				() => context?.setNotificationEnabled(true),
+				() => setNotifyEnbaled(true),
 				() => {
-					context?.setNotificationEnabled(false);
+					setNotifyEnbaled(false);
 				}
 			);
 			return;
 		}
-		context?.setNotificationEnabled(false);
+		setNotifyEnbaled(false);
 	};
 
 	return (
@@ -119,7 +121,7 @@ const Navigation = (props: RouteComponentProps) => {
 				<div className="notification">
 					<span>Desktop Benachrichtigung</span>
 					<Switch
-						checked={context?.notificationEnabled}
+						checked={notifyEnabled}
 						onChange={askNotificationPermissions}
 					/>
 				</div>

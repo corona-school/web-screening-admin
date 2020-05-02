@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Typography, Dropdown, Menu, Tag } from "antd";
+import { Typography, Dropdown, Menu, Tag, Input } from "antd";
 import {
 	LogoutOutlined,
 	UserOutlined,
@@ -7,8 +7,10 @@ import {
 	CheckCircleOutlined,
 } from "@ant-design/icons";
 import { ApiContext } from "../api/ApiContext";
-import "./Header.less";
+import classes from "./Header.module.less";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+
+const { Search } = Input;
 
 const { Title } = Typography;
 const Header = (props: RouteComponentProps) => {
@@ -58,27 +60,40 @@ const Header = (props: RouteComponentProps) => {
 
 		return (
 			<Dropdown overlay={menu}>
-				<div className="ProfileMenu">
-					<div className="ProfileImage">
+				<div className={classes.ProfileMenu}>
+					<div className={classes.ProfileImage}>
 						<span>
 							{context.user?.firstname[0]}
 							{context.user?.lastname[0]}
 						</span>
 					</div>
-					<div className="ProfileTextContainer">
-						<span className="ProfileName">
+					<div className={classes.ProfileTextContainer}>
+						<span className={classes.ProfileName}>
 							{context.user?.firstname} {context.user?.lastname}
 						</span>
-						<span className="ProfileJob">Screener</span>
+						<span className={classes.ProfileJob}>Screener</span>
 					</div>
 				</div>
 			</Dropdown>
 		);
 	};
 
+	const renderSearchStudent = () => {
+		return (
+			<div className={classes.searchInput}>
+				<Search
+					style={{ width: "300px" }}
+					placeholder="student@email.de"
+					onSearch={(value) => console.log(value)}
+					enterButton
+				/>
+			</div>
+		);
+	};
+
 	return (
-		<div className="header">
-			<div className="logo">
+		<div className={classes.header}>
+			<div className={classes.logo}>
 				<img src="/corona-school.svg" alt="logo" />
 				<Title
 					level={4}
@@ -86,6 +101,7 @@ const Header = (props: RouteComponentProps) => {
 					style={{ color: "white", paddingLeft: "12px" }}>
 					Screener
 				</Title>
+				{context.userIsLoggedIn && context.user && renderSearchStudent()}
 			</div>
 			{context.userIsLoggedIn && context.user && renderProfileMenu()}
 		</div>

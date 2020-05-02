@@ -19,6 +19,7 @@ import Push from "push.js";
 
 const ApiContext = React.createContext<IProviderProps | null>(null);
 axios.defaults.withCredentials = true;
+
 axios.defaults.timeout = 60 * 1000;
 
 const socket = io(baseUrl, {

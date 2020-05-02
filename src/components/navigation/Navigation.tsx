@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Menu, Switch, message, Typography } from "antd";
+import { Menu, Switch, message, Typography, Tooltip } from "antd";
 import {
 	CheckCircleOutlined,
 	DashboardOutlined,
@@ -125,6 +125,17 @@ const Navigation = (props: RouteComponentProps) => {
 						onChange={askNotificationPermissions}
 					/>
 				</div>
+				<Tooltip
+					title="Nicht aktive Screener werden bei der Berechnung der Wartezeit nicht berücksichtigt."
+					placement="bottom">
+					<div className="notification">
+						<span>Aktiv</span>
+						<Switch
+							checked={context?.active}
+							onChange={(b) => context?.setActive(b)}
+						/>
+					</div>
+				</Tooltip>
 			</div>
 		</div>
 	);

@@ -13,6 +13,7 @@ const { TabPane } = Tabs;
 const { Title } = Typography;
 const Queue = () => {
 	const context = useContext(ApiContext);
+	const [selectedJob, setSelectedJob] = useState<IJobInfo | null>(null);
 	const [isModalOpen, setModalOpen] = useState(false);
 	const [filterType, setFilterType] = useState(2);
 
@@ -20,10 +21,10 @@ const Queue = () => {
 		if (!selectedJob) {
 			setModalOpen(false);
 		}
-	}, [context?.selectedJob]);
+	}, [selectedJob]);
 
 	useInterval(() => {
-		if (userIsLoggedIn && !isSocketConnected) {
+		if (context?.userIsLoggedIn && !context?.isSocketConnected) {
 			getJobsCall();
 		}
 	}, 1000);
@@ -35,11 +36,7 @@ const Queue = () => {
 	const {
 		postChangeStatusCall,
 		getJobsCall,
-		userIsLoggedIn,
-		selectedJob,
 		handleRemoveJob,
-		setSelectedJob,
-		isSocketConnected,
 		studentData,
 		user,
 	} = context;

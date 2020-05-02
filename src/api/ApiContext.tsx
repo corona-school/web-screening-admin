@@ -70,6 +70,13 @@ export interface Screener {
 	email: string;
 }
 
+export interface ISocketScreener {
+	firstname: string;
+	lastname: string;
+	email: string;
+	status: boolean;
+}
+
 export interface Student {
 	firstname: string;
 	lastname: string;
@@ -88,37 +95,50 @@ export interface IProviderProps {
 	user: IScreenerInfo | null;
 	setUser: (user: IScreenerInfo) => void;
 	handleRemoveJob: (email: string) => void;
-	selectedJob: IJobInfo | null;
-	setSelectedJob: (job: IJobInfo | null) => void;
-	screenerOnline: IScreenerInfo[];
-	setScreenerOnline: (list: IScreenerInfo[]) => void;
+	screenerOnline: ISocketScreener[];
+	setScreenerOnline: (list: ISocketScreener[]) => void;
 	isSocketConnected: boolean;
 	isScreenerListOpen: boolean;
 	setScreenerListOpen: (isOpen: boolean) => void;
+	active: boolean;
+	setActive: (isActive: boolean) => void;
 }
 
 export interface State {
 	userIsLoggedIn: boolean;
 	studentData: IJobInfo[];
-	selectedJob: IJobInfo | null;
 	isSocketConnected: boolean;
-	screenerOnline: IScreenerInfo[];
+	screenerOnline: ISocketScreener[];
 	user: IScreenerInfo | null;
 	isScreenerListOpen: boolean;
+	active: boolean;
 }
 
 class ApiContextComponent extends React.Component<RouteComponentProps> {
 	state: State = {
 		userIsLoggedIn: false,
 		studentData: [],
-		selectedJob: null,
 		isSocketConnected: false,
 		screenerOnline: [],
 		isScreenerListOpen: false,
 		user: null,
+		active: localStorage.getItem("active")
+			? localStorage.getItem("active") === "true"
+			: true,
 	};
 
 	componentDidMount() {
+		axios.interceptors.response.use(
+			(response) => response,
+			(error) => {
+				if (error.response.status === 401) {
+					this.setState({ userIsLoggedIn: false, user: null });
+					this.props.history.push("/");
+				}
+
+				return Promise.reject(error);
+			}
+		);
 		socket.on("connect", () => {
 			this.setState({ isSocketConnected: true });
 		});
@@ -137,7 +157,7 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 			}
 		});
 
-		socket.on("screenerUpdate", (data?: IScreenerInfo[]) => {
+		socket.on("screenerUpdate", (data?: ISocketScreener[]) => {
 			if (data) {
 				this.setState({ screenerOnline: data });
 			}
@@ -255,6 +275,20 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 		return axios.post(baseUrl + postChangeStatus, data);
 	};
 
+	setActive = (isActive: boolean) => {
+		if (this.state.isSocketConnected && this.state.user) {
+			localStorage.setItem("active", isActive.toString());
+			this.setState({ active: isActive });
+			const data = {
+				firstname: this.state.user.firstname,
+				lastname: this.state.user.lastname,
+				email: this.state.user.email,
+				status: isActive,
+			};
+			socket.emit("screenerStatus", data);
+		}
+	};
+
 	render() {
 		const value: IProviderProps = {
 			getJobsCall: this.getJobsCall,
@@ -274,16 +308,16 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 				}
 			},
 			handleRemoveJob: this.handleRemoveJob,
-			selectedJob: this.state.selectedJob,
-			setSelectedJob: (job: IJobInfo | null) =>
-				this.setState({ selectedJob: job }),
+
 			screenerOnline: this.state.screenerOnline,
-			setScreenerOnline: (list: IScreenerInfo[]) =>
+			setScreenerOnline: (list: ISocketScreener[]) =>
 				this.setState({ screenerOnline: list }),
 			isSocketConnected: this.state.isSocketConnected,
 			isScreenerListOpen: this.state.isScreenerListOpen,
 			setScreenerListOpen: (value: boolean) =>
 				this.setState({ isScreenerListOpen: value }),
+			active: this.state.active,
+			setActive: this.setActive,
 		};
 		return (
 			<ApiContext.Provider value={value}>

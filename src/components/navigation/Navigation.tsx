@@ -121,6 +121,7 @@ const Navigation = (props: RouteComponentProps) => {
 				<div className="notification">
 					<span>Desktop Benachrichtigung</span>
 					<Switch
+						size="small"
 						checked={notifyEnabled}
 						onChange={askNotificationPermissions}
 					/>
@@ -131,6 +132,7 @@ const Navigation = (props: RouteComponentProps) => {
 					<div className="notification">
 						<span>Aktiv</span>
 						<Switch
+							size="small"
 							checked={context?.active}
 							onChange={(b) => context?.setActive(b)}
 						/>

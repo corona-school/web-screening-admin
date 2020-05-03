@@ -7,6 +7,8 @@ import UserList from "../components/userList/UserList";
 import { ApiContext } from "../api/ApiContext";
 import ScreenerList from "../components/ScreenerList";
 import Navigation from "../components/navigation/Navigation";
+import StudentInfo from "../components/student/StudentInfo";
+import OpeningHours from "../components/openingHours/OpeningHours";
 
 export default function Routes() {
 	const { isScreenerListOpen } = useContext(ApiContext);
@@ -33,6 +35,24 @@ export default function Routes() {
 						<Navigation />
 						<Dashboard />
 						{isScreenerListOpen && <ScreenerList />}
+					</div>
+				}
+			/>
+			<PrivateRoute
+				path="/opening-hours"
+				component={
+					<div className="main">
+						<Navigation />
+						<OpeningHours />
+					</div>
+				}
+			/>
+			<PrivateRoute
+				path="/student/:id"
+				component={
+					<div className="main">
+						<Navigation />
+						<StudentInfo />
 					</div>
 				}
 			/>

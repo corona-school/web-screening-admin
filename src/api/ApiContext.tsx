@@ -11,7 +11,7 @@ import {
 	getLoginStatus,
 	remove,
 	databaseStatistics,
-} from "./urls.js";
+} from "./urls";
 import { message, notification } from "antd";
 import * as Sentry from "@sentry/browser";
 import LogRocket from "logrocket";

@@ -7,6 +7,7 @@ import {
 	UserOutlined,
 	BookOutlined,
 	LikeOutlined,
+	CalendarOutlined,
 } from "@ant-design/icons";
 import Push from "push.js";
 import "./Navigation.less";
@@ -75,6 +76,10 @@ const Navigation = (props: RouteComponentProps) => {
 					<Menu.Item key="/dashboard">
 						<DashboardOutlined />
 						Dashboard
+					</Menu.Item>
+					<Menu.Item key="/opening-hours">
+						<CalendarOutlined />
+						Öffnungszeiten
 					</Menu.Item>
 				</Menu.ItemGroup>
 				<Menu.ItemGroup key="g1" title="Links">

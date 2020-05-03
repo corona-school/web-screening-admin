@@ -150,7 +150,11 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 				).length;
 				const newJobWaitings = queue.filter((j) => j.status === "waiting")
 					.length;
-				if (newJobWaitings > oldWaitingJobs && isNotificationEnabled) {
+				if (
+					newJobWaitings > oldWaitingJobs &&
+					isNotificationEnabled &&
+					this.state.userIsLoggedIn
+				) {
 					notify();
 				}
 				this.setState({ studentData: queue });

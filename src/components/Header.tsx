@@ -101,7 +101,7 @@ const Header = (props: RouteComponentProps) => {
 					style={{ color: "white", paddingLeft: "12px" }}>
 					Screener
 				</Title>
-				{context.userIsLoggedIn && context.user && renderSearchStudent()}
+				{/* {context.userIsLoggedIn && context.user && renderSearchStudent()} */}
 			</div>
 			{context.userIsLoggedIn && context.user && renderProfileMenu()}
 		</div>

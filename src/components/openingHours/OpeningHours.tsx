@@ -4,7 +4,7 @@ import useOpeningHours, {
 	ITime,
 	IOpeningHours,
 } from "../../api/useOpeningHours";
-import { Spin, Typography, Button, Empty } from "antd";
+import { Spin, Typography, Button, Empty, Input } from "antd";
 import { CalendarOutlined, PlusOutlined } from "@ant-design/icons";
 import moment from "moment";
 
@@ -76,8 +76,33 @@ const OpeningHours = () => {
 		);
 	};
 
+	const getWeekString = (week: number) => {
+		switch (week) {
+			case 1:
+				return "Montag";
+			case 2:
+				return "Dienstag";
+			case 3:
+				return "Mittwoch";
+			case 4:
+				return "Donnerstag";
+			case 5:
+				return "Freitag";
+			case 6:
+				return "Samstag";
+			case 7:
+				return "Sonntag";
+		}
+	};
+
 	const renderEdit = () => {
-		return <div>Hello World</div>;
+		return (
+			<div>
+				{getWeekString(selectedTime?.week || 1)}
+				<Input value={selectedTime?.from} style={{ width: "100px" }} />
+				<Input value={selectedTime?.to} style={{ width: "100px" }} />
+			</div>
+		);
 	};
 
 	return (
@@ -157,7 +182,7 @@ const OpeningHours = () => {
 					</div>
 				</div>
 			</div>
-			<div>{selectedTime && renderEdit()}</div>
+			{/* <div>{selectedTime && renderEdit()}</div> */}
 		</div>
 	);
 };

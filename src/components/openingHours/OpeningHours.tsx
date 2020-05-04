@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 import classes from "./OpeningHours.module.less";
 import useOpeningHours, { ITime } from "../../api/useOpeningHours";
-import { Spin, Typography, Button, Empty, Input, TimePicker } from "antd";
+import {
+	Spin,
+	Typography,
+	Button,
+	Empty,
+	Input,
+	TimePicker,
+	Dropdown,
+	Menu,
+} from "antd";
 import {
 	CalendarOutlined,
 	PlusOutlined,
@@ -85,15 +94,27 @@ const OpeningHours = () => {
 							moment(a.from, "HH:mm").unix() - moment(b.from, "HH:mm").unix()
 					)
 					.map((o) => {
+						const menu = (
+							<Menu>
+								<Menu.Item key="1" onClick={() => handleClick(o.id)}>
+									Edit
+								</Menu.Item>
+								<Menu.Item key="2" onClick={() => deleteTime(o.id)}>
+									Delete
+								</Menu.Item>
+							</Menu>
+						);
 						return (
-							<Button
-								onClick={() => handleClick(o.id)}
-								type={o.id === selectedTime ? "primary" : "dashed"}
-								shape={"round"}
-								icon={<CalendarOutlined />}
-								style={{ width: "150px" }}>
-								{o.from} - {o.to}
-							</Button>
+							<Dropdown overlay={menu} trigger={["contextMenu"]}>
+								<Button
+									onClick={() => handleClick(o.id)}
+									type={o.id === selectedTime ? "primary" : "dashed"}
+									shape={"round"}
+									icon={<CalendarOutlined />}
+									style={{ width: "150px" }}>
+									{o.from} - {o.to}
+								</Button>
+							</Dropdown>
 						);
 					})}
 				<Button
@@ -104,6 +125,12 @@ const OpeningHours = () => {
 					icon={<PlusOutlined />}></Button>
 			</div>
 		);
+	};
+
+	const deleteTime = (id: string) => {
+		const newList = openingHours.filter((t) => t.id !== id);
+		setOpeningHours(newList);
+		save(newList);
 	};
 
 	const getWeekString = (week: number) => {
@@ -168,14 +195,7 @@ const OpeningHours = () => {
 						<SaveOutlined />
 						Save
 					</Button>
-					<Button
-						danger
-						type="primary"
-						onClick={() => {
-							const newList = openingHours.filter((t) => t.id !== time.id);
-							setOpeningHours(newList);
-							save(newList);
-						}}>
+					<Button danger type="primary" onClick={() => deleteTime(time.id)}>
 						<DeleteOutlined />
 						Delete
 					</Button>

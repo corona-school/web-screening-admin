@@ -6,6 +6,7 @@ import {
 	CalendarOutlined,
 	PlusOutlined,
 	SaveOutlined,
+	DeleteOutlined,
 } from "@ant-design/icons";
 import * as Moment from "moment";
 import { extendMoment } from "moment-range";
@@ -40,6 +41,20 @@ const OpeningHours = () => {
 		setSelectedTime(id);
 	};
 
+	const add = (week: number) => {
+		const newList: ITime[] = [
+			...openingHours,
+			{
+				id: "will_be_overwritten",
+				week,
+				from: "12:00",
+				to: "15:00",
+			},
+		];
+		setOpeningHours(newList);
+		save(newList);
+	};
+
 	const renderButtons = (
 		times: ITime[],
 		isCurrentWeek: boolean,
@@ -53,6 +68,7 @@ const OpeningHours = () => {
 						image={Empty.PRESENTED_IMAGE_SIMPLE}
 						description="Keine Screenings"></Empty>
 					<Button
+						onClick={() => add(currentWeek)}
 						type="primary"
 						style={{ width: "140px", margin: "16px" }}
 						icon={<PlusOutlined />}>
@@ -63,19 +79,25 @@ const OpeningHours = () => {
 		}
 		return (
 			<div>
-				{times.map((o) => {
-					return (
-						<Button
-							onClick={() => handleClick(o.id)}
-							type={isCurrentWeek ? "primary" : "dashed"}
-							shape="round"
-							icon={<CalendarOutlined />}
-							style={{ width: "150px" }}>
-							{o.from} - {o.to}
-						</Button>
-					);
-				})}
+				{times
+					.sort(
+						(a, b) =>
+							moment(a.from, "HH:mm").unix() - moment(b.from, "HH:mm").unix()
+					)
+					.map((o) => {
+						return (
+							<Button
+								onClick={() => handleClick(o.id)}
+								type={o.id === selectedTime ? "primary" : "dashed"}
+								shape={"round"}
+								icon={<CalendarOutlined />}
+								style={{ width: "150px" }}>
+								{o.from} - {o.to}
+							</Button>
+						);
+					})}
 				<Button
+					onClick={() => add(currentWeek)}
 					type="dashed"
 					shape="circle"
 					style={{ width: "34px" }}
@@ -121,6 +143,7 @@ const OpeningHours = () => {
 		if (!time) {
 			return;
 		}
+		console.log(selectedTime, time, time.from, time.to);
 		return (
 			<div className={classes.editContainer}>
 				<Title level={4} style={{ color: "#6c757d", margin: "8px" }}>
@@ -129,7 +152,7 @@ const OpeningHours = () => {
 				<div>
 					<RangePicker
 						style={{ margin: "8px" }}
-						defaultValue={
+						value={
 							[moment(time.from, "HH:mm"), moment(time.to, "HH:mm")] as any
 						}
 						onChange={(e) => {
@@ -141,9 +164,20 @@ const OpeningHours = () => {
 						picker="time"
 						format={"HH:mm"}
 					/>
-					<Button type="primary" onClick={save}>
+					<Button type="primary" onClick={() => save()}>
 						<SaveOutlined />
 						Save
+					</Button>
+					<Button
+						danger
+						type="primary"
+						onClick={() => {
+							const newList = openingHours.filter((t) => t.id !== time.id);
+							setOpeningHours(newList);
+							save(newList);
+						}}>
+						<DeleteOutlined />
+						Delete
 					</Button>
 				</div>
 			</div>

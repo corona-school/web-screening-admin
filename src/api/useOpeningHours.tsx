@@ -28,9 +28,9 @@ const useOpeningHours = () => {
 			});
 	}, []);
 
-	const save = () => {
+	const save = (newHours?: ITime[]) => {
 		axios
-			.post(baseUrl + openingHoursPath, openingHours)
+			.post(baseUrl + openingHoursPath, newHours ? newHours : openingHours)
 			.then(({ data }) => {
 				message.success("Öffnungszeiten wurden erfolgreich gespeichert.");
 				setLoading(false);

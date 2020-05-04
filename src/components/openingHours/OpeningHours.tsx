@@ -1,12 +1,20 @@
 import React, { useState } from "react";
 import classes from "./OpeningHours.module.less";
-import useOpeningHours, {
-	ITime,
-	IOpeningHours,
-} from "../../api/useOpeningHours";
-import { Spin, Typography, Button, Empty, Input } from "antd";
-import { CalendarOutlined, PlusOutlined } from "@ant-design/icons";
-import moment from "moment";
+import useOpeningHours, { ITime } from "../../api/useOpeningHours";
+import { Spin, Typography, Button, Empty, Input, TimePicker } from "antd";
+import {
+	CalendarOutlined,
+	PlusOutlined,
+	SaveOutlined,
+} from "@ant-design/icons";
+import * as Moment from "moment";
+import { extendMoment } from "moment-range";
+
+const moment = extendMoment(Moment);
+moment().format();
+moment.locale("de");
+
+const { RangePicker } = TimePicker;
 
 const { Title } = Typography;
 
@@ -17,8 +25,8 @@ interface Time {
 }
 
 const OpeningHours = () => {
-	const [selectedTime, setSelectedTime] = useState<Time | null>(null);
-	const { openingHours, loading, setOpeningHours } = useOpeningHours();
+	const [selectedTime, setSelectedTime] = useState<string | null>(null);
+	const { openingHours, loading, setOpeningHours, save } = useOpeningHours();
 
 	if (loading || !openingHours) {
 		return (
@@ -28,8 +36,8 @@ const OpeningHours = () => {
 		);
 	}
 
-	const handleClick = (time: ITime, week: number) => {
-		setSelectedTime({ week, from: time.from, to: time.to });
+	const handleClick = (id: string) => {
+		setSelectedTime(id);
 	};
 
 	const renderButtons = (
@@ -58,11 +66,11 @@ const OpeningHours = () => {
 				{times.map((o) => {
 					return (
 						<Button
-							onClick={() => handleClick(o, currentWeek)}
+							onClick={() => handleClick(o.id)}
 							type={isCurrentWeek ? "primary" : "dashed"}
 							shape="round"
 							icon={<CalendarOutlined />}
-							style={{ width: "160px" }}>
+							style={{ width: "150px" }}>
 							{o.from} - {o.to}
 						</Button>
 					);
@@ -95,12 +103,49 @@ const OpeningHours = () => {
 		}
 	};
 
+	const changeTime = (time: ITime) => {
+		const newOpeningHours = openingHours.map((t) => {
+			if (t.id === time.id) {
+				return time;
+			}
+			return t;
+		});
+		setOpeningHours(newOpeningHours);
+	};
+
 	const renderEdit = () => {
+		if (!selectedTime) {
+			return;
+		}
+		const time = openingHours.find((t) => t.id === selectedTime);
+		if (!time) {
+			return;
+		}
 		return (
-			<div>
-				{getWeekString(selectedTime?.week || 1)}
-				<Input value={selectedTime?.from} style={{ width: "100px" }} />
-				<Input value={selectedTime?.to} style={{ width: "100px" }} />
+			<div className={classes.editContainer}>
+				<Title level={4} style={{ color: "#6c757d", margin: "8px" }}>
+					{getWeekString(time?.week || 1)}
+				</Title>
+				<div>
+					<RangePicker
+						style={{ margin: "8px" }}
+						defaultValue={
+							[moment(time.from, "HH:mm"), moment(time.to, "HH:mm")] as any
+						}
+						onChange={(e) => {
+							const from = moment(e?.[0]).format("HH:mm");
+							const to = moment(e?.[1]).format("HH:mm");
+							changeTime({ ...time, from, to });
+						}}
+						minuteStep={15}
+						picker="time"
+						format={"HH:mm"}
+					/>
+					<Button type="primary" onClick={save}>
+						<SaveOutlined />
+						Save
+					</Button>
+				</div>
 			</div>
 		);
 	};
@@ -115,7 +160,7 @@ const OpeningHours = () => {
 					<span style={{ color: "#6c757d", marginTop: 0 }}>Montag</span>
 					<div className={classes.times}>
 						{renderButtons(
-							openingHours.Monday.times,
+							openingHours.filter((t) => t.week === 1),
 							moment().isoWeekday() === 1,
 							1
 						)}
@@ -125,7 +170,7 @@ const OpeningHours = () => {
 					<span style={{ color: "#6c757d", marginTop: 0 }}>Dienstag</span>
 					<div className={classes.times}>
 						{renderButtons(
-							openingHours.Tuesday.times,
+							openingHours.filter((t) => t.week === 2),
 							moment().isoWeekday() === 2,
 							2
 						)}
@@ -135,7 +180,7 @@ const OpeningHours = () => {
 					<span style={{ color: "#6c757d", marginTop: 0 }}>Mittwoch</span>
 					<div className={classes.times}>
 						{renderButtons(
-							openingHours.Wednesday.times,
+							openingHours.filter((t) => t.week === 3),
 							moment().isoWeekday() === 3,
 							3
 						)}
@@ -145,7 +190,7 @@ const OpeningHours = () => {
 					<span style={{ color: "#6c757d", marginTop: 0 }}>Donnerstag</span>
 					<div className={classes.times}>
 						{renderButtons(
-							openingHours.Thursday.times,
+							openingHours.filter((t) => t.week === 4),
 							moment().isoWeekday() === 4,
 							4
 						)}
@@ -155,7 +200,7 @@ const OpeningHours = () => {
 					<span style={{ color: "#6c757d", marginTop: 0 }}>Freitag</span>
 					<div className={classes.times}>
 						{renderButtons(
-							openingHours.Friday.times,
+							openingHours.filter((t) => t.week === 5),
 							moment().isoWeekday() === 5,
 							5
 						)}
@@ -165,7 +210,7 @@ const OpeningHours = () => {
 					<span style={{ color: "#6c757d", marginTop: 0 }}>Samstag</span>
 					<div className={classes.times}>
 						{renderButtons(
-							openingHours.Saturday.times,
+							openingHours.filter((t) => t.week === 6),
 							moment().isoWeekday() === 6,
 							6
 						)}
@@ -175,14 +220,14 @@ const OpeningHours = () => {
 					<span style={{ color: "#6c757d", marginTop: 0 }}>Sonntag</span>
 					<div className={classes.times}>
 						{renderButtons(
-							openingHours.Sunday.times,
+							openingHours.filter((t) => t.week === 7),
 							moment().isoWeekday() === 7,
 							7
 						)}
 					</div>
 				</div>
 			</div>
-			{/* <div>{selectedTime && renderEdit()}</div> */}
+			<div>{selectedTime && renderEdit()}</div>
 		</div>
 	);
 };

@@ -6,7 +6,7 @@ import {
 	DashboardOutlined,
 	CheckCircleOutlined,
 } from "@ant-design/icons";
-import { ApiContext } from "../api/ApiContext";
+import { ApiContext, ScreenerStatus } from "../api/ApiContext";
 import classes from "./Header.module.less";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
@@ -103,6 +103,7 @@ const Header = (props: RouteComponentProps) => {
 				</Title>
 				{/* {context.userIsLoggedIn && context.user && renderSearchStudent()} */}
 			</div>
+
 			{context.userIsLoggedIn && context.user && renderProfileMenu()}
 		</div>
 	);

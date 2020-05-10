@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
-import "./Queue.less";
-import { Tabs, message, Typography } from "antd";
-import { ApiContext, IJobInfo } from "../../api/ApiContext";
+import classes from "./Queue.module.less";
+import { Tabs, message, Typography, Tag, Tooltip } from "antd";
+import { ApiContext, IJobInfo, ScreenerStatus } from "../../api/ApiContext";
 import { Keys, KeyMap, TabMap } from "./data";
 import JobTable from "./JobTable";
 import FeedbackModal from "./FeedbackModal";
@@ -114,11 +114,44 @@ const Queue = () => {
 			return true;
 		});
 
+	const renderStatus = () => {
+		if (context.status === ScreenerStatus.ONLINE) {
+			return (
+				<Tooltip
+					title="Du bist mit dem Backend verbunden und bekommst Live updates."
+					placement="left">
+					<Tag color="green">Live</Tag>
+				</Tooltip>
+			);
+		}
+		if (context.status === ScreenerStatus.OFFLINE) {
+			return (
+				<Tooltip
+					title="Deine Verbindung ist abgebrochen. Bitte lade die Seite neu!"
+					placement="left">
+					<Tag color="red">Offline</Tag>
+				</Tooltip>
+			);
+		}
+		if (context.status === ScreenerStatus.RECONNECTING) {
+			return (
+				<Tooltip
+					title="Deine Verbindung wird wiederhergestellt."
+					placement="left">
+					<Tag color="orange">Reconnecting...</Tag>
+				</Tooltip>
+			);
+		}
+	};
+
 	return (
-		<div className="queue">
-			<Title style={{ color: "#6c757d", marginTop: 0 }} level={4}>
-				Warteschlange
-			</Title>
+		<div className={classes.queue}>
+			<div className={classes.header}>
+				<Title style={{ color: "#6c757d", marginTop: 0 }} level={4}>
+					Warteschlange
+				</Title>
+				{renderStatus()}
+			</div>
 			<Tabs
 				defaultActiveKey={`${filterType}`}
 				activeKey={`${filterType}`}

@@ -102,6 +102,13 @@ export interface IProviderProps {
 	setScreenerListOpen: (isOpen: boolean) => void;
 	active: boolean;
 	setActive: (isActive: boolean) => void;
+	status: ScreenerStatus;
+}
+
+export enum ScreenerStatus {
+	ONLINE = "online",
+	OFFLINE = "offline",
+	RECONNECTING = "reconnect",
 }
 
 export interface State {
@@ -112,6 +119,7 @@ export interface State {
 	user: IScreenerInfo | null;
 	isScreenerListOpen: boolean;
 	active: boolean;
+	status: ScreenerStatus;
 }
 
 class ApiContextComponent extends React.Component<RouteComponentProps> {
@@ -122,6 +130,7 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 		screenerOnline: [],
 		isScreenerListOpen: false,
 		user: null,
+		status: ScreenerStatus.OFFLINE,
 		active: localStorage.getItem("active")
 			? localStorage.getItem("active") === "true"
 			: true,
@@ -140,7 +149,7 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 			}
 		);
 		socket.on("connect", () => {
-			this.setState({ isSocketConnected: true });
+			this.setState({ isSocketConnected: true, status: ScreenerStatus.ONLINE });
 		});
 
 		socket.on("updateQueue", (queue?: IJobInfo[]) => {
@@ -167,19 +176,25 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 			}
 		});
 		socket.on("disconnect", () => {
-			this.setState({ isSocketConnected: false });
+			this.setState({
+				isSocketConnected: false,
+				status: ScreenerStatus.OFFLINE,
+			});
 		});
 
 		socket.on("connect_error", (error: Error) => {
 			Sentry.captureException(error);
+			this.setState({ status: ScreenerStatus.OFFLINE });
 			console.log("connect_error", error.message);
 		});
 		socket.on("error", (error: Error) => {
 			Sentry.captureException(error);
+			this.setState({ status: ScreenerStatus.OFFLINE });
 			console.log("error", error.message);
 		});
 		socket.on("reconnecting", (attemptNumber: number) => {
 			console.log("reconnecting", attemptNumber);
+			this.setState({ status: ScreenerStatus.RECONNECTING });
 			if (attemptNumber % 5 === 0) {
 				notification.warning({
 					message: "Verbindungsprobleme",
@@ -193,6 +208,7 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 			socket.emit("screener-reconnect", this.state.user);
 		});
 		socket.on("connect_timeout", (data: any) => {
+			this.setState({ status: ScreenerStatus.OFFLINE });
 			console.log("connect_timeout", data.message);
 		});
 	}
@@ -322,6 +338,7 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 				this.setState({ isScreenerListOpen: value }),
 			active: this.state.active,
 			setActive: this.setActive,
+			status: this.state.status,
 		};
 		return (
 			<ApiContext.Provider value={value}>

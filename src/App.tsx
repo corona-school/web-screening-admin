@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import PageLayout from "./components/PageLayout";
+import HttpsRedirect from "react-https-redirect";
 import * as Sentry from "@sentry/browser";
 import ApiContext from "./api/ApiContext";
 import LogRocket from "logrocket";
@@ -13,13 +14,13 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const App = () => (
-	<>
+	<HttpsRedirect>
 		<Router>
 			<ApiContext>
 				<PageLayout />
 			</ApiContext>
 		</Router>
-	</>
+	</HttpsRedirect>
 );
 
 export default App;

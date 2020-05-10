@@ -6,6 +6,7 @@ export const getJobs = "queue/jobs";
 export const postChangeStatus = "student/changeJob";
 export const login = "screener/login";
 export const studentInfoPath = "student";
+export const studentManualVerification = "student/verify";
 export const remove = "student/remove";
 export const openingHoursPath = "openingHours";
 export const logout = "screener/logout";

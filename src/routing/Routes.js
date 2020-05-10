@@ -38,6 +38,7 @@ export default function Routes() {
 					</div>
 				}
 			/>
+
 			<PrivateRoute
 				path="/opening-hours"
 				component={
@@ -48,7 +49,7 @@ export default function Routes() {
 				}
 			/>
 			<PrivateRoute
-				path="/student/:id"
+				path="/student/:email"
 				component={
 					<div className="main">
 						<Navigation />

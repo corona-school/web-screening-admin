@@ -84,7 +84,10 @@ const Header = (props: RouteComponentProps) => {
 				<Search
 					style={{ width: "300px" }}
 					placeholder="student@email.de"
-					onSearch={(value) => console.log(value)}
+					onSearch={(value) => {
+						console.log(value);
+						props.history.push(`/student/${value}`);
+					}}
 					enterButton
 				/>
 			</div>
@@ -101,7 +104,7 @@ const Header = (props: RouteComponentProps) => {
 					style={{ color: "white", paddingLeft: "12px" }}>
 					Screener
 				</Title>
-				{/* {context.userIsLoggedIn && context.user && renderSearchStudent()} */}
+				{context.userIsLoggedIn && context.user && renderSearchStudent()}
 			</div>
 
 			{context.userIsLoggedIn && context.user && renderProfileMenu()}

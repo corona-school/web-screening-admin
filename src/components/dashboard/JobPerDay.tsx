@@ -8,12 +8,14 @@ import {
 	Area,
 	AreaChart,
 } from "recharts";
-import moment from "moment";
+import * as MomentLib from "moment";
 import { Typography, Radio } from "antd";
+import { extendMoment } from "moment-range";
 
 import "./JobPerDay.less";
 import { Statistic } from "../../api/useStatistics";
 
+const moment = extendMoment(MomentLib);
 const { Title } = Typography;
 
 interface Props {
@@ -23,12 +25,36 @@ interface Props {
 const JobPerDay = ({ statistics }: Props) => {
 	const [period, setPeriod] = useState("a");
 
-	const renderCompletedInDay = () => {
-		let stats = statistics.map((s) => moment(s.createdAt).format("YYYY-MM-DD"));
+	const initializeCount = (
+		startDate: MomentLib.Moment,
+		stopDate: MomentLib.Moment
+	) => {
+		const range = moment.range(startDate, stopDate).snapTo("day");
 
-		let counts: any = {};
-		for (let i = 0; i < stats.length; i++) {
-			counts[stats[i]] = 1 + (counts[stats[i]] || 0);
+		let counts: { [key: string]: number } = {};
+
+		Array.from(range.by("days")).forEach((m) => {
+			const key = m.format("YYYY-MM-DD");
+			counts[key] = 0;
+		});
+
+		return counts;
+	};
+
+	const renderCompletedInDay = () => {
+		const dates = statistics.map((s) => moment(s.createdAt));
+		const stats = statistics.map((s) =>
+			moment(s.createdAt).format("YYYY-MM-DD")
+		);
+
+		const minDate = moment.min(...dates);
+		const maxDate = moment.max(...dates);
+
+		const counts = initializeCount(minDate, maxDate);
+		console.log(counts);
+
+		for (const dateString of stats) {
+			counts[dateString] = 1 + (counts[dateString] || 0);
 		}
 
 		const dateFormat = period === "a" ? "dddd" : "DD.MM dddd";

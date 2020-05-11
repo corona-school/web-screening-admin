@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
 	XAxis,
 	YAxis,
@@ -9,7 +9,7 @@ import {
 	Area,
 } from "recharts";
 import moment from "moment";
-import { Typography } from "antd";
+import { Typography, Radio } from "antd";
 
 import "./JobPerDay.less";
 import { Statistic } from "../../api/useStatistics";
@@ -19,14 +19,41 @@ const { Title } = Typography;
 interface Props {
 	statistics: Statistic[];
 }
+const hours = [
+	"09",
+	"10",
+	"11",
+	"12",
+	"13",
+	"14",
+	"15",
+	"16",
+	"17",
+	"18",
+	"19",
+	"20",
+];
 
 const JobPerTime = ({ statistics }: Props) => {
+	const [period, setPeriod] = useState("a");
+
 	const renderCompletedByHour = () => {
-		let stats = statistics.map((s) => moment(s.createdAt).format("HH"));
+		let stats = statistics
+			.map((s) => moment(s.createdAt).add(1, "hour"))
+			.filter((s) => {
+				if (period === "a") return s.isSame(new Date(), "week");
+				if (period === "b") return s.isSame(new Date(), "month");
+				return true;
+			})
+			.map((s) => s.format("HH"));
 
 		let counts: any = {};
-		for (let i = 0; i < stats.length; i++) {
-			counts[stats[i]] = 1 + (counts[stats[i]] || 0);
+
+		hours.forEach((s) => {
+			counts[s] = 0;
+		});
+		for (const timeEntry of stats) {
+			counts[timeEntry] = 1 + (counts[timeEntry] || 0);
 		}
 
 		const data2: any = Object.keys(counts)
@@ -55,14 +82,24 @@ const JobPerTime = ({ statistics }: Props) => {
 					</linearGradient>
 				</defs>
 				<CartesianGrid strokeDasharray="5 5" />
-				<XAxis dataKey="hour" />
-				<YAxis />
+				<XAxis
+					dataKey="hour"
+					label={{
+						value: "Uhrzeit in Stunden",
+						position: "insideBottomRight",
+						offset: -10,
+					}}
+				/>
+				<YAxis
+					label={{ value: "Anzahl", angle: -90, position: "insideLeft" }}
+				/>
 				<Tooltip />
 				<Legend />
 				<Area
-					type="monotone"
+					type="step"
 					dataKey="count"
 					stroke="#82ca9d"
+					name="Anzahl"
 					fillOpacity={1}
 					fill="url(#colorPv)"
 					strokeWidth="1px"
@@ -74,10 +111,18 @@ const JobPerTime = ({ statistics }: Props) => {
 
 	return (
 		<div className="job-per-day">
-			<Title level={4} style={{ color: "#6c757d", marginTop: 0 }}>
-				Anzahl an Jobs pro Stunde:
-			</Title>
-
+			<div className="dashboard-header-jobs">
+				<Title level={4} style={{ color: "#6c757d", marginTop: 0 }}>
+					Anzahl an Jobs pro Stunde:
+				</Title>
+				<Radio.Group
+					value={period}
+					onChange={(change) => setPeriod(change.target.value)}>
+					<Radio.Button value="a">Woche</Radio.Button>
+					<Radio.Button value="b">Monat</Radio.Button>
+					<Radio.Button value="c">Gesamt</Radio.Button>
+				</Radio.Group>
+			</div>
 			{renderCompletedByHour()}
 		</div>
 	);

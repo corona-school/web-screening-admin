@@ -8,10 +8,11 @@ import FeedbackModal from "./FeedbackModal";
 import useInterval from "../../api/interval";
 
 import "./UserList.less";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 const { TabPane } = Tabs;
 const { Title } = Typography;
-const Queue = () => {
+const Queue = (props: RouteComponentProps) => {
 	const context = useContext(ApiContext);
 	const [selectedJob, setSelectedJob] = useState<IJobInfo | null>(null);
 	const [isModalOpen, setModalOpen] = useState(false);
@@ -45,12 +46,13 @@ const Queue = () => {
 		if (!selectedJob) {
 			return;
 		}
+
 		const job: IJobInfo = { ...selectedJob, status: "active" };
 		postChangeStatusCall(job)
 			.then((resp: any) => {
-				setSelectedJob(resp.data);
-				setModalOpen(true);
-				setFilterType(3);
+				setModalOpen(false);
+				const room = new URL(job.data.jitsi).pathname;
+				props.history.push(`screening/${job.data.email}${room}`);
 				message.success("Der Student wurde zum VideoCall eingeladen.");
 			})
 			.catch((err: any) => {
@@ -84,7 +86,7 @@ const Queue = () => {
 		if (!job) {
 			return;
 		}
-		const newJob: IJobInfo = { ...job, screener: user ? user : undefined };
+		const newJob: IJobInfo = { ...job, assignedTo: user ? user : undefined };
 		postChangeStatusCall(newJob)
 			.then(() => {
 				setSelectedJob(job);
@@ -106,10 +108,14 @@ const Queue = () => {
 			}
 			return true;
 		})
-		.sort((a, b) => a.time - b.time)
+		.sort((a, b) => a.timeWaiting - b.timeWaiting)
 		.filter((job) => {
-			if (job.status !== "waiting" && job.status !== "active" && job.screener) {
-				return job.screener.email === user?.email;
+			if (
+				job.status !== "waiting" &&
+				job.status !== "active" &&
+				job.assignedTo
+			) {
+				return job.assignedTo.email === user?.email;
 			}
 			return true;
 		});
@@ -187,4 +193,4 @@ const Queue = () => {
 	);
 };
 
-export default Queue;
+export default withRouter(Queue);

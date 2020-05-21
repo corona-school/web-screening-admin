@@ -6,6 +6,7 @@ import useStatistics from "../../api/useStatistics";
 
 const UserList = () => {
 	const { statistics, loading } = useStatistics();
+
 	return (
 		<div className="screening-container">
 			<OverviewAnalysis statistics={statistics} />

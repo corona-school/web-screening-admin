@@ -1,81 +1,52 @@
 import React, { useState } from "react";
-import { Modal, Button, Descriptions, Input, Tag, Select } from "antd";
+import { Descriptions, Tag, Select, Button } from "antd";
+import { IJobInfo } from "../../api";
 import moment from "moment";
-import "./FeedbackModal.less";
-import SubjectList from "./SubjectList";
 import { StatusMap, knowsFromMap } from "./data";
+import TextArea from "antd/lib/input/TextArea";
+import SubjectList from "./SubjectList";
 
-const { TextArea } = Input;
 const { Option } = Select;
 
-const FeedbackModal = ({
-	isModalOpen,
-	completeJob,
+interface Props {
+	selectedJob: IJobInfo;
+	setSelectedJob: (job: IJobInfo) => void;
+	completeJob: (job: IJobInfo, decision: boolean) => void;
+}
+
+const JobScreeningEdit = ({
 	selectedJob,
 	setSelectedJob,
-	startVideoCall,
-	closeModal,
-}) => {
+	completeJob,
+}: Props) => {
 	const [knowsFrom, setKnowsFrom] = useState(
-		knowsFromMap.has(selectedJob.knowcsfrom) ? selectedJob.knowcsfrom : "13"
+		knowsFromMap.has(selectedJob.data.knowcsfrom)
+			? selectedJob.data.knowcsfrom
+			: "13"
 	);
-	const changeJob = (key, value) => {
-		setSelectedJob({ ...selectedJob, [key]: value });
+	const changeJob = (key: string, value: any) => {
+		setSelectedJob({
+			...selectedJob,
+			data: { ...selectedJob.data, [key]: value },
+		});
 	};
 
 	return (
-		<Modal
-			width="640px"
-			style={{ top: 20, maxHeight: "90%" }}
-			visible={isModalOpen}
-			onCancel={closeModal}
-			title="Kennenlerngespräch"
-			footer={
-				selectedJob.status === "waiting"
-					? [
-							<Button
-								style={{ width: "200px" }}
-								type="primary"
-								onClick={startVideoCall}>
-								Starte Video-Call
-							</Button>,
-					  ]
-					: [
-							<Button
-								danger
-								key="back"
-								onClick={() => completeJob(selectedJob, false)}>
-								Ablehen
-							</Button>,
-							<Button
-								key="submit"
-								type="primary"
-								onClick={() => completeJob(selectedJob, true)}>
-								{selectedJob.status === "waiting" ||
-								selectedJob.status === "active"
-									? "Freischalten"
-									: "Ändern"}
-							</Button>,
-					  ]
-			}>
+		<div>
 			<Descriptions
 				title="Studenten-Information"
 				layout="horizontal"
 				column={2}>
 				<Descriptions.Item label="Name">
-					{selectedJob.firstname} {selectedJob.lastname}
+					{selectedJob.data.firstname} {selectedJob.data.lastname}
 				</Descriptions.Item>
 				<Descriptions.Item label="E-Mail">
-					{selectedJob.email}
+					{selectedJob.data.email}
 				</Descriptions.Item>
 				<Descriptions.Item label="Nachricht">
-					{selectedJob.msg ? selectedJob.msg : "-"}
+					{selectedJob.data.msg ? selectedJob.data.msg : "-"}
 				</Descriptions.Item>
-				<Descriptions.Item label="Alter">
-					{selectedJob.birthday
-						? moment().diff(selectedJob.birthday, "years")
-						: "keine Angabe"}
-				</Descriptions.Item>
+
 				<Descriptions.Item label="Status">
 					<Tag color={StatusMap.get(selectedJob.status)}>
 						{selectedJob.status.toUpperCase()}
@@ -87,7 +58,7 @@ const FeedbackModal = ({
 			<TextArea
 				rows={2}
 				placeholder="Feedback des Studenten"
-				value={selectedJob.feedback}
+				value={selectedJob.data.feedback}
 				onChange={(e) => changeJob("feedback", e.target.value)}
 			/>
 			<div className="label">Wie hat der Student von uns erfahren?</div>
@@ -118,26 +89,41 @@ const FeedbackModal = ({
 				<TextArea
 					rows={1}
 					placeholder="anderes"
-					value={selectedJob.knowcsfrom}
+					value={selectedJob.data.knowcsfrom}
 					onChange={(e) => changeJob("knowcsfrom", e.target.value)}
 				/>
 			)}
-
 			<div className="label">Kommentar: </div>
 			<TextArea
 				style={{ marginBottom: "16px" }}
 				rows={2}
-				value={selectedJob.commentScreener}
+				value={selectedJob.data.commentScreener}
 				placeholder="Hier ein Kommentar (Optional)"
 				onChange={(e) => changeJob("commentScreener", e.target.value)}
 			/>
 			<div className="label">Fächer: </div>
 			<SubjectList
-				subjects={selectedJob.subjects}
+				subjects={selectedJob.data.subjects}
 				setSubjects={(subjects) => changeJob("subjects", subjects)}
 			/>
-		</Modal>
+			<div style={{ marginTop: "32px" }}>
+				<Button
+					style={{ width: "100px", marginLeft: "0" }}
+					danger
+					key="back"
+					onClick={() => completeJob(selectedJob, false)}>
+					Ablehen
+				</Button>
+				<Button
+					style={{ width: "140px" }}
+					key="submit"
+					type="primary"
+					onClick={() => completeJob(selectedJob, true)}>
+					Freischalten
+				</Button>
+			</div>
+		</div>
 	);
 };
 
-export default FeedbackModal;
+export default JobScreeningEdit;

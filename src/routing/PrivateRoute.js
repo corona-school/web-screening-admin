@@ -1,18 +1,27 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Route, Redirect, Switch } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import { ApiContext } from "../api/ApiContext";
 import "./PrivateRoute.less";
 import * as Sentry from "@sentry/browser";
 import LogRocket from "logrocket";
+import Screening from "../components/screening";
+import Navigation from "../components/navigation/Navigation";
+import UserList from "../components/userList/UserList";
+import ScreenerList from "../components/ScreenerList";
+import Dashboard from "../components/dashboard/Dashboard";
+import OpeningHours from "../components/openingHours/OpeningHours";
+import StudentInfo from "../components/student/StudentInfo";
 
-const PrivateRoute = ({ path, component }) => {
+const PrivateRoute = () => {
 	const {
 		userIsLoggedIn,
 		setUserIsLoggedIn,
 		setUser,
+		isScreenerListOpen,
 		checkLoginStatus,
 	} = useContext(ApiContext);
+
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -53,12 +62,43 @@ const PrivateRoute = ({ path, component }) => {
 		);
 	}
 
+	if (!loading && !userIsLoggedIn) {
+		return <Redirect to="/" />;
+	}
+
 	return (
-		<>
-			<Route path={path}>
-				{userIsLoggedIn && !loading ? component : <Redirect to="/" />}
+		<Switch>
+			<Route path="/screening/:email/:room">
+				<Screening />
 			</Route>
-		</>
+			<Route path="/screening">
+				<div className="main">
+					<Navigation />
+					<UserList />
+					{isScreenerListOpen && <ScreenerList />}
+				</div>
+			</Route>
+			<Route path="/dashboard">
+				<div className="main">
+					<Navigation />
+					<Dashboard />
+					{isScreenerListOpen && <ScreenerList />}
+				</div>
+			</Route>
+
+			<Route path="/opening-hours">
+				<div className="main">
+					<Navigation />
+					<OpeningHours />
+				</div>
+			</Route>
+			<Route path="/student/:email">
+				<div className="main">
+					<Navigation />
+					<StudentInfo />
+				</div>
+			</Route>
+		</Switch>
 	);
 };
 

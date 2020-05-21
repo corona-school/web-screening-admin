@@ -29,23 +29,29 @@ const socket = io(baseUrl, {
 	reconnectionAttempts: 99999,
 });
 
-export interface IJobInfo {
+export interface IStudentData {
 	firstname: string;
 	lastname: string;
 	email: string;
 	subjects: ISubject[];
 	phone?: string;
-	birthday?: Date;
 	msg?: string;
-	screener?: IScreenerInfo;
 	invited?: boolean;
 	feedback?: string;
 	knowcsfrom: string;
 	commentScreener?: string;
-	time: number;
 	jitsi: string;
+}
+
+export interface IJobInfo {
+	id: string;
+	data: IStudentData;
+	assignedTo?: IScreenerInfo;
 	status: Status;
-	position?: number;
+	timeWaiting: number;
+	timeActive?: number;
+	timeDone?: number;
+	position: number;
 }
 
 export type Status = "waiting" | "active" | "completed" | "rejected";

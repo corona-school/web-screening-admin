@@ -48,7 +48,7 @@ const Queue = (props: RouteComponentProps) => {
 		}
 
 		const job: IJobInfo = { ...selectedJob, status: "active" };
-		postChangeStatusCall(job)
+		postChangeStatusCall(job.data, "SET_ACTIVE")
 			.then((resp: any) => {
 				setModalOpen(false);
 				const room = new URL(job.data.jitsi).pathname;
@@ -62,13 +62,11 @@ const Queue = (props: RouteComponentProps) => {
 			});
 	};
 
-	const completeJob = (selectedJob: IJobInfo, isVerified: boolean) => {
+	const completeJob = (job: IJobInfo, isVerified: boolean) => {
 		setModalOpen(false);
 		setFilterType(isVerified ? 4 : 5);
-		let job = selectedJob;
-		job.status = isVerified ? "completed" : "rejected";
 
-		postChangeStatusCall(job)
+		postChangeStatusCall(job.data, isVerified ? "SET_DONE" : "SET_REJECTED")
 			.then(() => message.success("Änderungen wurden erfolgreich gespeichert."))
 			.catch(() =>
 				message.error("Änderungen konnten nicht gespeichert werden")
@@ -82,22 +80,12 @@ const Queue = (props: RouteComponentProps) => {
 			return;
 		}
 
-		const hide = message.loading("Daten werden geladen..", 0);
 		if (!job) {
 			return;
 		}
-		const newJob: IJobInfo = { ...job, assignedTo: user ? user : undefined };
-		postChangeStatusCall(newJob)
-			.then(() => {
-				setSelectedJob(job);
-				setModalOpen(true);
-				hide();
-				message.success("Du wurdest als Screener eingetragen.");
-			})
-			.catch(() => {
-				message.error("Du konntest nicht als Screener eingetragen werden.");
-				hide();
-			});
+
+		setSelectedJob(job);
+		setModalOpen(true);
 	};
 
 	const data = studentData

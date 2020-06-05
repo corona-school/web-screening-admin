@@ -93,7 +93,7 @@ export interface IProviderProps {
 	getJobsCall: () => void;
 	studentData: IJobInfo[];
 	checkLoginStatus: () => void;
-	postChangeStatusCall: (job: IJobInfo) => Promise<any>;
+	postChangeStatusCall: (data: IStudentData, action: string) => Promise<any>;
 	userIsLoggedIn: boolean;
 	setUserIsLoggedIn: (isLoggedIn: boolean) => void;
 	loginCall: (data: { email: string; password: string }) => void;
@@ -297,8 +297,8 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 		return axios.get(baseUrl + getLoginStatus);
 	};
 
-	postChangeStatusCall = (data: IJobInfo) => {
-		return axios.post(baseUrl + postChangeStatus, data);
+	postChangeStatusCall = (data: IStudentData, action: string) => {
+		return axios.post(baseUrl + postChangeStatus, { data, action });
 	};
 
 	setActive = (isActive: boolean) => {

@@ -33,12 +33,9 @@ const Screening = (props: RouteComponentProps) => {
 		return <div>Error</div>;
 	}
 
-	const completeJob = (selectedJob: IJobInfo, decision: boolean) => {
-		let job = selectedJob;
-		job.status = decision ? "completed" : "rejected";
-
+	const completeJob = (job: IJobInfo, decision: boolean) => {
 		context
-			?.postChangeStatusCall(job)
+			?.postChangeStatusCall(job.data, decision ? "SET_DONE" : "SET_REJECTED")
 			.then(() => {
 				message.success("Änderungen wurden erfolgreich gespeichert.");
 				props.history.push("/screening");

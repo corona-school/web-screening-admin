@@ -133,7 +133,7 @@ const FeedbackModal = ({
 			/>
 			<div className="label">Fächer: </div>
 			<SubjectList
-				subjects={selectedJob.subjects}
+				subjects={selectedJob.data.subjects}
 				setSubjects={(subjects) => changeJob("subjects", subjects)}
 			/>
 		</Modal>

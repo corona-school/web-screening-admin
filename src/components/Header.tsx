@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 import { ApiContext, ScreenerStatus } from "../api/ApiContext";
 import classes from "./Header.module.less";
-import { withRouter, RouteComponentProps } from "react-router-dom";
+import { withRouter, RouteComponentProps, Link } from "react-router-dom";
 
 const { Search } = Input;
 
@@ -97,13 +97,17 @@ const Header = (props: RouteComponentProps) => {
 	return (
 		<div className={classes.header}>
 			<div className={classes.logo}>
-				<img src="/corona-school.svg" alt="logo" />
-				<Title
-					level={4}
-					className="title"
-					style={{ color: "white", paddingLeft: "12px" }}>
-					Screener
-				</Title>
+				<Link to="/screening">
+					<div className={classes.logo}>
+						<img src="/corona-school.svg" alt="logo" />
+						<Title
+							level={4}
+							className="title"
+							style={{ color: "white", paddingLeft: "12px" }}>
+							Screener
+						</Title>
+					</div>
+				</Link>
 				{context.userIsLoggedIn && context.user && renderSearchStudent()}
 			</div>
 

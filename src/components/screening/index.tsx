@@ -45,6 +45,10 @@ const Screening = (props: RouteComponentProps) => {
 			);
 	};
 
+	if (context === null) {
+		return <div>Error</div>;
+	}
+
 	return (
 		<div className={classes.container}>
 			<Jitsi
@@ -56,7 +60,12 @@ const Screening = (props: RouteComponentProps) => {
 			/>
 			<div className={classes.editContainer}>
 				<JobScreeningEdit
+					showButtons
 					completeJob={completeJob}
+					removeJob={(email: string) => {
+						context.handleRemoveJob(email);
+						props.history.push("/screening");
+					}}
 					selectedJob={selectedJob}
 					setSelectedJob={(job: IJobInfo) => setSelectedJob(job)}
 				/>

@@ -49,13 +49,13 @@ const Queue = (props: RouteComponentProps) => {
 
 		const job: IJobInfo = { ...selectedJob, status: "active" };
 		postChangeStatusCall(job.data, "SET_ACTIVE")
-			.then((resp: any) => {
+			.then((_newJob: IJobInfo) => {
 				setModalOpen(false);
 				const room = new URL(job.data.jitsi).pathname;
 				props.history.push(`screening/${job.data.email}${room}`);
 				message.success("Der Student wurde zum VideoCall eingeladen.");
 			})
-			.catch((err: any) => {
+			.catch((_err: any) => {
 				setSelectedJob(null);
 				setModalOpen(false);
 				message.error("Der VideoCall konnte nicht gestartet werden.");
@@ -169,6 +169,7 @@ const Queue = (props: RouteComponentProps) => {
 			</Tabs>
 			{selectedJob && (
 				<FeedbackModal
+					removeJob={context.handleRemoveJob}
 					isModalOpen={isModalOpen}
 					closeModal={() => setModalOpen(false)}
 					completeJob={completeJob}

@@ -73,7 +73,7 @@ const Navigation = (props: RouteComponentProps) => {
 					<Menu.Item key="/screening">
 						<CheckCircleOutlined /> Studenten
 					</Menu.Item>
-					<Menu.Item key="/dashboard">
+					<Menu.Item key="/dashboard" disabled>
 						<DashboardOutlined />
 						Dashboard
 					</Menu.Item>

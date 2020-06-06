@@ -1,20 +1,27 @@
-import React, { useContext } from "react";
-import { Typography, Dropdown, Menu, Tag, Input } from "antd";
+import React, { useContext, useState, useEffect } from "react";
+import { Typography, Dropdown, Menu, Tag, Input, AutoComplete } from "antd";
 import {
 	LogoutOutlined,
 	UserOutlined,
 	DashboardOutlined,
 	CheckCircleOutlined,
 } from "@ant-design/icons";
-import { ApiContext, ScreenerStatus } from "../api/ApiContext";
+import { ApiContext } from "../api/ApiContext";
 import classes from "./Header.module.less";
 import { withRouter, RouteComponentProps, Link } from "react-router-dom";
+import { SelectProps } from "antd/lib/select";
 
 const { Search } = Input;
 
 const { Title } = Typography;
 const Header = (props: RouteComponentProps) => {
+	const [options, setOptions] = useState<SelectProps<object>["options"]>([]);
 	const context = useContext(ApiContext);
+
+	useEffect(() => {
+		context?.getAllStudents();
+	}, []);
+
 	if (!context) {
 		return null;
 	}
@@ -79,17 +86,55 @@ const Header = (props: RouteComponentProps) => {
 	};
 
 	const renderSearchStudent = () => {
+		const searchResult = (query: string) => {
+			return context.students
+				.map((i) => ({
+					...i,
+					text: `${i.firstname} ${i.lastname} ${i.email}`,
+				}))
+				.filter((i) => i.text.indexOf(query) !== -1)
+				.map((item, idx) => {
+					return {
+						value: item.email,
+						label: (
+							<div
+								style={{
+									display: "flex",
+									flexDirection: "column",
+								}}>
+								<span>
+									{item.firstname} {item.lastname}
+								</span>
+								<span>{item.email}</span>
+							</div>
+						),
+					};
+				});
+		};
+		const handleSearch = (value: string) => {
+			setOptions(value ? searchResult(value) : []);
+		};
+
+		const onSelect = (value: string) => {
+			props.history.push(`/student/${value}`);
+		};
 		return (
 			<div className={classes.searchInput}>
-				<Search
-					style={{ width: "300px" }}
-					placeholder="student@email.de"
-					onSearch={(value) => {
-						console.log(value);
-						props.history.push(`/student/${value}`);
-					}}
-					enterButton
-				/>
+				<AutoComplete
+					dropdownMatchSelectWidth={252}
+					style={{ width: 300 }}
+					options={options}
+					onSelect={onSelect}
+					onSearch={handleSearch}>
+					<Search
+						style={{ width: "300px" }}
+						placeholder="Suche nach einem Student..."
+						onSearch={(value) => {
+							props.history.push(`/student/${value}`);
+						}}
+						enterButton
+					/>
+				</AutoComplete>
 			</div>
 		);
 	};

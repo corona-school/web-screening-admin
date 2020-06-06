@@ -175,9 +175,7 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
 					<Descriptions.Item label="E-Mail">
 						{studentInfo.email}
 					</Descriptions.Item>
-					<Descriptions.Item label="Nachricht">
-						{studentInfo.msg ? studentInfo.msg : "-"}
-					</Descriptions.Item>
+
 					<Descriptions.Item label="Telefonnummer">
 						{studentInfo.phone ? studentInfo.phone : "-"}
 					</Descriptions.Item>
@@ -188,6 +186,9 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
 						) : (
 							<Tag>-</Tag>
 						)}
+					</Descriptions.Item>
+					<Descriptions.Item label="Nachricht">
+						{studentInfo.msg ? studentInfo.msg : "-"}
 					</Descriptions.Item>
 				</Descriptions>
 				<Button

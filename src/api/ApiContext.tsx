@@ -11,6 +11,8 @@ import {
 	getLoginStatus,
 	remove,
 	databaseStatistics,
+	studentInfoPath,
+	studentSearchPath,
 } from "./urls";
 import { message, notification } from "antd";
 import * as Sentry from "@sentry/browser";
@@ -101,6 +103,8 @@ export interface IProviderProps {
 	user: IScreenerInfo | null;
 	setUser: (user: IScreenerInfo) => void;
 	handleRemoveJob: (email: string) => void;
+	getAllStudents: () => void;
+	students: SearchStudent[];
 	screenerOnline: ISocketScreener[];
 	setScreenerOnline: (list: ISocketScreener[]) => void;
 	isSocketConnected: boolean;
@@ -117,6 +121,12 @@ export enum ScreenerStatus {
 	RECONNECTING = "reconnect",
 }
 
+export interface SearchStudent {
+	firstname: string;
+	lastname: string;
+	email: string;
+}
+
 export interface State {
 	userIsLoggedIn: boolean;
 	studentData: IJobInfo[];
@@ -126,6 +136,7 @@ export interface State {
 	isScreenerListOpen: boolean;
 	active: boolean;
 	status: ScreenerStatus;
+	students: SearchStudent[];
 }
 
 class ApiContextComponent extends React.Component<RouteComponentProps> {
@@ -136,6 +147,7 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 		screenerOnline: [],
 		isScreenerListOpen: false,
 		user: null,
+		students: [],
 		status: ScreenerStatus.OFFLINE,
 		active: localStorage.getItem("active")
 			? localStorage.getItem("active") === "true"
@@ -154,6 +166,7 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 				return Promise.reject(error);
 			}
 		);
+
 		socket.on("connect", () => {
 			this.setState({ isSocketConnected: true, status: ScreenerStatus.ONLINE });
 		});
@@ -264,6 +277,19 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 			});
 	};
 
+	getAllStudents = () => {
+		axios
+			.get(baseUrl + studentSearchPath)
+			.then(({ data }) => {
+				if (data) {
+					this.setState({ students: data });
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
 	handleRemoveJob = (email: string) => {
 		axios
 			.post(baseUrl + remove, { email }, { params: { key: "StudentQueue" } })
@@ -341,7 +367,8 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 				}
 			},
 			handleRemoveJob: this.handleRemoveJob,
-
+			getAllStudents: this.getAllStudents,
+			students: this.state.students,
 			screenerOnline: this.state.screenerOnline,
 			setScreenerOnline: (list: ISocketScreener[]) =>
 				this.setState({ screenerOnline: list }),

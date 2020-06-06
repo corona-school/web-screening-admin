@@ -266,14 +266,14 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 
 	handleRemoveJob = (email: string) => {
 		axios
-			.post(baseUrl + remove, { email })
+			.post(baseUrl + remove, { email }, { params: { key: "StudentQueue" } })
 			.then(() => message.success("Job wurde erfolgreich entfernt!"))
 			.catch(() => message.error("Job konnte nicht entfernt werden."));
 	};
 
 	getJobsCall = () => {
 		axios
-			.get(baseUrl + getJobs)
+			.get(baseUrl + getJobs, { params: { key: "StudentQueue" } })
 			.then(({ data }) => {
 				this.setState({ studentData: data });
 			})
@@ -298,7 +298,14 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 	};
 
 	postChangeStatusCall = (data: IStudentData, action: string) => {
-		return axios.post(baseUrl + postChangeStatus, { data, action });
+		return axios.post(
+			baseUrl + postChangeStatus,
+			{
+				data,
+				action,
+			},
+			{ params: { key: "StudentQueue" } }
+		);
 	};
 
 	setActive = (isActive: boolean) => {

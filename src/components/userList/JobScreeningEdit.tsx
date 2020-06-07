@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Descriptions, Tag, Select, Button, Modal } from "antd";
 import { IJobInfo } from "../../api";
-import moment from "moment";
 import { StatusMap, knowsFromMap } from "./data";
 import TextArea from "antd/lib/input/TextArea";
 import SubjectList from "./SubjectList";
 import { Link } from "react-router-dom";
 import { DeleteOutlined } from "@ant-design/icons";
+
+import classes from "./JobScreeningEdit.module.less";
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -55,7 +56,7 @@ const JobScreeningEdit = ({
 	const room = new URL(selectedJob.data.jitsi).pathname;
 
 	return (
-		<div>
+		<div className={classes.container}>
 			<Descriptions
 				title="Studenten-Information"
 				layout="horizontal"

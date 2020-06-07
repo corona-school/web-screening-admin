@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import classes from "./Queue.module.less";
-import { Tabs, message, Typography, Tag, Tooltip } from "antd";
+import { Tabs, message, Typography, Tag, Tooltip, Modal } from "antd";
 import { ApiContext, IJobInfo, ScreenerStatus } from "../../api/ApiContext";
 import { Keys, KeyMap, TabMap } from "./data";
 import JobTable from "./JobTable";
@@ -9,9 +9,12 @@ import useInterval from "../../api/interval";
 
 import "./UserList.less";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
+const { confirm } = Modal;
 const { TabPane } = Tabs;
 const { Title } = Typography;
+
 const Queue = (props: RouteComponentProps) => {
 	const context = useContext(ApiContext);
 	const [selectedJob, setSelectedJob] = useState<IJobInfo | null>(null);
@@ -42,11 +45,7 @@ const Queue = (props: RouteComponentProps) => {
 		user,
 	} = context;
 
-	const startVideoCall = () => {
-		if (!selectedJob) {
-			return;
-		}
-
+	const startVideoCall = (selectedJob: IJobInfo) => {
 		const job: IJobInfo = { ...selectedJob, status: "active" };
 		postChangeStatusCall(job.data, "SET_ACTIVE")
 			.then((_newJob: IJobInfo) => {
@@ -85,7 +84,16 @@ const Queue = (props: RouteComponentProps) => {
 		}
 
 		setSelectedJob(job);
-		setModalOpen(true);
+		confirm({
+			title: "Willst du die Verifzierung beginnen?",
+			icon: <ExclamationCircleOutlined />,
+			content:
+				"Du wirst automatisch zum Jitsi-Call weitergeleitet und als Screener eingetragen.",
+			onOk() {
+				startVideoCall(job);
+			},
+			onCancel() {},
+		});
 	};
 
 	const data = studentData

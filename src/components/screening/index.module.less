@@ -4,8 +4,22 @@
 	margin-top: -1px;
 	display: flex;
 	flex-grow: 1;
+	max-height: 100vh;
 }
 .editContainer {
 	max-width: 600px;
 	padding: 16px;
+	min-height: 94vh;
+	max-height: 94vh;
+	overflow-y: auto;
+}
+
+.loadingComponent {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	min-height: 94vh;
+	background: #e8e8e8;
 }

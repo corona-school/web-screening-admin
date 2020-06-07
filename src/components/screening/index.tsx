@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import Jitsi from "react-jitsi";
 import { useParams, withRouter, RouteComponentProps } from "react-router-dom";
+import ClipLoader from "react-spinners/ClipLoader";
 import classes from "./index.module.less";
 import { ApiContext, IJobInfo } from "../../api/ApiContext";
 import JobScreeningEdit from "../userList/JobScreeningEdit";
@@ -9,6 +10,17 @@ import { message } from "antd";
 interface MatchParams {
 	room: string | undefined;
 	email: string | undefined;
+}
+
+class LoadingJitsi extends React.Component {
+	render() {
+		return (
+			<div className={classes.loadingComponent}>
+				<ClipLoader size={120} color={"#25b864"} loading={true} />
+				Video-Call wird geladen...
+			</div>
+		);
+	}
 }
 
 const Screening = (props: RouteComponentProps) => {
@@ -54,9 +66,8 @@ const Screening = (props: RouteComponentProps) => {
 			<Jitsi
 				containerStyle={{ width: "100%", height: "100%" }}
 				roomName={params.room}
-				onAPILoad={(JitsiMeetAPI) => {
-					console.log("Good Morning everyone!", JitsiMeetAPI);
-				}}
+				loadingComponent={LoadingJitsi}
+				onAPILoad={(JitsiMeetAPI) => {}}
 			/>
 			<div className={classes.editContainer}>
 				<JobScreeningEdit

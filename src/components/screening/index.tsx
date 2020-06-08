@@ -32,14 +32,11 @@ const Screening = (props: RouteComponentProps) => {
 		if (!params.email) {
 			return;
 		}
-
 		const job = context?.studentData.find((s) => s.data.email === params.email);
-		console.log(job, params.email, context?.studentData);
-
 		if (job) {
 			setSelectedJob(job);
 		}
-	}, [params.email, context?.studentData]);
+	}, [params.email]);
 
 	if (!params.room || !params.email || !selectedJob) {
 		return <div>Error</div>;

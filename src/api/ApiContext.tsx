@@ -98,7 +98,7 @@ export interface IProviderProps {
 	postChangeStatusCall: (data: IStudentData, action: string) => Promise<any>;
 	userIsLoggedIn: boolean;
 	setUserIsLoggedIn: (isLoggedIn: boolean) => void;
-	loginCall: (data: { email: string; password: string }) => void;
+	loginCall: (data: { email: string; password: string }) => Promise<void>;
 	logoutCall: () => void;
 	user: IScreenerInfo | null;
 	setUser: (user: IScreenerInfo) => void;
@@ -236,29 +236,33 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 		socket.close();
 	}
 
-	loginCall = (data: { email: string; password: string }) => {
-		axios
-			.post(baseUrl + login, data)
-			.then(({ data }) => {
-				this.setState({ userIsLoggedIn: true, user: data });
-				if (this.state.isSocketConnected) {
-					socket.emit("loginScreener", data);
-				}
-				Sentry.configureScope((scope) => {
-					scope.setUser({ email: data.email, id: data.email });
-					scope.setTag("user", data.email);
+	loginCall = (data: { email: string; password: string }): Promise<void> => {
+		return new Promise((resolve, reject) => {
+			axios
+				.post(baseUrl + login, data)
+				.then(({ data }) => {
+					this.setState({ userIsLoggedIn: true, user: data });
+					if (this.state.isSocketConnected) {
+						socket.emit("loginScreener", data);
+					}
+					Sentry.configureScope((scope) => {
+						scope.setUser({ email: data.email, id: data.email });
+						scope.setTag("user", data.email);
+					});
+					LogRocket.identify("user", {
+						name: data.firstname + " " + data.lastname,
+						email: data.email,
+						subscriptionType: "screener",
+					});
+					this.props.history.push("/screening");
+					resolve();
+				})
+				.catch((err) => {
+					message.error("Du konntest nicht eingelogt werden.");
+					console.log("login Failed", err);
+					reject(err);
 				});
-				LogRocket.identify("user", {
-					name: data.firstname + " " + data.lastname,
-					email: data.email,
-					subscriptionType: "screener",
-				});
-				this.props.history.push("/screening");
-			})
-			.catch((err) => {
-				message.error("Du konntest nicht eingelogt werden.");
-				console.log("login Failed", err);
-			});
+		});
 	};
 
 	logoutCall = () => {

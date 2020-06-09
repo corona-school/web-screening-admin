@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.0.5",
+    "@bugsnag/js": "^7.1.1",
+    "@bugsnag/plugin-react": "^7.1.1",
     "@fullstory/browser": "^1.4.4",
     "@sentry/browser": "^5.15.4",
     "@types/antd": "^1.0.0",

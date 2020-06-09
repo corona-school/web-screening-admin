@@ -4,10 +4,10 @@ import PageLayout from "./components/PageLayout";
 import HttpsRedirect from "react-https-redirect";
 import * as Sentry from "@sentry/browser";
 import ApiContext from "./api/ApiContext";
-import LogRocket from "logrocket";
+import * as FullStory from "@fullstory/browser";
 
 if (process.env.NODE_ENV === "production") {
-	LogRocket.init(process.env.REACT_APP_LOG_ROCKET || "");
+	FullStory.init({ orgId: "VSTAQ", devMode: !process.env.NODE_ENV });
 	Sentry.init({
 		dsn: process.env.REACT_APP_SENTRY_URL,
 	});

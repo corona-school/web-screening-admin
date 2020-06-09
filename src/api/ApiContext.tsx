@@ -11,12 +11,12 @@ import {
 	getLoginStatus,
 	remove,
 	databaseStatistics,
-	studentInfoPath,
 	studentSearchPath,
 } from "./urls";
+import * as FullStory from "@fullstory/browser";
 import { message, notification } from "antd";
 import * as Sentry from "@sentry/browser";
-import LogRocket from "logrocket";
+
 import { isNotificationEnabled, notify } from "../utils/notification";
 
 const ApiContext = React.createContext<IProviderProps | null>(null);
@@ -155,6 +155,8 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 	};
 
 	componentDidMount() {
+		FullStory.init({ orgId: "VSTAQ", devMode: !process.env.NODE_ENV });
+
 		axios.interceptors.response.use(
 			(response) => response,
 			(error) => {
@@ -245,15 +247,16 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 					if (this.state.isSocketConnected) {
 						socket.emit("loginScreener", data);
 					}
+
+					FullStory.identify(data.email, {
+						displayName: `${data.firstname} ${data.lastname}`,
+						email: data.email,
+					});
 					Sentry.configureScope((scope) => {
 						scope.setUser({ email: data.email, id: data.email });
 						scope.setTag("user", data.email);
 					});
-					LogRocket.identify("user", {
-						name: data.firstname + " " + data.lastname,
-						email: data.email,
-						subscriptionType: "screener",
-					});
+
 					this.props.history.push("/screening");
 					resolve();
 				})

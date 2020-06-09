@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.0.5",
+    "@fullstory/browser": "^1.4.4",
     "@sentry/browser": "^5.15.4",
     "@types/antd": "^1.0.0",
     "@types/axios": "^0.14.0",
@@ -25,7 +26,6 @@
     "express-favicon": "^2.0.1",
     "less": "^3.11.1",
     "less-loader": "^6.0.0",
-    "logrocket": "^1.0.7",
     "moment": "2.22.0",
     "moment-range": "^4.0.2",
     "push.js": "^1.0.12",

@@ -4,7 +4,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { ApiContext } from "../api/ApiContext";
 import "./PrivateRoute.less";
 import * as Sentry from "@sentry/browser";
-import LogRocket from "logrocket";
+
 import Screening from "../components/screening";
 import Navigation from "../components/navigation/Navigation";
 import UserList from "../components/userList/UserList";
@@ -36,11 +36,7 @@ const PrivateRoute = () => {
 						scope.setUser({ email: data.email, id: data.email });
 						scope.setTag("user", data.email);
 					});
-					LogRocket.identify("user", {
-						name: data.firstname + " " + data.lastname,
-						email: data.email,
-						subscriptionType: "screener",
-					});
+
 					setUserIsLoggedIn(true);
 					setLoading(false);
 				})

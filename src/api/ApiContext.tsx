@@ -155,8 +155,6 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 	};
 
 	componentDidMount() {
-		FullStory.init({ orgId: "VSTAQ", devMode: !process.env.NODE_ENV });
-
 		axios.interceptors.response.use(
 			(response) => response,
 			(error) => {

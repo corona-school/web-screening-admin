@@ -12,6 +12,7 @@ import ScreenerList from "../components/ScreenerList";
 import Dashboard from "../components/dashboard/Dashboard";
 import OpeningHours from "../components/openingHours/OpeningHours";
 import StudentInfo from "../components/student/StudentInfo";
+import * as FullStory from "@fullstory/browser";
 
 const PrivateRoute = () => {
 	const {
@@ -32,6 +33,10 @@ const PrivateRoute = () => {
 			checkLoginStatus()
 				.then(({ data }) => {
 					setUser(data);
+					FullStory.identify(data.email, {
+						displayName: `${data.firstname} ${data.lastname}`,
+						email: data.email,
+					});
 					Sentry.configureScope((scope) => {
 						scope.setUser({ email: data.email, id: data.email });
 						scope.setTag("user", data.email);

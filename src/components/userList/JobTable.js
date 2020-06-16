@@ -172,7 +172,9 @@ const JobTable = ({
 				expandedRowRender: (job) => {
 					return (
 						<div>
-							{job.msg && <p style={{ margin: "4px" }}>"{job.msg}"</p>}
+							{job.data.msg && (
+								<p style={{ margin: "4px" }}>"{job.data.msg}"</p>
+							)}
 							<div style={{ margin: "4px" }}>
 								{job.data.subjects.map((subject) => (
 									<Tag style={{ margin: "4px" }} key={subject.subject}>

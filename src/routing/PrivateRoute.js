@@ -11,6 +11,7 @@ import UserList from "../components/userList/UserList";
 import ScreenerList from "../components/ScreenerList";
 import Dashboard from "../components/dashboard/Dashboard";
 import OpeningHours from "../components/openingHours/OpeningHours";
+import CourseList from "../components/courses/CourseList";
 import StudentInfo from "../components/student/StudentInfo";
 import * as FullStory from "@fullstory/browser";
 
@@ -97,6 +98,13 @@ const PrivateRoute = () => {
 				<div className="main">
 					<Navigation />
 					<StudentInfo />
+				</div>
+			</Route>
+			<Route path="/courses">
+				<div className="main">
+					<Navigation />
+					<CourseList />
+					{isScreenerListOpen && <ScreenerList />}
 				</div>
 			</Route>
 		</Switch>

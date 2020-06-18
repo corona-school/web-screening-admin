@@ -5,6 +5,7 @@ import {
 	UserOutlined,
 	DashboardOutlined,
 	CheckCircleOutlined,
+	TeamOutlined
 } from "@ant-design/icons";
 import { ApiContext } from "../api/ApiContext";
 import classes from "./Header.module.less";
@@ -49,6 +50,13 @@ const Header = (props: RouteComponentProps) => {
 					<Tag color="green" style={{ marginLeft: "8px" }}>
 						new
 					</Tag>
+				</Menu.Item>
+				<Menu.Item
+					onClick={() => {
+						props.history.push("/courses");
+					}}>
+					<TeamOutlined />
+					Kurse
 				</Menu.Item>
 				<Menu.Item onClick={context.logoutCall}>
 					<LogoutOutlined />

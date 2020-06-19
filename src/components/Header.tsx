@@ -43,7 +43,7 @@ const Header = (props: RouteComponentProps) => {
 				</Menu.Item>
 				<Menu.Item
 					onClick={() => {
-						props.history.push("/dashboard");
+						props.history.push("/");
 					}}>
 					<DashboardOutlined />
 					Dashboard

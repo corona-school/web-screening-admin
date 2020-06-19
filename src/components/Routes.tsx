@@ -2,27 +2,29 @@ import React, { useContext, useEffect, useState } from "react";
 import { Route, Redirect, Switch } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import { ApiContext } from "../api/ApiContext";
-import "./PrivateRoute.less";
 import * as Sentry from "@sentry/browser";
 
-import Screening from "../components/screening";
-import Navigation from "../components/navigation/Navigation";
-import UserList from "../components/userList/UserList";
-import ScreenerList from "../components/ScreenerList";
-import Dashboard from "../components/dashboard/Dashboard";
-import OpeningHours from "../components/openingHours/OpeningHours";
-import CourseList from "../components/courses/CourseList";
-import StudentInfo from "../components/student/StudentInfo";
+import Screening from "./screening";
+import Navigation from "./navigation/Navigation";
+import UserList from "./userList/UserList";
+import ScreenerList from "./ScreenerList";
+import Dashboard from "./dashboard/Dashboard";
+import OpeningHours from "./openingHours/OpeningHours";
+import CourseList from "./courses/CourseList";
+import StudentInfo from "./student/StudentInfo";
 import * as FullStory from "@fullstory/browser";
+import Login from "./Login";
 
-const PrivateRoute = () => {
+import "./Routes.less";
+
+const Routes = () => {
 	const {
 		userIsLoggedIn,
 		setUserIsLoggedIn,
 		setUser,
 		isScreenerListOpen,
 		checkLoginStatus,
-	} = useContext(ApiContext);
+	} = useContext(ApiContext) as any;
 
 	const [loading, setLoading] = useState(true);
 
@@ -30,9 +32,8 @@ const PrivateRoute = () => {
 		console.log(userIsLoggedIn);
 
 		if (!userIsLoggedIn) {
-			setLoading(true);
 			checkLoginStatus()
-				.then(({ data }) => {
+				.then(({ data }: { data: any }) => {
 					setUser(data);
 					FullStory.identify(data.email, {
 						displayName: `${data.firstname} ${data.lastname}`,
@@ -46,7 +47,7 @@ const PrivateRoute = () => {
 					setUserIsLoggedIn(true);
 					setLoading(false);
 				})
-				.catch((err) => {
+				.catch((err: any) => {
 					console.error(err);
 					setUser(null);
 					setUserIsLoggedIn(false);
@@ -65,11 +66,19 @@ const PrivateRoute = () => {
 	}
 
 	if (!loading && !userIsLoggedIn) {
-		return <Redirect to="/" />;
+		return <Login />;
 	}
 
 	return (
 		<Switch>
+			<Route path="/" exact>
+				<div className="main">
+					<Navigation />
+					<Dashboard />
+					{isScreenerListOpen && <ScreenerList />}
+				</div>
+			</Route>
+
 			<Route path="/screening/:email/:room">
 				<Screening />
 			</Route>
@@ -80,13 +89,7 @@ const PrivateRoute = () => {
 					{isScreenerListOpen && <ScreenerList />}
 				</div>
 			</Route>
-			<Route path="/dashboard">
-				<div className="main">
-					<Navigation />
-					<Dashboard />
-					{isScreenerListOpen && <ScreenerList />}
-				</div>
-			</Route>
+			
 
 			<Route path="/opening-hours">
 				<div className="main">
@@ -111,4 +114,4 @@ const PrivateRoute = () => {
 	);
 };
 
-export default PrivateRoute;
+export default Routes;

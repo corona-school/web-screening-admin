@@ -237,33 +237,31 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 	}
 
 	loginCall = (data: { email: string; password: string }): Promise<void> => {
-		return new Promise((resolve, reject) => {
-			axios
-				.post(baseUrl + login, data)
-				.then(({ data }) => {
-					this.setState({ userIsLoggedIn: true, user: data });
-					if (this.state.isSocketConnected) {
-						socket.emit("loginScreener", data);
-					}
+		return axios
+			.post(baseUrl + login, data)
+			.then(({ data }) => {
+				this.setState({ userIsLoggedIn: true, user: data });
+				if (this.state.isSocketConnected) {
+					socket.emit("loginScreener", data);
+				}
 
-					FullStory.identify(data.email, {
-						displayName: `${data.firstname} ${data.lastname}`,
-						email: data.email,
-					});
-					Sentry.configureScope((scope) => {
-						scope.setUser({ email: data.email, id: data.email });
-						scope.setTag("user", data.email);
-					});
-
-					this.props.history.push("/screening");
-					resolve();
-				})
-				.catch((err) => {
-					message.error("Du konntest nicht eingelogt werden.");
-					console.log("login Failed", err);
-					reject(err);
+				FullStory.identify(data.email, {
+					displayName: `${data.firstname} ${data.lastname}`,
+					email: data.email,
 				});
-		});
+				Sentry.configureScope((scope) => {
+					scope.setUser({ email: data.email, id: data.email });
+					scope.setTag("user", data.email);
+				});
+
+				this.props.history.push("/screening");
+
+			})
+			.catch((err) => {
+				message.error("Du konntest nicht eingelogt werden.");
+				console.log("login Failed", err);
+				throw err;
+			});
 	};
 
 	logoutCall = () => {

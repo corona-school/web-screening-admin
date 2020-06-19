@@ -34,15 +34,21 @@ const Routes = () => {
 		if (!userIsLoggedIn) {
 			checkLoginStatus()
 				.then(({ data }: { data: any }) => {
+					console.log("Logged in with ", data);
 					setUser(data);
-					FullStory.identify(data.email, {
-						displayName: `${data.firstname} ${data.lastname}`,
-						email: data.email,
-					});
-					Sentry.configureScope((scope) => {
-						scope.setUser({ email: data.email, id: data.email });
-						scope.setTag("user", data.email);
-					});
+
+					try {
+						FullStory.identify(data.email, {
+							displayName: `${data.firstname} ${data.lastname}`,
+							email: data.email,
+						});
+						Sentry.configureScope((scope) => {
+							scope.setUser({ email: data.email, id: data.email });
+							scope.setTag("user", data.email);
+						});
+					} catch(e) {
+						console.log("Failed to initialize logging", e);
+					}
 
 					setUserIsLoggedIn(true);
 					setLoading(false);

@@ -245,20 +245,22 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 					socket.emit("loginScreener", data);
 				}
 
-				FullStory.identify(data.email, {
-					displayName: `${data.firstname} ${data.lastname}`,
-					email: data.email,
-				});
-				Sentry.configureScope((scope) => {
-					scope.setUser({ email: data.email, id: data.email });
-					scope.setTag("user", data.email);
-				});
-
-				this.props.history.push("/screening");
+				try {
+					FullStory.identify(data.email, {
+						displayName: `${data.firstname} ${data.lastname}`,
+						email: data.email,
+					});
+					Sentry.configureScope((scope) => {
+						scope.setUser({ email: data.email, id: data.email });
+						scope.setTag("user", data.email);
+					});
+				} catch(e) {
+					console.log("failed to initialize logging", e);
+				}
 
 			})
 			.catch((err) => {
-				message.error("Du konntest nicht eingelogt werden.");
+				message.error("Du konntest nicht eingeloggt werden.");
 				console.log("login Failed", err);
 				throw err;
 			});

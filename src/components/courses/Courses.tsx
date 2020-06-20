@@ -24,7 +24,7 @@ const Courses = () => {
     const [courseState, _setCourseState] = useState<CourseState>(CourseState.SUBMITTED);
     const [editCourse, setEditCourse] = useState<Course | null>(null);
 
-    const { courses, loadCourses, loading, updateCourse } = useCourses();
+    const { courses, loadCourses, loading, updateCourse } = useCourses({ initial: CourseState.SUBMITTED });
 
     function setCourseState(courseState: CourseState) {
         _setCourseState(courseState);

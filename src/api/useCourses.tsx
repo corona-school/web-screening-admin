@@ -4,7 +4,7 @@ import Axios from "axios";
 import { baseUrl } from "./urls";
 
 
-export default function useCourses() {
+export default function useCourses({ initial }: { initial: CourseState }) {
     const [{ courses, loading }, setState] = useState<{ courses: Course[], loading: boolean }>({ courses: [], loading: true });
 
     async function loadCourses(query: { search?: string, courseState?: CourseState }) {
@@ -37,7 +37,7 @@ export default function useCourses() {
     }
 
     // Initially load all courses
-    useEffect(() => { loadCourses({}) }, []);
+    useEffect(() => { loadCourses({ courseState: initial }) }, []);
 
     return { courses, loading, loadCourses, updateCourse };
 }

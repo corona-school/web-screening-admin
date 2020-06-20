@@ -94,14 +94,14 @@ export interface Student {
 export interface IProviderProps {
 	getJobsCall: () => void;
 	studentData: IJobInfo[];
-	checkLoginStatus: () => void;
+	checkLoginStatus: () => Promise<{ data: IScreenerInfo, status: number }>;
 	postChangeStatusCall: (data: IStudentData, action: string) => Promise<any>;
 	userIsLoggedIn: boolean;
 	setUserIsLoggedIn: (isLoggedIn: boolean) => void;
 	loginCall: (data: { email: string; password: string }) => Promise<void>;
 	logoutCall: () => void;
 	user: IScreenerInfo | null;
-	setUser: (user: IScreenerInfo) => void;
+	setUser: (user: IScreenerInfo | null) => void;
 	handleRemoveJob: (email: string) => void;
 	getAllStudents: () => void;
 	students: SearchStudent[];
@@ -160,7 +160,6 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 			(error) => {
 				if (error.response.status === 401) {
 					this.setState({ userIsLoggedIn: false, user: null });
-					this.props.history.push("/");
 				}
 
 				return Promise.reject(error);
@@ -237,15 +236,15 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 	}
 
 	loginCall = (data: { email: string; password: string }): Promise<void> => {
-		return new Promise((resolve, reject) => {
-			axios
-				.post(baseUrl + login, data)
-				.then(({ data }) => {
-					this.setState({ userIsLoggedIn: true, user: data });
-					if (this.state.isSocketConnected) {
-						socket.emit("loginScreener", data);
-					}
+		return axios
+			.post(baseUrl + login, data)
+			.then(({ data }) => {
+				this.setState({ userIsLoggedIn: true, user: data });
+				if (this.state.isSocketConnected) {
+					socket.emit("loginScreener", data);
+				}
 
+				try {
 					FullStory.identify(data.email, {
 						displayName: `${data.firstname} ${data.lastname}`,
 						email: data.email,
@@ -254,16 +253,16 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 						scope.setUser({ email: data.email, id: data.email });
 						scope.setTag("user", data.email);
 					});
+				} catch(e) {
+					console.log("failed to initialize logging", e);
+				}
 
-					this.props.history.push("/screening");
-					resolve();
-				})
-				.catch((err) => {
-					message.error("Du konntest nicht eingelogt werden.");
-					console.log("login Failed", err);
-					reject(err);
-				});
-		});
+			})
+			.catch((err) => {
+				message.error("Du konntest nicht eingeloggt werden.");
+				console.log("login Failed", err);
+				throw err;
+			});
 	};
 
 	logoutCall = () => {
@@ -275,7 +274,6 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 				if (this.state.isSocketConnected) {
 					socket.emit("logoutScreener", user);
 				}
-				this.props.history.push("/");
 			})
 			.catch((err) => {
 				console.error("Logout Failed", err);
@@ -365,7 +363,7 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 			loginCall: this.loginCall,
 			logoutCall: this.logoutCall,
 			user: this.state.user,
-			setUser: (user: IScreenerInfo) => {
+			setUser: (user: IScreenerInfo | null) => {
 				this.setState({ user });
 				if (this.state.isSocketConnected && user) {
 					socket.emit("loginScreener", user);

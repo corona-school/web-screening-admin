@@ -30,18 +30,11 @@ const Header = (props: RouteComponentProps) => {
 	const renderProfileMenu = () => {
 		const menu = (
 			<Menu>
-				<Menu.Item>
+				<Menu.Item disabled>
 					<UserOutlined />
 					Profile
 				</Menu.Item>
-				<Menu.Item
-					onClick={() => {
-						props.history.push("/screening");
-					}}>
-					<CheckCircleOutlined />
-					Studenten
-				</Menu.Item>
-				<Menu.Item
+				<Menu.Item disabled
 					onClick={() => {
 						props.history.push("/dashboard");
 					}}>
@@ -51,6 +44,14 @@ const Header = (props: RouteComponentProps) => {
 						new
 					</Tag>
 				</Menu.Item>
+				<Menu.Item
+					onClick={() => {
+						props.history.push("/screening");
+					}}>
+					<CheckCircleOutlined />
+					Studenten
+				</Menu.Item>
+
 				<Menu.Item
 					onClick={() => {
 						props.history.push("/courses");

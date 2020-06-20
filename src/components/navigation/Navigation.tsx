@@ -71,12 +71,12 @@ const Navigation = (props: RouteComponentProps) => {
 				selectedKeys={[currentPath]}
 				mode="inline">
 				<Menu.ItemGroup key="g1" title="Navigation">
-					<Menu.Item key="/screening">
-						<CheckCircleOutlined /> Studenten
-					</Menu.Item>
 					<Menu.Item key="/dashboard" disabled>
 						<DashboardOutlined />
 						Dashboard
+					</Menu.Item>
+					<Menu.Item key="/screening">
+						<CheckCircleOutlined /> Studenten
 					</Menu.Item>
 					<Menu.Item key="/opening-hours">
 						<CalendarOutlined />

@@ -26,7 +26,7 @@ const columns = [
 ];
 
 const Courses = () => {
-    const [courseState, _setCourseState] = useState("submitted" as CourseState);
+    const [courseState, _setCourseState] = useState<CourseState>(CourseState.SUBMITTED);
     
     const { courses, loadCourses, loading, updateCourse } = useCourses();
 

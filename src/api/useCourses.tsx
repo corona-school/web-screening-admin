@@ -5,7 +5,7 @@ import { baseUrl } from "./urls";
 
 
 export default function useCourses() {
-    const [{ courses, loading }, setState] = useState({ courses: [] as Course[], loading: true });
+    const [{ courses, loading }, setState] = useState<{ courses: Course[], loading: boolean }>({ courses: [], loading: true });
 
     async function loadCourses(query: { search?: string, courseState?: CourseState }) {
         setState({ loading: true, courses: [] });

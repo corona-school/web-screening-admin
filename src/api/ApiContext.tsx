@@ -160,7 +160,6 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 			(error) => {
 				if (error.response.status === 401) {
 					this.setState({ userIsLoggedIn: false, user: null });
-					this.props.history.push("/");
 				}
 
 				return Promise.reject(error);
@@ -275,7 +274,6 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 				if (this.state.isSocketConnected) {
 					socket.emit("logoutScreener", user);
 				}
-				this.props.history.push("/");
 			})
 			.catch((err) => {
 				console.error("Logout Failed", err);

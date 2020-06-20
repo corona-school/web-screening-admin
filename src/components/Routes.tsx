@@ -10,7 +10,7 @@ import UserList from "./userList/UserList";
 import ScreenerList from "./ScreenerList";
 import Dashboard from "./dashboard/Dashboard";
 import OpeningHours from "./openingHours/OpeningHours";
-import CourseList from "./courses/CourseList";
+import Courses from "./courses/Courses";
 import StudentInfo from "./student/StudentInfo";
 import * as FullStory from "@fullstory/browser";
 import Login from "./Login";
@@ -115,7 +115,7 @@ const Routes = () => {
 			<Route path="/courses">
 				<div className="main">
 					<Navigation />
-					<CourseList />
+					<Courses />
 					{isScreenerListOpen && <ScreenerList />}
 				</div>
 			</Route>

@@ -365,7 +365,7 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
 			loginCall: this.loginCall,
 			logoutCall: this.logoutCall,
 			user: this.state.user,
-			setUser: (user: IScreenerInfo) => {
+			setUser: (user: IScreenerInfo | null) => {
 				this.setState({ user });
 				if (this.state.isSocketConnected && user) {
 					socket.emit("loginScreener", user);

@@ -94,14 +94,14 @@ export interface Student {
 export interface IProviderProps {
 	getJobsCall: () => void;
 	studentData: IJobInfo[];
-	checkLoginStatus: () => void;
+	checkLoginStatus: () => Promise<{ data: IScreenerInfo, status: number }>;
 	postChangeStatusCall: (data: IStudentData, action: string) => Promise<any>;
 	userIsLoggedIn: boolean;
 	setUserIsLoggedIn: (isLoggedIn: boolean) => void;
 	loginCall: (data: { email: string; password: string }) => Promise<void>;
 	logoutCall: () => void;
 	user: IScreenerInfo | null;
-	setUser: (user: IScreenerInfo) => void;
+	setUser: (user: IScreenerInfo | null) => void;
 	handleRemoveJob: (email: string) => void;
 	getAllStudents: () => void;
 	students: SearchStudent[];

@@ -24,7 +24,7 @@ const Routes = () => {
 		setUser,
 		isScreenerListOpen,
 		checkLoginStatus,
-	} = useContext(ApiContext) as any;
+	} = useContext(ApiContext)!;
 
 	const [loading, setLoading] = useState(true);
 
@@ -33,7 +33,7 @@ const Routes = () => {
 
 		if (!userIsLoggedIn) {
 			checkLoginStatus()
-				.then(({ data }: { data: any }) => {
+				.then(({ data }) => {
 					console.log("Logged in with ", data);
 					setUser(data);
 

@@ -65,8 +65,8 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
     ];
     
     return (
-            <div className={"queue"}>
-            <div className={"header"}>
+        <div className="queue">
+            <div className="header">
                 <Title style={{ color: "#6c757d", marginTop: 0 }} level={4}>
                     Kurse
                 </Title>

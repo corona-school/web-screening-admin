@@ -78,6 +78,9 @@ const Routes = () => {
 	return (
 		<Switch>
 			<Route path="/" exact>
+				<Redirect to="/screening" />
+			</Route>
+			<Route path="/dashboard">
 				<div className="main">
 					<Navigation />
 					<Dashboard />

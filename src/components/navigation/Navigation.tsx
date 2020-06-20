@@ -71,7 +71,7 @@ const Navigation = (props: RouteComponentProps) => {
 				selectedKeys={[currentPath]}
 				mode="inline">
 				<Menu.ItemGroup key="g1" title="Navigation">
-					<Menu.Item key="/">
+					<Menu.Item key="/dashboard" disabled>
 						<DashboardOutlined />
 						Dashboard
 					</Menu.Item>

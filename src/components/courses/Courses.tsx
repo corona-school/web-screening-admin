@@ -94,16 +94,18 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     const [description, setDescription] = useState(course.description);
     const [category, setCategory] = useState<CourseCategory>(course.category);
     const [imageUrl, setImageUrl] = useState(course.imageUrl);
+    const [screeningComment, setScreeningComment] = useState(course.screeningComment);
 
     function update(courseState: CourseState.ALLOWED | CourseState.CANCELLED | CourseState.DENIED | undefined) {
         updateCourse(course, {
-            category, courseState, description, imageUrl, name, outline
+            category, courseState, description, imageUrl, name, outline, screeningComment
         }).then(close);
     }
 
     return <div>
         Name: <input value={name} onChange={e => setName(e.target.value)} />
         (viele weitere Inputs)
+        Feedback: <input value={screeningComment || ""} onChange={e => setScreeningComment(e.target.value || null)} />
         <button onClick={() => update(CourseState.ALLOWED)}>Speichern und Annehmen</button>
         <button onClick={() => update(CourseState.DENIED)}>Speichern und Ablehnen</button>
         <button onClick={() => close()}>Abbrechen</button>

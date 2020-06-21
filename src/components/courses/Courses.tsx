@@ -150,7 +150,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
         return (
             <div className="course-header">
                 <Space size="large">
-                    <Button onClick={() => close()} icon={<ArrowLeftOutlined />}/>
+                    <Button onClick={() => update(undefined)} icon={<ArrowLeftOutlined />}/>
                     <Title style={{ color: "#6c757d"}} level={4}>
                         { name }
                     </Title>

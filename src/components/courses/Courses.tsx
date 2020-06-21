@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Tabs, Table, Tag, Space, Row, Col, Card, Descriptions } from "antd";
+import {Button, Tabs, Table, Tag, Space, Card, Descriptions, Input, Modal} from "antd";
 import Title from "antd/lib/typography/Title";
 import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, ReadOutlined } from "@ant-design/icons/lib";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -11,6 +11,8 @@ import useCourses from "../../api/useCourses";
 import { Student } from "../../api";
 import index from "../screening";
 
+
+const { TextArea } = Input;
 
 const courseStates: { [key in CourseState]: string } = {
     submitted: "Prüfen",
@@ -97,11 +99,51 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     const [category, setCategory] = useState<CourseCategory>(course.category);
     const [imageUrl, setImageUrl] = useState(course.imageUrl);
     const [screeningComment, setScreeningComment] = useState(course.screeningComment);
+    const [commentFormActive, setCommentFormActive] = useState(false);
 
     function update(courseState: CourseState.ALLOWED | CourseState.CANCELLED | CourseState.DENIED | undefined) {
         updateCourse(course, {
             category, courseState, description, imageUrl, name, outline, screeningComment
         }).then(close);
+    }
+
+    const FieldEditor = ({ value, onChange }: { value: string, onChange(e: string): void}) => {
+        const handleChange = (event: { target: { value: string; }; }) => {
+            const text = event.target.value;
+            onChange(text);
+        }
+
+        return (
+            <TextArea
+                rows={4}
+                value={ value }
+                onChange={ handleChange }
+            />
+        )
+    }
+
+    const CommentCourse = () => {
+        const [value, setValue] = useState<string>(screeningComment || "");
+        const handleFieldChange = (new_value: string) => {
+            setValue(new_value)
+        };
+
+        const submitComment = () => {
+            setScreeningComment(value);
+            setCommentFormActive(false);
+        }
+
+        const handleCancel = () => {
+            setCommentFormActive(false);
+        }
+
+        return (
+            <Modal title="Kommentieren" visible={ commentFormActive } onOk={ submitComment } onCancel={ handleCancel }>
+                <div>
+                    <FieldEditor value={ value } onChange={ handleFieldChange } />
+                </div>
+            </Modal>
+        );
     }
 
     const Header = () => {
@@ -114,6 +156,10 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                     </Title>
                 </Space>
                 <Space size="small">
+                    <Button onClick={ () => setCommentFormActive(true) }
+                            style={{ background: "#C4C4C4", color: "#FFFFFF"}}>
+                        Kommentieren
+                    </Button>
                     <Button onClick={() => update(CourseState.ALLOWED)} style={{ background: "#B5F1BB" }}>
                         Annehmen
                     </Button>
@@ -168,6 +214,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
             <Header />
             <CourseDetails />
             <MetaDetails />
+            <CommentCourse />
         </div>
     );
 }

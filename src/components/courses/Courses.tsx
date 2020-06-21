@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Tabs, Table, Tag } from "antd";
+import { Button, Tabs, Table, Tag, Space, Row, Col, Card, Descriptions } from "antd";
 import Title from "antd/lib/typography/Title";
+import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, ReadOutlined } from "@ant-design/icons/lib";
 import ClipLoader from "react-spinners/ClipLoader";
 
 import "./Courses.less";
@@ -102,14 +103,52 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
         }).then(close);
     }
 
-    return <div>
-        Name: <input value={name} onChange={e => setName(e.target.value)} />
-        (viele weitere Inputs)
-        Feedback: <input value={screeningComment || ""} onChange={e => setScreeningComment(e.target.value || null)} />
-        <button onClick={() => update(CourseState.ALLOWED)}>Speichern und Annehmen</button>
-        <button onClick={() => update(CourseState.DENIED)}>Speichern und Ablehnen</button>
-        <button onClick={() => close()}>Abbrechen</button>
-    </div>;
+    return (
+        <div className="update-course">
+            <div className="course-header">
+                <Space size="small">
+                    <ArrowLeftOutlined onClick={() => close()}/>
+                    <Title style={{ color: "#6c757d", marginTop: 0 }} level={4}>
+                        { name }
+                    </Title>
+                </Space>
+                <Space size="small">
+                    <Button onClick={() => update(CourseState.ALLOWED)} style={{ background: "#B5F1BB" }}>
+                        Annehmen
+                    </Button>
+                    <Button onClick={() => update(CourseState.DENIED)} style={{ background: "#F5AFAF" }}>
+                        Ablehnen
+                    </Button>
+                </Space>
+            </div>
+            <div className="course-details">
+                <Card title={ <><FileTextOutlined /> Beschreibung:</> }>
+                    { description }
+                </Card>
+                <br/>
+                <Card title={ <><FileTextOutlined /> Gliederung:</> }>
+                    { outline }
+                </Card>
+                <br/>
+                <Card title={ <><FileTextOutlined /> Kommentar:</> }>
+                    { screeningComment }
+                </Card>
+            </div>
+            <div className="meta-details" >
+                <Descriptions layout="vertical" column={1} bordered={true}>
+                    <Descriptions.Item label={ <><CalendarOutlined /> Erstellt am</> }>
+                        { new Date(course.createdAt).toLocaleDateString() }
+                    </Descriptions.Item>
+                    <Descriptions.Item label={ <><CalendarOutlined /> Updated am</> }>
+                        { new Date(course.updatedAt).toLocaleDateString() }
+                    </Descriptions.Item>
+                    <Descriptions.Item label={ <UserOutlined />}>
+
+                    </Descriptions.Item>
+                </Descriptions>
+            </div>
+        </div>
+    );
 }
 
 

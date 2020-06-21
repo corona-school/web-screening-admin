@@ -9,6 +9,7 @@ import { CourseState, Course, ApiCourseUpdate, CourseCategory } from "../../type
 
 import useCourses from "../../api/useCourses";
 import { Student } from "../../api";
+import index from "../screening";
 
 
 const courseStates: { [key in CourseState]: string } = {
@@ -143,21 +144,23 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     };
 
     const MetaDetails = () => {
-        return (
-            <div className="meta-details" >
-                <Descriptions layout="vertical" column={1} bordered={true}>
-                    <Descriptions.Item label={ <><CalendarOutlined /> Erstellt am</> }>
-                        { new Date(course.createdAt).toLocaleDateString() }
-                    </Descriptions.Item>
-                    <Descriptions.Item label={ <><CalendarOutlined /> Updated am</> }>
-                        { new Date(course.updatedAt).toLocaleDateString() }
-                    </Descriptions.Item>
-                    <Descriptions.Item label={ <UserOutlined />}>
-
-                    </Descriptions.Item>
-                </Descriptions>
-            </div>
-        );
+        return <div className="meta-details" >
+            <Descriptions layout="vertical" column={1} bordered={true}>
+                <Descriptions.Item label={ <><CalendarOutlined /> Erstellt am</> }>
+                    { new Date(course.createdAt).toLocaleDateString() }
+                </Descriptions.Item>
+                <Descriptions.Item label={ <><CalendarOutlined /> Updated am</> }>
+                    { new Date(course.updatedAt).toLocaleDateString() }
+                </Descriptions.Item>
+                <Descriptions.Item label={ <UserOutlined /> }>
+                    {
+                        course.instructors?.
+                        map(instructor => instructor.firstname + " " + instructor.lastname).
+                        join(", ") || "-"
+                    }
+                </Descriptions.Item>
+            </Descriptions>
+        </div>;
     };
 
     return (

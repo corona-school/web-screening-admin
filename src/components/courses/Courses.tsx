@@ -103,12 +103,12 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
         }).then(close);
     }
 
-    return (
-        <div className="update-course">
+    const Header = () => {
+        return (
             <div className="course-header">
-                <Space size="small">
-                    <ArrowLeftOutlined onClick={() => close()}/>
-                    <Title style={{ color: "#6c757d", marginTop: 0 }} level={4}>
+                <Space size="large">
+                    <Button onClick={() => close()} icon={<ArrowLeftOutlined />}/>
+                    <Title style={{ color: "#6c757d"}} level={4}>
                         { name }
                     </Title>
                 </Space>
@@ -121,6 +121,11 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                     </Button>
                 </Space>
             </div>
+        );
+    };
+
+    const CourseDetails = () => {
+        return (
             <div className="course-details">
                 <Card title={ <><FileTextOutlined /> Beschreibung:</> }>
                     { description }
@@ -134,6 +139,11 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                     { screeningComment }
                 </Card>
             </div>
+        );
+    };
+
+    const MetaDetails = () => {
+        return (
             <div className="meta-details" >
                 <Descriptions layout="vertical" column={1} bordered={true}>
                     <Descriptions.Item label={ <><CalendarOutlined /> Erstellt am</> }>
@@ -147,6 +157,14 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                     </Descriptions.Item>
                 </Descriptions>
             </div>
+        );
+    };
+
+    return (
+        <div className="update-course">
+            <Header />
+            <CourseDetails />
+            <MetaDetails />
         </div>
     );
 }

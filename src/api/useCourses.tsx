@@ -9,7 +9,7 @@ export default function useCourses({ initial }: { initial: CourseState }) {
 
     async function loadCourses(query: { search?: string, courseState?: CourseState }) {
         setState({ loading: true, courses: [] });
-        const { status, data: { courses } } = await Axios.post(`${baseUrl}courses`, query);
+        const { status, data: { courses } } = await Axios.get(`${baseUrl}courses`, { params: query });
 
         if(status !== 200)
             throw new Error(`Failed to fetch courses with status ${status}`);

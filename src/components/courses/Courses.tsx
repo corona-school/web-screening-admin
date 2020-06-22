@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, {useCallback, useState} from "react";
 import {Button, Tabs, Table, Tag, Space, Card, Descriptions, Input, Modal} from "antd";
 import Title from "antd/lib/typography/Title";
-import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, ReadOutlined } from "@ant-design/icons/lib";
+import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, ReadOutlined, EditOutlined } from "@ant-design/icons/lib";
 import ClipLoader from "react-spinners/ClipLoader";
 
 import "./Courses.less";
@@ -95,6 +95,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     const [imageUrl, setImageUrl] = useState(course.imageUrl);
     const [screeningComment, setScreeningComment] = useState(course.screeningComment);
     const [commentFormActive, setCommentFormActive] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
 
     function update(courseState: CourseState.ALLOWED | CourseState.CANCELLED | CourseState.DENIED | undefined) {
         updateCourse(course, {
@@ -103,10 +104,10 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     }
 
     const FieldEditor = ({ value, onChange }: { value: string, onChange(e: string): void}) => {
-        const handleChange = (event: { target: { value: string; }; }) => {
+        const handleChange = useCallback((event: { target: { value: string; }; }) => {
             const text = event.target.value;
             onChange(text);
-        }
+        },[])
 
         return (
             <TextArea
@@ -161,24 +162,36 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                     <Button onClick={() => update(CourseState.DENIED)} style={{ background: "#F5AFAF" }}>
                         Ablehnen
                     </Button>
+                    <Button onClick={() => setIsEditMode(!isEditMode)} icon={<EditOutlined />}/>
                 </Space>
             </div>
         );
     };
 
     const CourseDetails = () => {
+
+
         return (
             <div className="course-details">
                 <Card title={ <><FileTextOutlined /> Beschreibung:</> }>
-                    { description }
+                    { !isEditMode && description }
+                    { isEditMode && <TextArea value={ description }
+                                              onChange={(e) => setDescription(e.target.value) }/>
+                    }
                 </Card>
                 <br/>
                 <Card title={ <><FileTextOutlined /> Gliederung:</> }>
-                    { outline }
+                    { !isEditMode && outline }
+                    { isEditMode && <TextArea value={ outline }
+                                              onChange={(e) => setOutline(e.target.value)}/>
+                    }
                 </Card>
                 <br/>
                 <Card title={ <><FileTextOutlined /> Kommentar:</> }>
-                    { screeningComment }
+                    { !isEditMode && screeningComment }
+                    { isEditMode && <TextArea value={ screeningComment || "" }
+                                              onChange={(e) => setOutline(e.target.value)}/>
+                    }
                 </Card>
             </div>
         );
@@ -206,10 +219,10 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
 
     return (
         <div className="update-course">
-            <Header />
-            <CourseDetails />
-            <MetaDetails />
-            <CommentCourse />
+            { Header() }
+            { CourseDetails() }
+            { MetaDetails() }
+            { CommentCourse() }
         </div>
     );
 }

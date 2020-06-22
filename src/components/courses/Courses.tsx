@@ -170,12 +170,12 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                             style={{ background: "#C4C4C4", color: "#FFFFFF"}}>
                         Kommentieren
                     </Button>*/}
-                    <Button onClick={() => update(CourseState.ALLOWED)} style={{ background: "#B5F1BB" }}>
+                    {course.courseState !== "allowed" && <Button onClick={() => update(CourseState.ALLOWED)} style={{ background: "#B5F1BB" }}>
                         Annehmen
-                    </Button>
-                    <Button onClick={() => update(CourseState.DENIED)} style={{ background: "#F5AFAF" }}>
+                    </Button>}
+                    {course.courseState !== "denied" && <Button onClick={() => update(CourseState.DENIED)} style={{ background: "#F5AFAF" }}>
                         Ablehnen
-                    </Button>
+                    </Button>}
                     <Button onClick={() => setIsEditMode(true)} icon={<EditOutlined />}/>
                 </Space>}
 
@@ -184,12 +184,12 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                             style={{ background: "#C4C4C4", color: "#FFFFFF"}}>
                         Speichern
                     </Button>
-                    <Button onClick={() => update(CourseState.ALLOWED)} style={{ background: "#B5F1BB" }}>
+                    {course.courseState !== "allowed" && <Button onClick={() => update(CourseState.ALLOWED)} style={{ background: "#B5F1BB" }}>
                         Speichern und Annehmen
-                    </Button>
-                    <Button onClick={() => update(CourseState.DENIED)} style={{ background: "#F5AFAF" }}>
+                    </Button>}
+                    {course.courseState !== "denied" && <Button onClick={() => update(CourseState.DENIED)} style={{ background: "#F5AFAF" }}>
                         Speichern und Ablehnen
-                    </Button>
+                    </Button>}
                 </Space>}
 
             </div>

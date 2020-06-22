@@ -60,11 +60,6 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
             dataIndex: "createdAt",
             key: "createdAt",
             render: (createdAt: string) => new Date(createdAt).toLocaleDateString(),
-        },
-        {
-            title: "Aktionen",
-            dataIndex: "actions",
-            render: (_: any, course: Course) => <Tag color="volcano" onClick={() => setEditCourse(course)}>Bearbeiten</Tag>
         }
     ];
     
@@ -82,7 +77,7 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
                 {Object.keys(courseStates).map((courseState) => {
                     return (
                         <Tabs.TabPane tab={courseStates[courseState as CourseState]} key={courseState}>
-                            <Table loading={loading} columns={columns} dataSource={courses}></Table>
+                            <Table loading={loading} columns={columns} dataSource={courses} onRow={record => ({ onClick() { setEditCourse(record); }})} className="hover"></Table>
                         </Tabs.TabPane>
                     );
                 })}

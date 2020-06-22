@@ -6,7 +6,7 @@ export interface Course {
     id: number;
     createdAt: Date;
     updatedAt: Date;
-    // instructors?: Student[];
+    instructors?: Student[];
     name: string;
     outline: string;
     description: string;

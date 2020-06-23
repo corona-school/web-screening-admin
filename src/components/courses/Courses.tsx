@@ -61,6 +61,12 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
             render: (instructors: Student[]) => instructors.map(instructor => instructor.firstname + " " + instructor.lastname).join(", ") || "-",
         },
         {
+            title: "Tags",
+            dataIndex: "tags",
+            key: "tags",
+            render: (tags: string[]) => courses.map(course => course.tags?.map(tag => <Tag>{tag.name}</Tag>))
+        },
+        {
             title: "Erstellungsdatum",
             dataIndex: "createdAt",
             key: "createdAt",

@@ -12,7 +12,7 @@ export interface Course {
     description: string;
     imageUrl: string | null;
     category: CourseCategory;
-    // tags?: CourseTag[];
+    tags?: CourseTag[];
     // subcourses?: Subcourse[];
     courseState: CourseState;
     screeningComment: string | null;
@@ -40,4 +40,11 @@ export enum CourseCategory {
     REVISION = 'revision',
     CLUB = 'club',
     COACHING = 'coaching'
+}
+
+export interface CourseTag {
+    id: number;
+    identifier: string;
+    name: string;
+    category: string;
 }

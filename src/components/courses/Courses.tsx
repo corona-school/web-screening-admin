@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from "react";
 import {Button, Tabs, Table, Tag, Space, Card, Descriptions, Input, Modal, Dropdown, Menu} from "antd";
 import Title from "antd/lib/typography/Title";
-import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, ReadOutlined, EditOutlined, ArrowDownOutlined, DownOutlined } from "@ant-design/icons/lib";
+import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, ReadOutlined, EditOutlined, ArrowDownOutlined, DownOutlined, TagOutlined } from "@ant-design/icons/lib";
 import ClipLoader from "react-spinners/ClipLoader";
 
 import "./Courses.less";
@@ -254,11 +254,16 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                 <Descriptions.Item label={ <><CalendarOutlined /> Updated am</> }>
                     { new Date(course.updatedAt).toLocaleDateString() }
                 </Descriptions.Item>
-                <Descriptions.Item label={ <UserOutlined /> }>
+                <Descriptions.Item label={ <><UserOutlined /> Trainer</> }>
                     {
                         course.instructors?.
                         map(instructor => instructor.firstname + " " + instructor.lastname).
                         join(", ") || "-"
+                    }
+                </Descriptions.Item>
+                <Descriptions.Item label={ <><TagOutlined /> Labels</> }>
+                    { 
+                        course.tags?.map(tag => <Tag>{tag.name}</Tag>)
                     }
                 </Descriptions.Item>
             </Descriptions>

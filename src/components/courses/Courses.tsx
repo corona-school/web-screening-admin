@@ -158,11 +158,11 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     const Header = () => {
         return (
             <div className="course-header">
-                <Space size="large">
+                <Space size="large" style={{ width: "100%"}}>
                     <Button onClick={() => (!isEdited || window.confirm("Willst du die Änderungen verwerfen?")) && close()} icon={<ArrowLeftOutlined />}/>
                     
                     { !isEditMode && <Title style={{ color: "#6c757d"}} level={4}>{name}</Title> }
-                    { isEditMode && <Input style={{ width: "100%"}} size="large" value={ name } onChange={ e => setName(e.target.value) } /> }
+                    { isEditMode && <Input style={{ width: "100%"}} size="large" value={ name } className = "" onChange={ e => setName(e.target.value) } /> }
                     
                 </Space>
                 {!isEditMode && <Space size="small">

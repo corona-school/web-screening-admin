@@ -5,7 +5,7 @@ import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, Re
 import ClipLoader from "react-spinners/ClipLoader";
 
 import "./Courses.less";
-import { CourseState, Course, ApiCourseUpdate, CourseCategory } from "../../types/Course";
+import { CourseState, Course, ApiCourseUpdate, CourseCategory, CourseTag } from "../../types/Course";
 
 import useCourses from "../../api/useCourses";
 import { Student } from "../../api";
@@ -64,7 +64,7 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
             title: "Tags",
             dataIndex: "tags",
             key: "tags",
-            render: (tags: string[]) => courses.map(course => course.tags?.map(tag => <Tag>{tag.name}</Tag>))
+            render: (tags: CourseTag[]) => tags?.map(tag => <Tag>{tag.name}</Tag>)
         },
         {
             title: "Erstellungsdatum",

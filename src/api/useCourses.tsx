@@ -4,12 +4,12 @@ import Axios from "axios";
 import { baseUrl } from "./urls";
 
 
-export default function useCourses() {
+export default function useCourses({ initial }: { initial: CourseState }) {
     const [{ courses, loading }, setState] = useState<{ courses: Course[], loading: boolean }>({ courses: [], loading: true });
 
     async function loadCourses(query: { search?: string, courseState?: CourseState }) {
         setState({ loading: true, courses: [] });
-        const { status, data: { courses } } = await Axios.post(`${baseUrl}courses`, query);
+        const { status, data: { courses } } = await Axios.get(`${baseUrl}courses`, { params: query });
 
         if(status !== 200)
             throw new Error(`Failed to fetch courses with status ${status}`);
@@ -37,7 +37,7 @@ export default function useCourses() {
     }
 
     // Initially load all courses
-    useEffect(() => { loadCourses({}) }, []);
+    useEffect(() => { loadCourses({ courseState: initial }) }, []);
 
     return { courses, loading, loadCourses, updateCourse };
 }

@@ -4,3 +4,65 @@
 	width: 100%;
 	overflow: hidden;
 }
+
+.hover {
+	cursor: pointer;
+}
+
+.queue {
+	overflow: auto;
+	margin: 32px;
+	padding: 20px;
+	background: white;
+	border-radius: 8px;
+	box-shadow: 0 0 35px 0 rgba(154, 161, 171, 0.15);
+}
+
+.header {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.update-course {
+	overflow: auto;
+	align-items: center;
+	justify-content: space-between;
+	margin: 32px;
+	padding: 20px;
+	background: white;
+	border-radius: 8px;
+	box-shadow: 0 0 35px 0 rgba(154, 161, 171, 0.15);
+}
+
+.course-header {
+	display: flex;
+	padding: 20px;
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.course-details {
+	float: left;
+	padding: 20px;
+	overflow: auto;
+	flex-direction: column;
+	width: 67%;
+}
+
+.meta-details {
+	float: right;
+	padding: 20px;
+	overflow: auto;
+	flex-direction: column;
+	width: 33%;
+}
+/*
+widens the size of the title in edit mode
+*/
+.course-header .ant-space-item:nth-child(2) {
+	width: 100%;
+	margin-right: 5%;
+}

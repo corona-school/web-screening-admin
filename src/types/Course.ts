@@ -6,15 +6,16 @@ export interface Course {
     id: number;
     createdAt: Date;
     updatedAt: Date;
-    // instructors?: Student[];
+    instructors?: Student[];
     name: string;
     outline: string;
     description: string;
     imageUrl: string | null;
     category: CourseCategory;
-    // tags?: CourseTag[];
+    tags?: CourseTag[];
     // subcourses?: Subcourse[];
     courseState: CourseState;
+    screeningComment: string | null;
 }
 
 export interface ApiCourseUpdate {
@@ -24,6 +25,7 @@ export interface ApiCourseUpdate {
     outline?: string;
     category?: CourseCategory;
     imageUrl?: string | null;
+    screeningComment?: string | null;
 }
 
 export enum CourseState {
@@ -38,4 +40,11 @@ export enum CourseCategory {
     REVISION = 'revision',
     CLUB = 'club',
     COACHING = 'coaching'
+}
+
+export interface CourseTag {
+    id: number;
+    identifier: string;
+    name: string;
+    category: string;
 }

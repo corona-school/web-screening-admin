@@ -52,13 +52,13 @@ const Header = (props: RouteComponentProps) => {
 					Studenten
 				</Menu.Item>
 
-				<Menu.Item
+				{/*<Menu.Item
 					onClick={() => {
 						props.history.push("/courses");
 					}}>
 					<TeamOutlined />
 					Kurse
-				</Menu.Item>
+				</Menu.Item>*/}
 				<Menu.Item onClick={context.logoutCall}>
 					<LogoutOutlined />
 					Logout

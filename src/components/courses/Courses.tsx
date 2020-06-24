@@ -122,44 +122,6 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
         }).then(close);
     }
 
-    const FieldEditor = ({ value, onChange }: { value: string, onChange(e: string): void}) => {
-        const handleChange = useCallback((event: { target: { value: string; }; }) => {
-            const text = event.target.value;
-            onChange(text);
-        }, []);
-
-        return (
-            <TextArea
-                rows={4}
-                value={ value }
-                onChange={ handleChange }
-            />
-        )
-    }
-
-    const CommentCourse = () => {
-        const [value, setValue] = useState<string>(screeningComment || "");
-        const handleFieldChange = (new_value: string) => {
-            setValue(new_value)
-        };
-
-        const submitComment = () => {
-            setScreeningComment(value);
-            setCommentFormActive(false);
-        }
-
-        const handleCancel = () => {
-            setCommentFormActive(false);
-        }
-
-        return (
-            <Modal title="Kommentieren" visible={ commentFormActive } onOk={ submitComment } onCancel={ handleCancel }>
-                <div>
-                    <FieldEditor value={ value } onChange={ handleFieldChange } />
-                </div>
-            </Modal>
-        );
-    }
 
     const Header = () => {
         return (

@@ -83,10 +83,10 @@ const Navigation = (props: RouteComponentProps) => {
 							<CalendarOutlined />
 						Öffnungszeiten
 					</Menu.Item>
-						<Menu.Item key="/courses">
+						{/*<Menu.Item key="/courses">
 							<TeamOutlined />
 						Kurse
-					</Menu.Item>
+					</Menu.Item>*/}
 					</Menu.ItemGroup>
 					<Menu.ItemGroup key="g1" title="Links">
 						<Menu.Item key="/screener-docs">

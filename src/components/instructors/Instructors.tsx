@@ -5,6 +5,7 @@ import "./Instructors.less"
 import useInstructors from "../../api/useInstructors";
 import {ScreeningStatus, Student} from "../../types/Student";
 import Title from "antd/lib/typography/Title";
+import useDebounce from "../../utils/useDebounce";
 
 
 const possibleScreeningStatus: { [key in ScreeningStatus]: string } = {
@@ -14,14 +15,13 @@ const possibleScreeningStatus: { [key in ScreeningStatus]: string } = {
 }
 
 const Instructors = () => {
-    const  [screeningStatus, _setScreeningStatus] = useState<ScreeningStatus>(ScreeningStatus.Unscreened);
+    const  [screeningStatus, setScreeningStatus] = useState<ScreeningStatus>(ScreeningStatus.Unscreened);
+    const  [search, setSearch] = useState<string>("");
+    const { instructors, loadInstructors, loading } = useInstructors({ initialStatus: ScreeningStatus.Unscreened, initialSearch: "" });
 
-    const { instructors, loadInstructors, loading } = useInstructors({ initial: ScreeningStatus.Unscreened})
-
-    function setScreeningStatus(screeningStatus: ScreeningStatus){
-        _setScreeningStatus(screeningStatus);
-        loadInstructors({ screeningStatus });
-    }
+    console.log(instructors);
+    
+    useDebounce({ screeningStatus, search }, 1000, loadInstructors);
 
     return (
         <div className="course-container">

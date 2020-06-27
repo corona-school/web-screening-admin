@@ -3,10 +3,10 @@ import Axios from "axios";
 import { baseUrl } from "./urls";
 import { ScreeningStatus, ApiScreeningResult } from "../types/Student";
 
-export default function useInstructors({ initial }: { initial: ScreeningStatus }) {
+export default function useInstructors({ initialStatus, initialSearch }: { initialStatus: ScreeningStatus, initialSearch: string }) {
     const [{ instructors, loading }, setState] = useState<{ instructors: any[], loading: boolean }>({ instructors: [], loading: true });
 
-    async function loadInstructors(query: { screeningStatus: ScreeningStatus}) {
+    async function loadInstructors(query: { screeningStatus: ScreeningStatus, search: string }) {
         setState({ loading: true, instructors: [] });
         const { status, data: { instructors } } = await Axios.get(`${baseUrl}instructors`, { params: query });
 
@@ -36,7 +36,7 @@ export default function useInstructors({ initial }: { initial: ScreeningStatus }
     }
 
     // Initially load all courses
-    useEffect(() => { loadInstructors({ screeningStatus: initial }) }, []);
+    useEffect(() => { loadInstructors({ screeningStatus: initialStatus, search: initialSearch }) }, []);
 
     return { instructors, loading, loadInstructors, updateInstructor };
 }

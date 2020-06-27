@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { Tabs, Table, Input } from "antd";
+import { Tabs, Table, Input, Space } from "antd";
 
 import "./Instructors.less"
 import useInstructors from "../../api/useInstructors";
@@ -52,6 +52,13 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
 
     ];
 
+    const searchField = <Search
+        size="large"
+        style={{ width: "400px" }}
+        placeholder="Nach einem Kursleiter suchen..."
+        onSearch={value => setSearch(value)}
+    />
+
     return (
         <div className="list">
             <div className="header">
@@ -60,6 +67,7 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
                 </Title>
             </div>
             <Tabs
+                tabBarExtraContent={searchField}
                 activeKey={ screeningStatus }
                 onChange={k => setScreeningStatus(k as ScreeningStatus)}>
                 {Object.keys(possibleScreeningStatus).map((screeningStatus) => {
@@ -67,13 +75,13 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
                         <Tabs.TabPane
                             tab={possibleScreeningStatus[screeningStatus as ScreeningStatus]}
                             key={screeningStatus}>
-                            <Search
-                                placeholder="Nach einem Kursleiter suchen..."
-                                onSearch={value => setSearch(value)} />
-                            <Table loading={loading}
-                                   dataSource={instructors}
-                                   className="hover"
-                                   columns={columns}/>
+                            <Space size="small" direction="vertical" style={{ width: "100%" }}>
+                                <Table
+                                    loading={loading}
+                                    dataSource={instructors}
+                                    className="hover"
+                                    columns={columns}/>
+                            </Space>
                         </Tabs.TabPane>
 
                     )

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { Tabs, Table } from "antd";
+import { Tabs, Table, Input } from "antd";
 
 import "./Instructors.less"
 import useInstructors from "../../api/useInstructors";
@@ -7,6 +7,7 @@ import {ScreeningStatus, Student} from "../../types/Student";
 import Title from "antd/lib/typography/Title";
 import useDebounce from "../../utils/useDebounce";
 
+const { Search } = Input;
 
 const possibleScreeningStatus: { [key in ScreeningStatus]: string } = {
     UNSCREENED: "Prüfen",
@@ -30,12 +31,13 @@ const Instructors = () => {
                 setScreeningStatus={setScreeningStatus}
                 instructors={instructors}
                 loading={loading}
+                setSearch={setSearch}
             />
         </div>
     )
 }
 
-function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loading }: { screeningStatus: ScreeningStatus, setScreeningStatus(screeningStatus: ScreeningStatus): void, instructors: Student[], loading: boolean }) {
+function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loading, setSearch }: { screeningStatus: ScreeningStatus, setScreeningStatus(screeningStatus: ScreeningStatus): void, instructors: Student[], loading: boolean, setSearch(search: string): void }) {
     const columns = [
         {
             title: "Nachname",
@@ -65,6 +67,9 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
                         <Tabs.TabPane
                             tab={possibleScreeningStatus[screeningStatus as ScreeningStatus]}
                             key={screeningStatus}>
+                            <Search
+                                placeholder="Nach einem Kursleiter suchen..."
+                                onSearch={value => setSearch(value)} />
                             <Table loading={loading}
                                    dataSource={instructors}
                                    className="hover"

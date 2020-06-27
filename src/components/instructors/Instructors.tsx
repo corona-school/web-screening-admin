@@ -7,8 +7,6 @@ import {ScreeningStatus, Student} from "../../types/Student";
 import Title from "antd/lib/typography/Title";
 import useDebounce from "../../utils/useDebounce";
 
-const { Search } = Input;
-
 const possibleScreeningStatus: { [key in ScreeningStatus]: string } = {
     UNSCREENED: "Prüfen",
     ACCEPTED: "Angenommen",
@@ -52,11 +50,16 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
 
     ];
 
-    const searchField = <Search
+    const onSearch = (event: { target: { value: string; }; }) => {
+        setSearch(event.target.value);
+    }
+
+    const searchField = <Input
         size="large"
         style={{ width: "400px" }}
         placeholder="Nach einem Kursleiter suchen..."
-        onSearch={value => setSearch(value)}
+        allowClear
+        onChange={onSearch}
     />
 
     return (

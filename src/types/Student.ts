@@ -64,3 +64,8 @@ export interface Screening {
     screener?: any;
     student?: Student;
 }
+
+export enum TeacherModule {
+  INTERNSHIP = "internship",
+  SEMINAR = "seminar"
+}

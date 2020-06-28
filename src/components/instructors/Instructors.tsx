@@ -3,7 +3,7 @@ import { Tabs, Table, Input, Space } from "antd";
 
 import "./Instructors.less"
 import useInstructors from "../../api/useInstructors";
-import {ScreeningStatus, Student} from "../../types/Student";
+import {ScreeningStatus, Student, TeacherModule} from "../../types/Student";
 import Title from "antd/lib/typography/Title";
 import useDebounce from "../../utils/useDebounce";
 
@@ -47,6 +47,12 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
             dataIndex: "firstname",
             key: "firstname,"
         },
+        {
+            title: "Kursleiter-Typ",
+            dataIndex: "module",
+            key: "module",
+            render: (module: TeacherModule) => module ? "Praktikum" : "Sommer-AGs",
+        }
 
     ];
 

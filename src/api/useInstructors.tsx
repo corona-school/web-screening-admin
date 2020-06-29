@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import Axios from "axios";
 import { baseUrl } from "./urls";
-import { ScreeningStatus, ApiScreeningResult } from "../types/Student";
+import { ScreeningStatus, ApiScreeningResult, Screening, Student } from "../types/Student";
+
+type Instructor = Student & { __screening__: Screening };
 
 export default function useInstructors({ initialStatus, initialSearch }: { initialStatus: ScreeningStatus, initialSearch: string }) {
-    const [{ instructors, loading }, setState] = useState<{ instructors: any[], loading: boolean }>({ instructors: [], loading: true });
+    const [{ instructors, loading }, setState] = useState<{ instructors: Instructor[], loading: boolean }>({ instructors: [], loading: true });
 
     async function loadInstructors(query: { screeningStatus: ScreeningStatus, search: string }) {
         setState({ loading: true, instructors: [] });
@@ -31,7 +33,7 @@ export default function useInstructors({ initialStatus, initialSearch }: { initi
 
         setState({
             loading: false,
-            instructors: before.map(it => it.id === instructor.id ? instructor : it)
+            instructors: before.map(it => it.id === instructor.id ? { ...instructor, __screening__: screening } : it)
         });
     }
 

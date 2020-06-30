@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Menu, Switch, message, Typography, Tooltip } from "antd";
+import { Menu, Switch, message, Typography, Tooltip, Affix } from "antd";
 import {
 	CheckCircleOutlined,
 	DashboardOutlined,
@@ -8,6 +8,7 @@ import {
 	BookOutlined,
 	LikeOutlined,
 	CalendarOutlined,
+	TeamOutlined,
 } from "@ant-design/icons";
 import Push from "push.js";
 import "./Navigation.less";
@@ -63,88 +64,94 @@ const Navigation = (props: RouteComponentProps) => {
 	};
 
 	return (
-		<div className="menu-container">
-			<Menu
-				onClick={handleClick}
-				style={{ width: 256 }}
-				selectedKeys={[currentPath]}
-				mode="inline">
-				<Menu.ItemGroup key="g1" title="Navigation">
-					<Menu.Item key="/screening">
-						<CheckCircleOutlined /> Studenten
-					</Menu.Item>
-					<Menu.Item key="/dashboard" disabled>
-						<DashboardOutlined />
+		<Affix offsetTop={63}>
+			<div className="menu-container">
+				<Menu
+					onClick={handleClick}
+					style={{ width: 256 }}
+					selectedKeys={[currentPath]}
+					mode="inline">
+					<Menu.ItemGroup key="g1" title="Navigation">
+						<Menu.Item key="/dashboard" disabled>
+							<DashboardOutlined />
 						Dashboard
 					</Menu.Item>
-					<Menu.Item key="/opening-hours">
-						<CalendarOutlined />
+						<Menu.Item key="/screening">
+							<CheckCircleOutlined /> Studenten
+					</Menu.Item>
+						<Menu.Item key="/opening-hours">
+							<CalendarOutlined />
 						Öffnungszeiten
 					</Menu.Item>
-				</Menu.ItemGroup>
-				<Menu.ItemGroup key="g1" title="Links">
-					<Menu.Item key="/screener-docs">
-						<BookOutlined />
-						<a
-							target="_blank"
-							rel="noopener noreferrer"
-							href="https://drive.google.com/drive/folders/1LEXFw9zXG4mrcnBWmMPgm6lD970PDbOa">
-							Screener Material
+						{/*<Menu.Item key="/courses">
+							<TeamOutlined />
+						Kurse
+					</Menu.Item>*/}
+					</Menu.ItemGroup>
+					<Menu.ItemGroup key="g1" title="Links">
+						<Menu.Item key="/screener-docs">
+							<BookOutlined />
+							<a
+								target="_blank"
+								rel="noopener noreferrer"
+								href="https://drive.google.com/drive/folders/1LEXFw9zXG4mrcnBWmMPgm6lD970PDbOa">
+								Screener Material
 						</a>
-					</Menu.Item>
-					<Menu.Item key="/screening-times">
-						<TableOutlined />
-						<a
-							target="_blank"
-							rel="noopener noreferrer"
-							href="https://docs.google.com/spreadsheets/d/1YEPdtbr1fsMmvIy5nRh_7V9IFEDN67iumTRSDx-mUvk/edit">
-							Bereitschaftstabelle
+						</Menu.Item>
+						<Menu.Item key="/screening-times">
+							<TableOutlined />
+							<a
+								target="_blank"
+								rel="noopener noreferrer"
+								href="https://docs.google.com/spreadsheets/d/1YEPdtbr1fsMmvIy5nRh_7V9IFEDN67iumTRSDx-mUvk/edit">
+								Bereitschaftstabelle
 						</a>
-					</Menu.Item>
-					<Menu.Item key="/mentoring-list">
-						<UserOutlined />
-						<a
-							target="_blank"
-							rel="noopener noreferrer"
-							href="https://docs.google.com/spreadsheets/d/1GFb-AVmymDoDMQ_rzdD5GwD1zqz8Pk-7mBLxcBeFywg/edit#gid=0">
-							Mentoren Liste
+						</Menu.Item>
+						<Menu.Item key="/mentoring-list">
+							<UserOutlined />
+							<a
+								target="_blank"
+								rel="noopener noreferrer"
+								href="https://docs.google.com/spreadsheets/d/1GFb-AVmymDoDMQ_rzdD5GwD1zqz8Pk-7mBLxcBeFywg/edit#gid=0">
+								Mentoren Liste
 						</a>
-					</Menu.Item>
-					<Menu.Item key="/socialmedia">
-						<LikeOutlined />
-						<a
-							target="_blank"
-							rel="noopener noreferrer"
-							href="https://drive.google.com/drive/folders/1FQ-ICijXiTRVU2HHZiJuFfOlu1Cb1zyz">
-							SocialMedia
+						</Menu.Item>
+						<Menu.Item key="/socialmedia">
+							<LikeOutlined />
+							<a
+								target="_blank"
+								rel="noopener noreferrer"
+								href="https://drive.google.com/drive/folders/1FQ-ICijXiTRVU2HHZiJuFfOlu1Cb1zyz">
+								SocialMedia
 						</a>
-					</Menu.Item>
-				</Menu.ItemGroup>
-			</Menu>
-			<div className="menu-notification">
-				<Text type="secondary">Einstellungen</Text>
-				<div className="notification">
-					<span>Desktop Benachrichtigung</span>
-					<Switch
-						size="small"
-						checked={notifyEnabled}
-						onChange={askNotificationPermissions}
-					/>
-				</div>
-				<Tooltip
-					title="Nicht aktive Screener werden bei der Berechnung der Wartezeit nicht berücksichtigt."
-					placement="bottom">
+						</Menu.Item>
+					</Menu.ItemGroup>
+				</Menu>
+				<div className="menu-notification">
+					<Text type="secondary">Einstellungen</Text>
 					<div className="notification">
-						<span>Aktiv</span>
+						<span>Desktop Benachrichtigung</span>
 						<Switch
 							size="small"
-							checked={context?.active}
-							onChange={(b) => context?.setActive(b)}
+							checked={notifyEnabled}
+							onChange={askNotificationPermissions}
 						/>
 					</div>
-				</Tooltip>
+					<Tooltip
+						title="Nicht aktive Screener werden bei der Berechnung der Wartezeit nicht berücksichtigt."
+						placement="bottom">
+						<div className="notification">
+							<span>Aktiv</span>
+							<Switch
+								size="small"
+								checked={context?.active}
+								onChange={(b) => context?.setActive(b)}
+							/>
+						</div>
+					</Tooltip>
+				</div>
 			</div>
-		</div>
+		</Affix>
 	);
 };
 

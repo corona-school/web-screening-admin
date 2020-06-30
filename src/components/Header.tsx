@@ -1,10 +1,11 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Typography, Dropdown, Menu, Tag, Input, AutoComplete } from "antd";
+import { Typography, Dropdown, Menu, Tag, Input, AutoComplete, Affix } from "antd";
 import {
 	LogoutOutlined,
 	UserOutlined,
 	DashboardOutlined,
 	CheckCircleOutlined,
+	TeamOutlined
 } from "@ant-design/icons";
 import { ApiContext } from "../api/ApiContext";
 import classes from "./Header.module.less";
@@ -29,18 +30,11 @@ const Header = (props: RouteComponentProps) => {
 	const renderProfileMenu = () => {
 		const menu = (
 			<Menu>
-				<Menu.Item>
+				<Menu.Item disabled>
 					<UserOutlined />
 					Profile
 				</Menu.Item>
-				<Menu.Item
-					onClick={() => {
-						props.history.push("/screening");
-					}}>
-					<CheckCircleOutlined />
-					Studenten
-				</Menu.Item>
-				<Menu.Item
+				<Menu.Item disabled
 					onClick={() => {
 						props.history.push("/dashboard");
 					}}>
@@ -50,6 +44,21 @@ const Header = (props: RouteComponentProps) => {
 						new
 					</Tag>
 				</Menu.Item>
+				<Menu.Item
+					onClick={() => {
+						props.history.push("/screening");
+					}}>
+					<CheckCircleOutlined />
+					Studenten
+				</Menu.Item>
+
+				{/*<Menu.Item
+					onClick={() => {
+						props.history.push("/courses");
+					}}>
+					<TeamOutlined />
+					Kurse
+				</Menu.Item>*/}
 				<Menu.Item onClick={context.logoutCall}>
 					<LogoutOutlined />
 					Logout
@@ -140,24 +149,26 @@ const Header = (props: RouteComponentProps) => {
 	};
 
 	return (
-		<div className={classes.header}>
-			<div className={classes.logo}>
-				<Link to="/screening">
-					<div className={classes.logo}>
-						<img src="/corona-school.svg" alt="logo" />
-						<Title
-							level={4}
-							className="title"
-							style={{ color: "white", paddingLeft: "12px" }}>
-							Screener
+		<Affix>
+			<div className={classes.header}>
+				<div className={classes.logo}>
+					<Link to="/screening">
+						<div className={classes.logo}>
+							<img src="/corona-school.svg" alt="logo" />
+							<Title
+								level={4}
+								className="title"
+								style={{ color: "white", paddingLeft: "12px" }}>
+								Screener
 						</Title>
-					</div>
-				</Link>
-				{context.userIsLoggedIn && context.user && renderSearchStudent()}
-			</div>
+						</div>
+					</Link>
+					{context.userIsLoggedIn && context.user && renderSearchStudent()}
+				</div>
 
-			{context.userIsLoggedIn && context.user && renderProfileMenu()}
-		</div>
+				{context.userIsLoggedIn && context.user && renderProfileMenu()}
+			</div>
+		</Affix>
 	);
 };
 

@@ -1,5 +1,5 @@
 import React from "react";
-import Routes from "../routing/Routes";
+import Routes from "./Routes";
 import Header from "./Header";
 import "./PageLayout.less";
 

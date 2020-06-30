@@ -3,7 +3,7 @@ import Axios from "axios";
 import { baseUrl } from "./urls";
 import { ScreeningStatus, ApiScreeningResult, Screening, Student } from "../types/Student";
 
-type Instructor = Student & { __screening__: Screening };
+export type Instructor = Student & { __screening__: Screening };
 
 export default function useInstructors({ initialStatus, initialSearch }: { initialStatus: ScreeningStatus, initialSearch: string }) {
     const [{ instructors, loading }, setState] = useState<{ instructors: Instructor[], loading: boolean }>({ instructors: [], loading: true });

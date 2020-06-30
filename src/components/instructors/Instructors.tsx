@@ -27,7 +27,7 @@ const Instructors = () => {
     useDebounce({ screeningStatus, search }, 1000, loadInstructors);
 
     return (
-        <div className="course-container">
+        <div className="instructor-container">
             {editInstructor && <UpdateInstructor
             instructor={editInstructor}
             updateInstructor={updateInstructor}
@@ -136,11 +136,10 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
 
     const Header = () => {
         return (
-            <div className="course-header">
+            <div className="header">
                 <Space size="large" style={{ width: "100%"}}>
                     <Button onClick={() => (!isEdited || window.confirm("Willst du die Änderungen verwerfen?")) && close()}  icon={<ArrowLeftOutlined />}/>
                     <Title style={{ color: "#6c757d"}} level={4}>{ instructor.firstname+ " " + instructor.lastname}</Title>
-                    <div> {commentScreener} </div>
                 </Space>
 
                 {!isEditMode && <Space size="small">
@@ -174,9 +173,11 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
         );
     };
 
-    return <div>
-        { Header() }
-    </div>; 
+    return (
+        <div className="update-instructor">
+            { Header() }
+        </div>
+    );
  
 }
 

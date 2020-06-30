@@ -1,13 +1,12 @@
 import React, {useState} from "react";
-import { Tabs, Table, Input, Space, Card, Button } from "antd";
+import {Button, Card, Input, Space, Table, Tabs} from "antd";
 
 import "./Instructors.less"
-import useInstructors from "../../api/useInstructors";
-import { Instructor } from "../../api/useInstructors";
-import {ScreeningStatus, Student, TeacherModule, ApiScreeningResult, Screening} from "../../types/Student";
+import useInstructors, {Instructor} from "../../api/useInstructors";
+import {ApiScreeningResult, ScreeningStatus, TeacherModule} from "../../types/Student";
 import Title from "antd/lib/typography/Title";
 import useDebounce from "../../utils/useDebounce";
-import { ArrowLeftOutlined, EditOutlined, FileTextOutlined } from "@ant-design/icons";
+import {ArrowLeftOutlined, EditOutlined, FileTextOutlined} from "@ant-design/icons";
 
 const { TextArea } = Input;
 
@@ -34,6 +33,7 @@ const Instructors = () => {
             instructor={editInstructor}
             updateInstructor={updateInstructor}
             close={() => setEditInstructor(null)}
+            screeningStatus={screeningStatus}
             />}
             {!editInstructor && <InstructorTable
                 screeningStatus={screeningStatus}
@@ -117,8 +117,8 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
 }
 
 
-function UpdateInstructor({ instructor, updateInstructor, close }: { instructor: Instructor, updateInstructor(instructor: Instructor, update: ApiScreeningResult): Promise<void>, close(): void }) {
-    const screening = instructor.__screening__ ? instructor.__screening__ : { comment: "", knowsCoronaSchoolFrom: "" };
+function UpdateInstructor({ instructor, updateInstructor, close, screeningStatus }: { instructor: Instructor, updateInstructor(instructor: Instructor, update: ApiScreeningResult): Promise<void>, close(): void, screeningStatus: ScreeningStatus }) {
+    const screening = instructor.__screening__ ? instructor.__screening__ : { comment: "", knowsCoronaSchoolFrom: "", success: null };
 
     const [phone, setPhone] = useState(instructor.phone);
     const [birthday, setbirthday] = useState(instructor.birthday);
@@ -139,6 +139,15 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
     }
 
     const Header = () => {
+        const showAcceptButton = (
+            screeningStatus === ScreeningStatus.Rejected ||
+            screeningStatus === ScreeningStatus.Unscreened
+        );
+        const showRejectButton = (
+            screeningStatus === ScreeningStatus.Accepted ||
+            screeningStatus === ScreeningStatus.Unscreened
+        );
+
         return (
             <div className="header">
                 <Space size="large" style={{ width: "100%"}}>
@@ -151,22 +160,30 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
                             style={{ background: "#C4C4C4", color: "#FFFFFF"}}>
                         Kommentieren
                     </Button>*/}
-                    {instructor.verified !== true && <Button onClick={() => update(true)} style={{ background: "#B5F1BB" }}>
-                        Annehmen
-                    </Button>}
-                    {instructor.verified !== false && <Button onClick={() => update(false)} style={{ background: "#F5AFAF" }}>
-                        Ablehnen
-                    </Button>}
+                    { showAcceptButton &&
+                        <Button onClick={() => update(true)} style={{ background: "#B5F1BB" }}>
+                            Annehmen
+                        </Button>
+                    }
+                    { showRejectButton &&
+                        <Button onClick={() => update(false)} style={{ background: "#F5AFAF" }}>
+                            Ablehnen
+                        </Button>
+                    }
                     <Button onClick={() => setIsEditMode(true)} icon={<EditOutlined />}/>
                 </Space>}
 
                 {isEditMode && <Space size="small">
-                    {instructor.verified !== true && <Button onClick={() => update(true)} style={{ background: "#B5F1BB" }}>
-                        Speichern und Annehmen
-                    </Button>}
-                    {instructor.verified !== false && <Button onClick={() => update(false)} style={{ background: "#F5AFAF" }}>
-                        Speichern und Ablehnen
-                    </Button>}
+                    { showAcceptButton &&
+                        <Button onClick={() => update(true)} style={{ background: "#B5F1BB" }}>
+                            Speichern und Annehmen
+                        </Button>
+                    }
+                    { showRejectButton &&
+                        <Button onClick={() => update(false)} style={{ background: "#F5AFAF" }}>
+                            Speichern und Ablehnen
+                        </Button>
+                    }
                 </Space>}
             </div>
         );

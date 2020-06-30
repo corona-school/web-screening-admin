@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { Tabs, Table, Input, Space, Card } from "antd";
+import { Tabs, Table, Input, Space, Card, Button } from "antd";
 
 import "./Instructors.less"
 import useInstructors from "../../api/useInstructors";
@@ -7,6 +7,7 @@ import { Instructor } from "../../api/useInstructors";
 import {ScreeningStatus, Student, TeacherModule, ApiScreeningResult} from "../../types/Student";
 import Title from "antd/lib/typography/Title";
 import useDebounce from "../../utils/useDebounce";
+import { ArrowLeftOutlined, EditOutlined } from "@ant-design/icons";
 
 const possibleScreeningStatus: { [key in ScreeningStatus]: string } = {
     UNSCREENED: "Prüfen",
@@ -117,74 +118,66 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
 function UpdateInstructor({ instructor, updateInstructor, close }: { instructor: Instructor, updateInstructor(instructor: Instructor, update: ApiScreeningResult): Promise<void>, close(): void }) {
     const [phone, setPhone] = useState(instructor.phone);
     const [birthday, setbirthday] = useState(instructor.birthday);
-    const [commentScreener, setcommentScreener] = useState("instructor.__screening__.comment");
-    const [knowscsfrom, setknowscsfrom] = useState("instructor.__screening__.knowsCoronaSchoolFrom");
+    const [commentScreener, setcommentScreener] = useState(instructor.__screening__.comment || undefined);
+    const [knowscsfrom, setknowscsfrom] = useState(instructor.__screening__.knowsCoronaSchoolFrom);
     const [screenerEmail, setscreenerEmail] = useState(instructor.email);
     const [subjects, setsubjects] = useState(instructor.subjects);
     const [feedback, setfeedback] = useState(instructor.feedback);
-
     const [isEditMode, setIsEditMode] = useState(false);
 
-    function update(verified: ApiScreeningResult["verified"]){
+    const isEdited = 
+        commentScreener !== instructor.__screening__.comment; 
+
+    function update(verified: boolean){
         updateInstructor(instructor, {
             verified, phone, birthday, commentScreener, knowscsfrom, screenerEmail, subjects, feedback
         }).then(close);
     }
 
-// copied from Courses.tsx
-    // const InstructorDetails = () => {
-    //     const categoryMenu = (
-    //         <Menu>
-    //             {Object.entries(categoryName)
-    //                 .map(([category, name]) => 
-    //                     <Menu.Item onClick={() => setCategory(category as CourseCategory)}>
-    //                             {name}
-    //                     </Menu.Item>    
-    //             )}
-        
-        
-    //         </Menu>
-    //     );
+    const Header = () => {
+        return (
+            <div className="course-header">
+                <Space size="large" style={{ width: "100%"}}>
+                    <Button onClick={() => (!isEdited || window.confirm("Willst du die Änderungen verwerfen?")) && close()}  icon={<ArrowLeftOutlined />}/>
+                    <Title style={{ color: "#6c757d"}} level={4}>{ instructor.firstname+ " " + instructor.lastname}</Title>
+                    <div> {commentScreener} </div>
+                </Space>
 
-    //     return (
-    //         <div className="course-details">
-    //             <Card title={ <><FileTextOutlined /> Beschreibung:</> }>
-    //                 { !isEditMode && description }
-    //                 { isEditMode && <TextArea value={ description }
-    //                                           onChange={(e) => setDescription(e.target.value) }/>
-    //                 }
-    //             </Card>
-    //             <br/>
-    //             <Card title={ <><FileTextOutlined /> Gliederung:</> }>
-    //                 { !isEditMode && outline }
-    //                 { isEditMode && <TextArea value={ outline }
-    //                                           onChange={(e) => setOutline(e.target.value)}/>
-    //                 }
-    //             </Card>
-    //             <br/>
-    //             <Card title={<><FileTextOutlined /> Kategorie: </>}>
-    //                 {!isEditMode && categoryName[category]}
-    //                 {isEditMode && <Dropdown.Button overlay={categoryMenu} icon={<DownOutlined />}>
-    //                     <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-    //                         {categoryName[category]}
-    //                     </a>
-    //                 </Dropdown.Button>}
-    //             </Card>
-    //             <br/>
-    //             <Card title={ <><FileTextOutlined /> Kommentar:</> }>
-    //                 { !isEditMode && screeningComment }
-    //                 { isEditMode && <TextArea value={ screeningComment || "" }
-    //                                           onChange={(e) => setScreeningComment(e.target.value)}/>
-    //                 }
-    //             </Card>
-    //         </div>
-    //     );
-    // };
-    return (
-        <div className="update-instructor">
-            Hallo!
-        </div>
-    )
+                {!isEditMode && <Space size="small">
+                    {/*<Button onClick={ () => setCommentFormActive(true) }
+                            style={{ background: "#C4C4C4", color: "#FFFFFF"}}>
+                        Kommentieren
+                    </Button>*/}
+                    {instructor.verified !== true && <Button onClick={() => update(true)} style={{ background: "#B5F1BB" }}>
+                        Annehmen
+                    </Button>}
+                    {instructor.verified !== false && <Button onClick={() => update(false)} style={{ background: "#F5AFAF" }}>
+                        Ablehnen
+                    </Button>}
+                    <Button onClick={() => setIsEditMode(true)} icon={<EditOutlined />}/>
+                </Space>}
+
+                {isEditMode && <Space size="small">
+                    <Button 
+                    // onClick={ () => update(undefined)}
+                            style={{ background: "#C4C4C4", color: "#FFFFFF"}}>
+                        Speichern
+                    </Button>
+                    {instructor.verified !== true && <Button onClick={() => update(true)} style={{ background: "#B5F1BB" }}>
+                        Speichern und Annehmen
+                    </Button>}
+                    {instructor.verified !== false && <Button onClick={() => update(false)} style={{ background: "#F5AFAF" }}>
+                        Speichern und Ablehnen
+                    </Button>}
+                </Space>}
+            </div>
+        );
+    };
+
+    return <div>
+        { Header() }
+    </div>; 
+ 
 }
 
 export default Instructors;

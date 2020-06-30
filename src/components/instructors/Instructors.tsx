@@ -7,7 +7,9 @@ import { Instructor } from "../../api/useInstructors";
 import {ScreeningStatus, Student, TeacherModule, ApiScreeningResult, Screening} from "../../types/Student";
 import Title from "antd/lib/typography/Title";
 import useDebounce from "../../utils/useDebounce";
-import { ArrowLeftOutlined, EditOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, EditOutlined, FileTextOutlined } from "@ant-design/icons";
+
+const { TextArea } = Input;
 
 const possibleScreeningStatus: { [key in ScreeningStatus]: string } = {
     UNSCREENED: "Prüfen",
@@ -159,11 +161,6 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
                 </Space>}
 
                 {isEditMode && <Space size="small">
-                    <Button 
-                    // onClick={ () => update(undefined)}
-                            style={{ background: "#C4C4C4", color: "#FFFFFF"}}>
-                        Speichern
-                    </Button>
                     {instructor.verified !== true && <Button onClick={() => update(true)} style={{ background: "#B5F1BB" }}>
                         Speichern und Annehmen
                     </Button>}
@@ -175,9 +172,25 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
         );
     };
 
+    const customDetails = () => {
+        const commentField =
+            <Card title={ <><FileTextOutlined /> Kommentar: </> }>
+                { !isEditMode && commentScreener}
+                { isEditMode && <TextArea value={ commentScreener }
+                                          onChange={ (e) => setcommentScreener(e.target.value) } />}
+            </Card>
+
+        return (
+            <div className="custom-details">
+                { commentField }
+            </div>
+        )
+    }
+
     return (
         <div className="update-instructor">
             { Header() }
+            { customDetails() }
         </div>
     );
  

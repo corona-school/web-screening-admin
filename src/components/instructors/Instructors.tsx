@@ -127,6 +127,7 @@ function UpdateInstructor({ instructor, updateInstructor, close, screeningStatus
     const [screenerEmail, setscreenerEmail] = useState(instructor.email);
     const [subjects, setsubjects] = useState(instructor.subjects);
     const [feedback, setfeedback] = useState(instructor.feedback);
+    const [isStudent, setIsStudent] = useState(instructor.isStudent);
 
     const [isEditMode, setIsEditMode] = useState(false);
 
@@ -134,7 +135,7 @@ function UpdateInstructor({ instructor, updateInstructor, close, screeningStatus
 
     function update(verified: boolean){
         updateInstructor(instructor, {
-            verified, phone, birthday, commentScreener, knowscsfrom, screenerEmail, subjects, feedback
+            verified, phone, birthday, commentScreener, knowscsfrom, screenerEmail, subjects, feedback, isStudent
         }).then(close);
     }
 

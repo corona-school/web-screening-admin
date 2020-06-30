@@ -4,7 +4,7 @@ import { Tabs, Table, Input, Space, Card, Button } from "antd";
 import "./Instructors.less"
 import useInstructors from "../../api/useInstructors";
 import { Instructor } from "../../api/useInstructors";
-import {ScreeningStatus, Student, TeacherModule, ApiScreeningResult} from "../../types/Student";
+import {ScreeningStatus, Student, TeacherModule, ApiScreeningResult, Screening} from "../../types/Student";
 import Title from "antd/lib/typography/Title";
 import useDebounce from "../../utils/useDebounce";
 import { ArrowLeftOutlined, EditOutlined } from "@ant-design/icons";
@@ -116,17 +116,19 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
 
 
 function UpdateInstructor({ instructor, updateInstructor, close }: { instructor: Instructor, updateInstructor(instructor: Instructor, update: ApiScreeningResult): Promise<void>, close(): void }) {
+    const screening = instructor.__screening__ ? instructor.__screening__ : { comment: "", knowsCoronaSchoolFrom: "" };
+
     const [phone, setPhone] = useState(instructor.phone);
     const [birthday, setbirthday] = useState(instructor.birthday);
-    const [commentScreener, setcommentScreener] = useState(instructor.__screening__.comment || undefined);
-    const [knowscsfrom, setknowscsfrom] = useState(instructor.__screening__.knowsCoronaSchoolFrom);
+    const [commentScreener, setcommentScreener] = useState(screening.comment);
+    const [knowscsfrom, setknowscsfrom] = useState(screening.knowsCoronaSchoolFrom);
     const [screenerEmail, setscreenerEmail] = useState(instructor.email);
     const [subjects, setsubjects] = useState(instructor.subjects);
     const [feedback, setfeedback] = useState(instructor.feedback);
+
     const [isEditMode, setIsEditMode] = useState(false);
 
-    const isEdited = 
-        commentScreener !== instructor.__screening__.comment; 
+    const isEdited = commentScreener !== screening.comment;
 
     function update(verified: boolean){
         updateInstructor(instructor, {

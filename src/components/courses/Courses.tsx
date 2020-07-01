@@ -73,6 +73,19 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
             render: (createdAt: string) => new Date(createdAt).toLocaleDateString(),
         }
     ];
+
+    const rowClassName = (record: Course) => {
+        if(record.courseState === courseState)
+            return '';
+
+        if(record.courseState === CourseState.ALLOWED)
+            return 'green';
+
+        if(record.courseState === CourseState.DENIED)
+            return 'red';
+
+        return '';
+    }
     
     return (
         <div className="queue">
@@ -88,7 +101,7 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
                 {Object.keys(courseStates).map((courseState) => {
                     return (
                         <Tabs.TabPane tab={courseStates[courseState as CourseState]} key={courseState}>
-                            <Table loading={loading} columns={columns} dataSource={courses} onRow={record => ({ onClick() { setEditCourse(record); }})} className="hover"></Table>
+                            <Table rowClassName={rowClassName} loading={loading} columns={columns} dataSource={courses} onRow={record => ({ onClick() { setEditCourse(record); }})} className="hover"></Table>
                         </Tabs.TabPane>
                     );
                 })}

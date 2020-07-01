@@ -118,7 +118,7 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
 
 
 function UpdateInstructor({ instructor, updateInstructor, close, screeningStatus }: { instructor: Instructor, updateInstructor(instructor: Instructor, update: ApiScreeningResult): Promise<void>, close(): void, screeningStatus: ScreeningStatus }) {
-    const screening = instructor.__screening__ ? instructor.__screening__ : { comment: "", knowsCoronaSchoolFrom: "", success: null };
+    const screening = instructor.__screening__ ?? { comment: "", knowsCoronaSchoolFrom: "", success: null };
 
     const [phone, setPhone] = useState(instructor.phone);
     const [birthday, setbirthday] = useState(instructor.birthday);
@@ -140,14 +140,8 @@ function UpdateInstructor({ instructor, updateInstructor, close, screeningStatus
     }
 
     const Header = () => {
-        const showAcceptButton = (
-            screeningStatus === ScreeningStatus.Rejected ||
-            screeningStatus === ScreeningStatus.Unscreened
-        );
-        const showRejectButton = (
-            screeningStatus === ScreeningStatus.Accepted ||
-            screeningStatus === ScreeningStatus.Unscreened
-        );
+        const showAcceptButton = !screening.success;
+        const showRejectButton = screening.success !== false;
 
         return (
             <div className="header">

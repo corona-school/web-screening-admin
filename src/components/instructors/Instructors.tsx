@@ -83,6 +83,8 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
             
         if(record.__screening__?.success === false) 
             return 'red';
+
+        return "";
     };
 
     const onSearch = (event: { target: { value: string; }; }) => {

@@ -8,7 +8,7 @@ import {ApiScreeningResult, ScreeningStatus, TeacherModule} from "../../types/St
 import Title from "antd/lib/typography/Title";
 import useDebounce from "../../utils/useDebounce";
 import {ArrowLeftOutlined, EditOutlined, FileTextOutlined} from "@ant-design/icons";
-import { screeningTemplate } from "./screeningTemplate";
+import { screeningTemplateAG, screeningTemplateIntern } from "./screeningTemplate";
 
 const { TextArea } = Input;
 
@@ -139,7 +139,7 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
 
 
 function UpdateInstructor({ instructor, updateInstructor, close }: { instructor: Instructor, updateInstructor(instructor: Instructor, update: ApiScreeningResult): Promise<void>, close(): void }) {
-    const screening = instructor.__screening__ ?? { comment: screeningTemplate, knowsCoronaSchoolFrom: "", success: null };
+    const screening = instructor.__screening__ ?? { comment: (instructor.module ? screeningTemplateIntern : screeningTemplateAG), knowsCoronaSchoolFrom: "", success: null };
 
     const [phone, setPhone] = useState(instructor.phone);
     const [commentScreener, setCommentScreener] = useState(screening.comment);

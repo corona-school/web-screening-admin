@@ -9,6 +9,7 @@ export interface Student {
   msg: string;
   feedback?: string;
   isStudent: boolean;
+  module?: TeacherModule;
 }
 
 export interface SearchStudent {

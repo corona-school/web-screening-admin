@@ -38,7 +38,7 @@ export default function useInstructors({ initialStatus, initialSearch }: { initi
     }
 
     // Initially load all courses
-    useEffect(() => { loadInstructors({ screeningStatus: initialStatus, search: initialSearch }) }, []);
+    useEffect(() => { loadInstructors({ screeningStatus: initialStatus, search: initialSearch }) }, [initialStatus, initialSearch]);
 
     return { instructors, loading, loadInstructors, updateInstructor };
 }

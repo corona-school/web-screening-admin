@@ -6,7 +6,6 @@ export interface Student {
   verified?: boolean;
   subjects: string;
   phone?: string;
-  birthday?: Date;
   msg: string;
   feedback?: string;
   isStudent: boolean;
@@ -49,14 +48,13 @@ export enum ScreeningStatus {
 export interface ApiScreeningResult {
   verified: boolean;
   phone?: string;
-  birthday?: Date;
   commentScreener?: string;
   knowscsfrom?: string;
-  screenerEmail: string;
   subjects?: string;
   feedback?: string;
   isStudent: boolean;
 }
+
 export interface Screening {
     id: number;
     success: boolean; //verified or not verified

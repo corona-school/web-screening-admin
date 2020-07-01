@@ -6,7 +6,7 @@ export default function useDebounce<T>(value: T, time: number = 1000): T {
     useEffect(() => {
         const timer = setTimeout(() => setDebounced(value), time);
         return () => clearTimeout(timer);
-    }, [JSON.stringify(value)]);
+    }, [value, time]);
 
     return debounced;
 }

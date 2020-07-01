@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {Button, Card, Input, Space, Table, Tabs} from "antd";
+import Markdown from "react-markdown";
 
 import "./Instructors.less"
 import useInstructors, {Instructor} from "../../api/useInstructors";
@@ -7,6 +8,7 @@ import {ApiScreeningResult, ScreeningStatus, TeacherModule} from "../../types/St
 import Title from "antd/lib/typography/Title";
 import useDebounce from "../../utils/useDebounce";
 import {ArrowLeftOutlined, EditOutlined, FileTextOutlined} from "@ant-design/icons";
+import { screeningTemplate } from "./screeningTemplate";
 
 const { TextArea } = Input;
 
@@ -35,7 +37,6 @@ const Instructors = () => {
             instructor={editInstructor}
             updateInstructor={updateInstructor}
             close={() => setEditInstructor(null)}
-            screeningStatus={screeningStatus}
             />}
             {!editInstructor && <InstructorTable
                 screeningStatus={screeningStatus}
@@ -94,7 +95,7 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
     const searchField = <Input
         size="large"
         style={{ width: "400px" }}
-        placeholder="Nach einem Kursleiter suchen..."
+        placeholder="Suche nach Nachname oder Email"
         allowClear
         onChange={onSearch}
     />
@@ -137,16 +138,18 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
 }
 
 
-function UpdateInstructor({ instructor, updateInstructor, close, screeningStatus }: { instructor: Instructor, updateInstructor(instructor: Instructor, update: ApiScreeningResult): Promise<void>, close(): void, screeningStatus: ScreeningStatus }) {
-    const screening = instructor.__screening__ ?? { comment: "", knowsCoronaSchoolFrom: "", success: null };
+function UpdateInstructor({ instructor, updateInstructor, close }: { instructor: Instructor, updateInstructor(instructor: Instructor, update: ApiScreeningResult): Promise<void>, close(): void }) {
+    const screening = instructor.__screening__ ?? { comment: screeningTemplate, knowsCoronaSchoolFrom: "", success: null };
 
     const [phone, setPhone] = useState(instructor.phone);
-    const [birthday, setbirthday] = useState(instructor.birthday);
-    const [commentScreener, setcommentScreener] = useState(screening.comment);
-    const [knowscsfrom, setknowscsfrom] = useState(screening.knowsCoronaSchoolFrom);
-    const [screenerEmail, setscreenerEmail] = useState(instructor.email);
-    const [subjects, setsubjects] = useState(instructor.subjects);
-    const [feedback, setfeedback] = useState(instructor.feedback);
+    const [commentScreener, setCommentScreener] = useState(screening.comment);
+    
+    // we might want to support these in future releases depending on management
+
+    /*const [knowscsfrom, setKnowscsfrom] = useState(screening.knowsCoronaSchoolFrom);
+    const [subjects, setSubjects] = useState(instructor.subjects);
+    const [feedback, setFeedback] = useState(instructor.feedback);*/
+
     const [isStudent, setIsStudent] = useState(instructor.isStudent);
 
     const [isEditMode, setIsEditMode] = useState(false);
@@ -155,26 +158,23 @@ function UpdateInstructor({ instructor, updateInstructor, close, screeningStatus
 
     function update(verified: boolean){
         updateInstructor(instructor, {
-            verified, phone, birthday, commentScreener, knowscsfrom, screenerEmail, subjects, feedback, isStudent
+            verified, phone, commentScreener, isStudent /* knowscsfrom, subjects, feedback, */ 
         }).then(close);
     }
 
     const Header = () => {
         const showAcceptButton = !screening.success;
         const showRejectButton = screening.success !== false;
+        const showSaveButton = screening.success !== null;
 
         return (
             <div className="header">
                 <Space size="large" style={{ width: "100%"}}>
                     <Button onClick={() => (!isEdited || window.confirm("Willst du die Änderungen verwerfen?")) && close()}  icon={<ArrowLeftOutlined />}/>
-                    <Title style={{ color: "#6c757d"}} level={4}>{ instructor.firstname+ " " + instructor.lastname}</Title>
+                    <Title style={{ color: "#6c757d"}} level={4}>{ instructor.firstname + " " + instructor.lastname}</Title>
                 </Space>
 
                 {!isEditMode && <Space size="small">
-                    {/*<Button onClick={ () => setCommentFormActive(true) }
-                            style={{ background: "#C4C4C4", color: "#FFFFFF"}}>
-                        Kommentieren
-                    </Button>*/}
                     { showAcceptButton &&
                         <Button onClick={() => update(true)} style={{ background: "#B5F1BB" }}>
                             Annehmen
@@ -189,6 +189,7 @@ function UpdateInstructor({ instructor, updateInstructor, close, screeningStatus
                 </Space>}
 
                 {isEditMode && <Space size="small">
+                    { showSaveButton && <Button onClick={() => update(instructor.__screening__!.success)}>Speichern</Button> }
                     { showAcceptButton &&
                         <Button onClick={() => update(true)} style={{ background: "#B5F1BB" }}>
                             Speichern und Annehmen
@@ -205,16 +206,33 @@ function UpdateInstructor({ instructor, updateInstructor, close, screeningStatus
     };
 
     const customDetails = () => {
-        const commentField =
+        const commentField = (
             <Card title={ <><FileTextOutlined /> Kommentar: </> }>
-                { !isEditMode && commentScreener}
+                { !isEditMode && <Markdown source={commentScreener} />}
                 { isEditMode && <TextArea value={ commentScreener }
-                                          onChange={ (e) => setcommentScreener(e.target.value) } />}
+                                          onChange={ (e) => setCommentScreener(e.target.value) } />}
             </Card>
+        );
+
+        const studentField = (
+            <Card title={<><FileTextOutlined /> Betreuer: </>}>
+                { !isEditMode && (isStudent ? "Hilft auch Schülern" : "Ist nur Referent")}
+                { isEditMode && (isStudent ?  <Button key="no" onClick={() => setIsStudent(false)}>Ist nur Referent</Button> : <Button key="yes" onClick={() => setIsStudent(true)}>Hilft auch Schülern</Button>)}
+            </Card>
+        );
+
+        const otherFields = (
+            <Card title={<><FileTextOutlined /> Daten: </>}>
+                Telefonnummer: {phone ?? "-"}<br/>
+                Email: {instructor.email}
+            </Card>
+        )
 
         return (
             <div className="custom-details">
                 { commentField }
+                { studentField }
+                { otherFields }
             </div>
         )
     }

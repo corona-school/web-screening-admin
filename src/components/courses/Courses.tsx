@@ -1,15 +1,13 @@
-import React, {useCallback, useState} from "react";
-import {Button, Tabs, Table, Tag, Space, Card, Descriptions, Input, Modal, Dropdown, Menu} from "antd";
+import React, { useState } from "react";
+import {Button, Tabs, Table, Tag, Space, Card, Descriptions, Input, Dropdown, Menu} from "antd";
 import Title from "antd/lib/typography/Title";
-import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, ReadOutlined, EditOutlined, ArrowDownOutlined, DownOutlined, TagOutlined } from "@ant-design/icons/lib";
-import ClipLoader from "react-spinners/ClipLoader";
+import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, EditOutlined, DownOutlined, TagOutlined } from "@ant-design/icons/lib";
 
 import "./Courses.less";
 import { CourseState, Course, ApiCourseUpdate, CourseCategory, CourseTag } from "../../types/Course";
 
 import useCourses from "../../api/useCourses";
 import { Student } from "../../api";
-import index from "../screening";
 
 
 const { TextArea } = Input;
@@ -118,7 +116,6 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     const [category, setCategory] = useState<CourseCategory>(course.category);
     const [imageUrl, setImageUrl] = useState(course.imageUrl);
     const [screeningComment, setScreeningComment] = useState(course.screeningComment);
-    const [commentFormActive, setCommentFormActive] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
 
     const isEdited = 
@@ -147,10 +144,6 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                     
                 </Space>
                 {!isEditMode && <Space size="small">
-                    {/*<Button onClick={ () => setCommentFormActive(true) }
-                            style={{ background: "#C4C4C4", color: "#FFFFFF"}}>
-                        Kommentieren
-                    </Button>*/}
                     {course.courseState !== "allowed" && <Button onClick={() => update(CourseState.ALLOWED)} style={{ background: "#B5F1BB" }}>
                         Annehmen
                     </Button>}
@@ -256,7 +249,6 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
             { Header() }
             { CourseDetails() }
             { MetaDetails() }
-            { /* CommentCourse() */}
         </div>
     );
 }

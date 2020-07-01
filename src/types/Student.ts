@@ -9,6 +9,7 @@ export interface Student {
   birthday?: Date;
   msg: string;
   feedback?: string;
+  isStudent: boolean;
 }
 
 export interface SearchStudent {
@@ -54,6 +55,7 @@ export interface ApiScreeningResult {
   screenerEmail: string;
   subjects?: string;
   feedback?: string;
+  isStudent: boolean;
 }
 export interface Screening {
     id: number;

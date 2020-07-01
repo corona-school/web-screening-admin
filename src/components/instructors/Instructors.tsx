@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
 import {Button, Card, Input, Space, Table, Tabs} from "antd";
 
 import "./Instructors.less"
@@ -25,7 +25,9 @@ const Instructors = () => {
 
     console.log(instructors);
     
-    useDebounce({ screeningStatus, search }, 1000, loadInstructors);
+    const debouncedSearch = useDebounce(search, 1000);
+        
+    useEffect(() => { loadInstructors({ screeningStatus, search: debouncedSearch }); }, [screeningStatus, debouncedSearch]);
 
     return (
         <div className="instructor-container">

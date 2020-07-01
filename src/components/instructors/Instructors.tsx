@@ -70,6 +70,21 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
 
     ];
 
+    const toScreeningStatus = (status: boolean | undefined) => status === undefined ? ScreeningStatus.Unscreened : (status ? ScreeningStatus.Accepted : ScreeningStatus.Rejected);
+
+
+    const rowClassName = (record: Instructor) => {
+        // in case this table shows what the screener expects, apply no color
+        if(toScreeningStatus(record.__screening__?.success) === screeningStatus)
+            return '';
+            
+        if(record.__screening__?.success === true)
+            return 'green';
+            
+        if(record.__screening__?.success === false) 
+            return 'red';
+    };
+
     const onSearch = (event: { target: { value: string; }; }) => {
         setSearch(event.target.value);
     }
@@ -104,6 +119,7 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
                                     dataSource={instructors}
                                     className="hover"
                                     columns={columns}
+                                    rowClassName={rowClassName}
                                     onRow={record => ({ onClick() { setEditInstructor(record); }})}/>
                             </Space>
                         </Tabs.TabPane>

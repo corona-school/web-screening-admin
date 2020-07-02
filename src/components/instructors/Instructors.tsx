@@ -227,30 +227,32 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
         );
 
         const studentField = () => {
-            const TEXT = "Für Eins-zu-Eins-Betreuung geeignet";
+            const TEXT = "Für Eins-zu-Eins-Betreuung geeignet"
 
             return (
-                <p style={{marginBottom: "20px"}}>
+                <Card>
                     { (!isEditMode && isStudent) &&
-                        <Text>{ TEXT }</Text>
+                        <Text strong>{ TEXT }</Text>
                     }
                     { (!isEditMode && !isStudent) &&
-                        <Text delete>{ TEXT }</Text>
+                        <Text delete strong>{ TEXT }</Text>
                     }
                     {isEditMode &&
                         <Space>
                             <Checkbox onChange={() => setIsStudent(!isStudent)} checked={isStudent}/>
-                            <Text>{ TEXT }</Text>
+                            <Text strong>{ TEXT }</Text>
                         </Space>
                     }
-                </p>
+                </Card>
             );
         };
 
         return (
             <div className="custom-details">
-                { studentField() }
-                { commentField }
+                <Space direction="vertical" style={{width: "100%"}}>
+                    { studentField() }
+                    { commentField }
+                </Space>
             </div>
         )
     }

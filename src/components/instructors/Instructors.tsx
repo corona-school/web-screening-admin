@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import {Button, Card, Input, Space, Table, Tabs} from "antd";
+import {Button, Card, Input, Space, Table, Tabs, Checkbox, Typography} from "antd";
 import Markdown from "react-markdown";
 
 import "./Instructors.less"
 import useInstructors, {Instructor} from "../../api/useInstructors";
 import {ApiScreeningResult, ScreeningStatus, TeacherModule} from "../../types/Student";
-import Title from "antd/lib/typography/Title";
 import useDebounce from "../../utils/useDebounce";
 import {ArrowLeftOutlined, EditOutlined, FileTextOutlined} from "@ant-design/icons";
 import { screeningTemplateAG, screeningTemplateIntern } from "./screeningTemplate";
 
 const { TextArea } = Input;
+const { Title, Text } = Typography;
 
 const possibleScreeningStatus: { [key in ScreeningStatus]: string } = {
     UNSCREENED: "Prüfen",
@@ -217,12 +217,26 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
             </Card>
         );
 
-        const studentField = (
-            <Card title={<><FileTextOutlined /> Betreuer: </>}>
-                { !isEditMode && (isStudent ? "Hilft auch Schülern" : "Ist nur Referent")}
-                { isEditMode && (isStudent ?  <Button key="no" onClick={() => setIsStudent(false)}>Ist nur Referent</Button> : <Button key="yes" onClick={() => setIsStudent(true)}>Hilft auch Schülern</Button>)}
-            </Card>
-        );
+        const studentField = () => {
+            const TEXT = "Für Eins-zu-Eins-Betreuung geeignet";
+
+            return (
+                <p style={{marginBottom: "20px"}}>
+                    { (!isEditMode && isStudent) &&
+                        <Text>{ TEXT }</Text>
+                    }
+                    { (!isEditMode && !isStudent) &&
+                        <Text delete>{ TEXT }</Text>
+                    }
+                    {isEditMode &&
+                        <Space>
+                            <Checkbox onChange={() => setIsStudent(!isStudent)} checked={isStudent}/>
+                            <Text>{ TEXT }</Text>
+                        </Space>
+                    }
+                </p>
+            );
+        };
 
         const otherFields = (
             <Card title={<><FileTextOutlined /> Daten: </>}>
@@ -233,8 +247,8 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
 
         return (
             <div className="custom-details">
+                { studentField() }
                 { commentField }
-                { studentField }
                 { otherFields }
             </div>
         )

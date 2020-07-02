@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {Button, Card, Input, Space, Table, Tabs, Descriptions, Checkbox, Typography, Tag } from "antd";
+import {Button, Card, Input, Space, Table, Tabs, Descriptions, Checkbox, Typography, Tag, AutoComplete } from "antd";
 import Markdown from "react-markdown";
 
 import "./Instructors.less"
@@ -155,9 +155,9 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
     
     // we might want to support these in future releases depending on management
 
-    /*const [knowscsfrom, setKnowscsfrom] = useState(screening.knowsCoronaSchoolFrom);
+    const [knowscsfrom, setKnowscsfrom] = useState(screening.knowsCoronaSchoolFrom);
     const [subjects, setSubjects] = useState(instructor.subjects);
-    const [feedback, setFeedback] = useState(instructor.feedback);*/
+    const [feedback, setFeedback] = useState(instructor.feedback);
 
     const [isStudent, setIsStudent] = useState(instructor.isStudent);
 
@@ -167,7 +167,7 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
 
     function update(verified: boolean){
         updateInstructor(instructor, {
-            verified, phone, commentScreener, isStudent /* knowscsfrom, subjects, feedback, */ 
+            verified, phone, commentScreener, isStudent, knowscsfrom, subjects, feedback
         }).then(close);
     }
 
@@ -248,11 +248,39 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
             );
         };
 
+        const instructorFeedback = () => {
+            return (
+                <Card title="Feedback vom Kursleiter">
+                    <Space direction="vertical" style={{width: "100%"}}>
+                        <div>
+                            <Text strong>Kennt Corona School durch:</Text>
+                            <br/>
+                            {!isEditMode && <Text>{ knowscsfrom }</Text>}
+                            {isEditMode &&
+                            <Input value={knowscsfrom}
+                                   onChange={(event) => setKnowscsfrom(event.target.value)}
+                                   defaultValue="Kennt Corona School durch..." /> }
+                        </div>
+                        <div>
+                            <Text strong>Kommentar vom Kursleiter:</Text>
+                            <br/>
+                            {!isEditMode && <Text>{ feedback }</Text>}
+                            {isEditMode &&
+                            <TextArea value={feedback}
+                                      onChange={(event) => setFeedback(event.target.value)}
+                                      rows={4} />}
+                        </div>
+                    </Space>
+                </Card>
+            )
+        }
+
         return (
             <div className="custom-details">
                 <Space direction="vertical" style={{width: "100%"}}>
                     { studentField() }
                     { commentField }
+                    { instructorFeedback() }
                 </Space>
             </div>
         )

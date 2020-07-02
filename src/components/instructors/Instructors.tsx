@@ -209,8 +209,11 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
         const commentField = (
             <Card title={ <><FileTextOutlined /> Kommentar: </> }>
                 { !isEditMode && <Markdown source={commentScreener} />}
-                { isEditMode && <TextArea value={ commentScreener }
-                                          onChange={ (e) => setCommentScreener(e.target.value) } />}
+                { isEditMode && <TextArea 
+                    value={ commentScreener }
+                    onChange={ (e) => setCommentScreener(e.target.value) } 
+                    style={{ minHeight: "500px" }}
+                />}
             </Card>
         );
 

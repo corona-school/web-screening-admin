@@ -76,13 +76,13 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
 
     const rowClassName = (record: Instructor) => {
         // in case this table shows what the screener expects, apply no color
-        if(toScreeningStatus(record.__screening__?.success) === screeningStatus)
+        if(toScreeningStatus(record.__instructorScreening__?.success) === screeningStatus)
             return '';
             
-        if(record.__screening__?.success === true)
+        if(record.__instructorScreening__?.success === true)
             return 'green';
             
-        if(record.__screening__?.success === false) 
+        if(record.__instructorScreening__?.success === false)
             return 'red';
 
         return "";
@@ -139,7 +139,7 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
 
 
 function UpdateInstructor({ instructor, updateInstructor, close }: { instructor: Instructor, updateInstructor(instructor: Instructor, update: ApiScreeningResult): Promise<void>, close(): void }) {
-    const screening = instructor.__screening__ ?? { comment: (instructor.module ? screeningTemplateIntern : screeningTemplateAG), knowsCoronaSchoolFrom: "", success: null };
+    const screening = instructor.__instructorScreening__ ?? { comment: (instructor.module ? screeningTemplateIntern : screeningTemplateAG), knowsCoronaSchoolFrom: "", success: null };
 
     const [phone, setPhone] = useState(instructor.phone);
     const [commentScreener, setCommentScreener] = useState(screening.comment);
@@ -189,7 +189,7 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
                 </Space>}
 
                 {isEditMode && <Space size="small">
-                    { showSaveButton && <Button onClick={() => update(instructor.__screening__!.success)}>Speichern</Button> }
+                    { showSaveButton && <Button onClick={() => update(instructor.__instructorScreening__!.success)}>Speichern</Button> }
                     { showAcceptButton &&
                         <Button onClick={() => update(true)} style={{ background: "#B5F1BB" }}>
                             Speichern und Annehmen

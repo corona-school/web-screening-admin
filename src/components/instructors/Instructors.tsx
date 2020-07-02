@@ -240,23 +240,29 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
             );
         };
 
-        const otherFields = (
-            <Card title={<><FileTextOutlined /> Daten: </>}>
-                Telefonnummer: {phone ?? "-"}<br/>
-                Email: {instructor.email}
-            </Card>
-        )
-
         return (
             <div className="custom-details">
                 { studentField() }
                 { commentField }
-                { otherFields }
             </div>
         )
     }
 
     const studentDetails = () => {
+        const emailField = (
+            <Descriptions.Item label="E-Mail">
+                <a href={ "mailto: " + instructor.email}>
+                    { instructor.email }
+                </a>
+            </Descriptions.Item>
+        )
+
+        const phoneField = (
+            <Descriptions.Item label="Telefonnummer">
+                {phone ?? "-"}
+            </Descriptions.Item>
+        )
+
         const subjects = createSubjects(instructor.subjects);
         const subjectField = (
             <Descriptions.Item label={<> Fächer </>}>
@@ -302,6 +308,8 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
         return (
             <div className="student-details">
                 <Descriptions layout="vertical" column={1} bordered={true}>
+                    { emailField }
+                    { phoneField }
                     { (subjects.length != 0) && subjectField }
                     { (instructor.module != undefined) && teacherData}
                 </Descriptions>

@@ -14,7 +14,7 @@ import {
 } from "../../types/Student";
 import useDebounce from "../../utils/useDebounce";
 import { createSubjects } from "../../utils/subjectUtils";
-import {ArrowLeftOutlined, EditOutlined, FileTextOutlined} from "@ant-design/icons";
+import {ArrowLeftOutlined, EditOutlined, FileTextOutlined, MailOutlined, PhoneOutlined, TableOutlined, IdcardOutlined, ProfileOutlined } from "@ant-design/icons";
 import { screeningTemplateAG, screeningTemplateIntern } from "./screeningTemplate";
 import { ISubject } from "../../api";
 
@@ -250,7 +250,7 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
 
         const instructorFeedback = () => {
             return (
-                <Card title="Feedback vom Kursleiter">
+                <Card title={ <> <FileTextOutlined /> Feedback vom Kursleiter </> }>
                     <Space direction="vertical" style={{width: "100%"}}>
                         <div>
                             <Text strong>Kennt Corona School durch:</Text>
@@ -288,13 +288,13 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
 
     const studentDetails = () => {
         const instructorType = (
-            <Descriptions.Item label="Kursleiter-Typ">
+            <Descriptions.Item label={ <> <IdcardOutlined /> Kursleiter-Typ </> }>
                 { instructor.module ? "Praktikum" : "Sommer-AG" }
             </Descriptions.Item>
         )
 
         const emailField = (
-            <Descriptions.Item label="E-Mail">
+            <Descriptions.Item label={<> <MailOutlined /> E-Mail </>}>
                 <a href={ "mailto: " + instructor.email}>
                     { instructor.email }
                 </a>
@@ -302,14 +302,14 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
         )
 
         const phoneField = (
-            <Descriptions.Item label="Telefonnummer">
+            <Descriptions.Item label={ <> <PhoneOutlined /> Telefonnummer </> }>
                 {phone ?? "-"}
             </Descriptions.Item>
         )
 
         const subjects = createSubjects(instructor.subjects);
         const subjectField = (
-            <Descriptions.Item label={<> Fächer </>}>
+            <Descriptions.Item label={<> <TableOutlined /> Fächer </>}>
                     {<table>
                         <tbody>
                             {subjects.map(s =>
@@ -324,7 +324,7 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
         )
 
         const teacherData = (
-            <Descriptions.Item label={<>Lehrerdaten</>}>
+            <Descriptions.Item label={<> <ProfileOutlined /> Lehrerdaten</>}>
                 <table>
                     <tbody>
                         <tr>

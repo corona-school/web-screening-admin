@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {Button, Card, Input, Space, Table, Tabs, Descriptions, Checkbox, Typography} from "antd";
+import {Button, Card, Input, Space, Table, Tabs, Descriptions, Checkbox, Typography, Tag } from "antd";
 import Markdown from "react-markdown";
 
 import "./Instructors.less"
@@ -183,7 +183,8 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
                     <Title style={{ color: "#6c757d"}} level={4}>{ instructor.firstname + " " + instructor.lastname}</Title>
                 </Space>
 
-                {!isEditMode && <Space size="small">
+                {!isEditMode &&
+                <Space size="small">
                     { showAcceptButton &&
                         <Button onClick={() => update(true)} style={{ background: "#B5F1BB" }}>
                             Annehmen
@@ -258,6 +259,12 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
     }
 
     const studentDetails = () => {
+        const instructorType = (
+            <Descriptions.Item label="Kursleiter-Typ">
+                { instructor.module ? "Praktikum" : "Sommer-AG" }
+            </Descriptions.Item>
+        )
+
         const emailField = (
             <Descriptions.Item label="E-Mail">
                 <a href={ "mailto: " + instructor.email}>
@@ -316,6 +323,7 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
         return (
             <div className="student-details">
                 <Descriptions layout="vertical" column={1} bordered={true}>
+                    { instructorType }
                     { emailField }
                     { phoneField }
                     { (subjects.length != 0) && subjectField }

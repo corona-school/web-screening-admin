@@ -9,7 +9,10 @@ export interface Student {
   msg: string;
   feedback?: string;
   isStudent: boolean;
+  state?: State;
+  university?: string;
   module?: TeacherModule;
+  moduleHours?: number;
 }
 
 export interface SearchStudent {
@@ -70,4 +73,24 @@ export interface Screening {
 export enum TeacherModule {
   INTERNSHIP = "internship",
   SEMINAR = "seminar"
+}
+
+export enum State {
+  BW = 'bw',
+  BY = 'by',
+  BE = 'be',
+  BB = 'bb',
+  HB = 'hb',
+  HH = 'hh',
+  HE = 'he',
+  MV = 'mv',
+  NI = 'ni',
+  NW = 'nw',
+  RP = 'rp',
+  SL = 'sl',
+  SN = 'sn',
+  ST = 'st',
+  SH = 'sh',
+  TH = 'th',
+  OTHER = 'other'
 }

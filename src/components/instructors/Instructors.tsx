@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import {Button, Card, Input, Space, Table, Tabs} from "antd";
+import {Button, Card, Input, Space, Table, Tabs, Radio, Descriptions} from "antd";
 import Markdown from "react-markdown";
 
 import "./Instructors.less"
 import useInstructors, {Instructor} from "../../api/useInstructors";
-import {ApiScreeningResult, ScreeningStatus, TeacherModule} from "../../types/Student";
+import {ApiScreeningResult, ScreeningStatus, TeacherModule, State} from "../../types/Student";
 import Title from "antd/lib/typography/Title";
 import useDebounce from "../../utils/useDebounce";
+import { createSubjects } from "../../utils/subjectUtils";
 import {ArrowLeftOutlined, EditOutlined, FileTextOutlined} from "@ant-design/icons";
 import { screeningTemplateAG, screeningTemplateIntern } from "./screeningTemplate";
+import { ISubject } from "../../api";
 
 const { TextArea } = Input;
 
@@ -219,8 +221,13 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
 
         const studentField = (
             <Card title={<><FileTextOutlined /> Betreuer: </>}>
-                { !isEditMode && (isStudent ? "Hilft auch Schülern" : "Ist nur Referent")}
-                { isEditMode && (isStudent ?  <Button key="no" onClick={() => setIsStudent(false)}>Ist nur Referent</Button> : <Button key="yes" onClick={() => setIsStudent(true)}>Hilft auch Schülern</Button>)}
+                <div>Referent ist auch Student</div>
+                <Radio.Group value={isStudent} onChange={e => setIsStudent(e.target.value)}>
+                    <Radio value={true}>Ja</Radio>
+                    <Radio value={false}>Nein</Radio>
+                </Radio.Group>
+                {/* { !isEditMode && (isStudent ? "Hilft auch Schülern" : "Ist nur Referent")}
+                { isEditMode && (isStudent ?  <Button key="no" onClick={() => setIsStudent(false)}>Ist nur Referent</Button> : <Button key="yes" onClick={() => setIsStudent(true)}>Hilft auch Schülern</Button>)} */}
             </Card>
         );
 
@@ -240,10 +247,64 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
         )
     }
 
+    const studentDetails = () => {
+        const subjects = createSubjects(instructor.subjects);
+        const subjectField = (
+            <Descriptions.Item label={<> Fächer </>}>
+                    {<table>
+                        <tbody>
+                            {subjects.map(s =>
+                            <tr>
+                                <td>{s.subject}</td>
+                                <td>{`Klasse ${s.min} bis ${s.max}`}</td>
+                            </tr>
+                            )}
+                        </tbody>
+                    </table>}
+                </Descriptions.Item>
+        )
+
+        // TODO: translate state enum to actual text for display
+        const teacherData = (
+            <Descriptions.Item label={<>Lehrerdaten</>}>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Bundesland</td>
+                            <td>{instructor.state?.toString()}</td>
+                        </tr>
+                        <tr>
+                            <td>Universität</td>
+                            <td>{instructor.university}</td>
+                        </tr>
+                        <tr>
+                            <td>Modultyp</td>
+                            <td>{instructor.module == "internship" ? "Praktikum" : "Seminar"}</td>
+                        </tr>
+                        <tr>
+                            <td>Modulstunden</td>
+                            <td>{instructor.moduleHours}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </Descriptions.Item>
+        )
+
+        return (
+            <div className="student-details">
+                <Descriptions layout="vertical" column={1} bordered={true}>
+                    { (subjects.length != 0) && subjectField }
+                    { (instructor.module != undefined) && teacherData}
+                </Descriptions>
+            </div>
+        )
+    }
+
     return (
         <div className="update-instructor">
             { Header() }
             { customDetails() }
+            { studentDetails() }
         </div>
     );
  

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {Button, Card, Input, Space, Table, Tabs, Radio, Descriptions} from "antd";
+import {Button, Card, Input, Space, Table, Tabs, Descriptions, Checkbox, Typography} from "antd";
 import Markdown from "react-markdown";
 
 import "./Instructors.less"
 import useInstructors, {Instructor} from "../../api/useInstructors";
 import {ApiScreeningResult, ScreeningStatus, TeacherModule, State} from "../../types/Student";
-import Title from "antd/lib/typography/Title";
 import useDebounce from "../../utils/useDebounce";
 import { createSubjects } from "../../utils/subjectUtils";
 import {ArrowLeftOutlined, EditOutlined, FileTextOutlined} from "@ant-design/icons";
@@ -13,6 +12,7 @@ import { screeningTemplateAG, screeningTemplateIntern } from "./screeningTemplat
 import { ISubject } from "../../api";
 
 const { TextArea } = Input;
+const { Title, Text } = Typography;
 
 const possibleScreeningStatus: { [key in ScreeningStatus]: string } = {
     UNSCREENED: "Prüfen",
@@ -78,13 +78,13 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
 
     const rowClassName = (record: Instructor) => {
         // in case this table shows what the screener expects, apply no color
-        if(toScreeningStatus(record.__screening__?.success) === screeningStatus)
+        if(toScreeningStatus(record.__instructorScreening__?.success) === screeningStatus)
             return '';
             
-        if(record.__screening__?.success === true)
+        if(record.__instructorScreening__?.success === true)
             return 'green';
             
-        if(record.__screening__?.success === false) 
+        if(record.__instructorScreening__?.success === false)
             return 'red';
 
         return "";
@@ -141,7 +141,7 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
 
 
 function UpdateInstructor({ instructor, updateInstructor, close }: { instructor: Instructor, updateInstructor(instructor: Instructor, update: ApiScreeningResult): Promise<void>, close(): void }) {
-    const screening = instructor.__screening__ ?? { comment: (instructor.module ? screeningTemplateIntern : screeningTemplateAG), knowsCoronaSchoolFrom: "", success: null };
+    const screening = instructor.__instructorScreening__ ?? { comment: (instructor.module ? screeningTemplateIntern : screeningTemplateAG), knowsCoronaSchoolFrom: "", success: null };
 
     const [phone, setPhone] = useState(instructor.phone);
     const [commentScreener, setCommentScreener] = useState(screening.comment);
@@ -191,7 +191,7 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
                 </Space>}
 
                 {isEditMode && <Space size="small">
-                    { showSaveButton && <Button onClick={() => update(instructor.__screening__!.success)}>Speichern</Button> }
+                    { showSaveButton && <Button onClick={() => update(instructor.__instructorScreening__!.success)}>Speichern</Button> }
                     { showAcceptButton &&
                         <Button onClick={() => update(true)} style={{ background: "#B5F1BB" }}>
                             Speichern und Annehmen
@@ -219,17 +219,26 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
             </Card>
         );
 
-        const studentField = (
-            <Card title={<><FileTextOutlined /> Betreuer: </>}>
-                <div>Referent ist auch Student</div>
-                <Radio.Group value={isStudent} onChange={e => setIsStudent(e.target.value)}>
-                    <Radio value={true}>Ja</Radio>
-                    <Radio value={false}>Nein</Radio>
-                </Radio.Group>
-                {/* { !isEditMode && (isStudent ? "Hilft auch Schülern" : "Ist nur Referent")}
-                { isEditMode && (isStudent ?  <Button key="no" onClick={() => setIsStudent(false)}>Ist nur Referent</Button> : <Button key="yes" onClick={() => setIsStudent(true)}>Hilft auch Schülern</Button>)} */}
-            </Card>
-        );
+        const studentField = () => {
+            const TEXT = "Für Eins-zu-Eins-Betreuung geeignet";
+
+            return (
+                <p style={{marginBottom: "20px"}}>
+                    { (!isEditMode && isStudent) &&
+                        <Text>{ TEXT }</Text>
+                    }
+                    { (!isEditMode && !isStudent) &&
+                        <Text delete>{ TEXT }</Text>
+                    }
+                    {isEditMode &&
+                        <Space>
+                            <Checkbox onChange={() => setIsStudent(!isStudent)} checked={isStudent}/>
+                            <Text>{ TEXT }</Text>
+                        </Space>
+                    }
+                </p>
+            );
+        };
 
         const otherFields = (
             <Card title={<><FileTextOutlined /> Daten: </>}>
@@ -240,8 +249,8 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
 
         return (
             <div className="custom-details">
+                { studentField() }
                 { commentField }
-                { studentField }
                 { otherFields }
             </div>
         )

@@ -4,7 +4,14 @@ import Markdown from "react-markdown";
 
 import "./Instructors.less"
 import useInstructors, {Instructor} from "../../api/useInstructors";
-import {ApiScreeningResult, ScreeningStatus, TeacherModule, State} from "../../types/Student";
+import {
+    ApiScreeningResult,
+    ScreeningStatus,
+    TeacherModule,
+    StateLong,
+    State,
+    TeacherModulePretty
+} from "../../types/Student";
 import useDebounce from "../../utils/useDebounce";
 import { createSubjects } from "../../utils/subjectUtils";
 import {ArrowLeftOutlined, EditOutlined, FileTextOutlined} from "@ant-design/icons";
@@ -279,26 +286,25 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
                 </Descriptions.Item>
         )
 
-        // TODO: translate state enum to actual text for display
         const teacherData = (
             <Descriptions.Item label={<>Lehrerdaten</>}>
                 <table>
                     <tbody>
                         <tr>
-                            <td>Bundesland</td>
-                            <td>{instructor.state?.toString()}</td>
+                            <td>Bundesland:</td>
+                            <td>{ StateLong[instructor.state as State] }</td>
                         </tr>
                         <tr>
-                            <td>Universität</td>
-                            <td>{instructor.university}</td>
+                            <td>Universität:</td>
+                            <td>{ instructor.university }</td>
                         </tr>
                         <tr>
-                            <td>Modultyp</td>
-                            <td>{instructor.module == "internship" ? "Praktikum" : "Seminar"}</td>
+                            <td>Modultyp:</td>
+                            <td>{ TeacherModulePretty[instructor.module as TeacherModule] }</td>
                         </tr>
                         <tr>
-                            <td>Modulstunden</td>
-                            <td>{instructor.moduleHours}</td>
+                            <td>Modulstunden:</td>
+                            <td>{ instructor.moduleHours }</td>
                         </tr>
                     </tbody>
                 </table>

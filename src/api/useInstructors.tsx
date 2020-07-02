@@ -26,14 +26,14 @@ export default function useInstructors({ initialStatus, initialSearch }: { initi
         // Remove this to update silently:
         setState({ loading: true, instructors: [] });
 
-        const { status, data: { instructor, screening } } = await Axios.post(`${baseUrl}instructor/${id}/update`, update);
+        const { status, data: { instructor } } = await Axios.post(`${baseUrl}instructor/${id}/update`, update);
 
         if(status !== 200)
             throw new Error(`Failed to update instructor ${id} with status ${status}`);
 
         setState({
             loading: false,
-            instructors: before.map(it => it.id === instructor.id ? { ...instructor, __screening__: screening } : it)
+            instructors: before.map(it => it.id === instructor.id ? instructor : it)
         });
     }
 

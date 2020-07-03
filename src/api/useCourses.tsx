@@ -37,7 +37,7 @@ export default function useCourses({ initial }: { initial: CourseState }) {
     }
 
     // Initially load all courses
-    useEffect(() => { loadCourses({ courseState: initial }) }, []);
+    useEffect(() => { loadCourses({ courseState: initial }) }, [initial]);
 
     return { courses, loading, loadCourses, updateCourse };
 }

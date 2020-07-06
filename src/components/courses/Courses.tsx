@@ -21,9 +21,9 @@ const courseStates: { [key in CourseState]: string } = {
 };
 
 const categoryName: { [key in CourseCategory]: string } = {
-    club: "Club",
-    revision: "Wiederholung",
-    coaching: "Coaching"
+    club: "AG",
+    revision: "Repetitorium",
+    coaching: "Lern-Coaching"
 }
 
 

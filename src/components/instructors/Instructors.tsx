@@ -293,6 +293,12 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
             </Descriptions.Item>
         )
 
+        const message = (
+            <Descriptions.Item label={ <> <FileTextOutlined /> Nachricht </> }>
+                { instructor.msg ?? "-" }
+            </Descriptions.Item>
+        )
+
         const emailField = (
             <Descriptions.Item label={<> <MailOutlined /> E-Mail </>}>
                 <a href={ "mailto: " + instructor.email}>
@@ -352,6 +358,7 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
             <div className="student-details">
                 <Descriptions layout="vertical" column={1} bordered={true}>
                     { instructorType }
+                    { message }
                     { emailField }
                     { phoneField }
                     { (subjects.length != 0) && subjectField }

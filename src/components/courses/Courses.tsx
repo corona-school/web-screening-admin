@@ -1,13 +1,15 @@
-import React, { useState } from "react";
-import {Button, Tabs, Table, Tag, Space, Card, Descriptions, Input, Dropdown, Menu} from "antd";
+import React, { useState, useEffect } from "react";
+import {Button, Tabs, Table, Tag, Space, Card, Descriptions, Input, Dropdown, Menu, AutoComplete} from "antd";
 import Title from "antd/lib/typography/Title";
-import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, EditOutlined, DownOutlined, TagOutlined } from "@ant-design/icons/lib";
+import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, EditOutlined, DownOutlined, TagOutlined, PlusOutlined} from "@ant-design/icons/lib";
 
 import "./Courses.less";
 import { CourseState, Course, ApiCourseUpdate, CourseCategory, CourseTag } from "../../types/Course";
 
 import useCourses from "../../api/useCourses";
-import { Student } from "../../api";
+import useInstructors from "../../api/useInstructors";
+// import { Student } from "../../api";
+import { Student, ScreeningStatus } from "../../types/Student";
 
 
 const { TextArea } = Input;
@@ -220,6 +222,44 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     };
 
     const MetaDetails = () => {
+
+        const [inputVisible, setInputVisible] = useState(false);
+        const [inputValue, setInputValue] = useState("");
+        const { instructors, loadInstructors } = useInstructors({ initialStatus: ScreeningStatus.Accepted, initialSearch: "" });
+        const [search, setSearch] = useState<string>("");
+
+        useEffect(() => { loadInstructors({ screeningStatus : ScreeningStatus.Accepted, search: search }); }, [ScreeningStatus.Accepted, search]);
+
+        console.log(instructors);
+        console.log(course.instructors);
+
+        const showInput = () => {
+            setInputVisible(true);
+        }
+
+        const handleInputConfirm = (input : string) => {
+            const student : Student = {
+                id: 1,
+                firstname: input,
+                lastname: "",
+                email: "",
+                subjects: "",
+                msg: "",
+                isStudent: true,
+            }
+            course.instructors?.push(student);
+            setInputVisible(false);
+        }
+
+        const searchField =<AutoComplete
+            className="tag-input"
+            size="small"
+            placeholder="Name"
+            allowClear
+            onChange={setSearch}
+            onSearch={setSearch}
+        />
+
         return <div className="meta-details" >
             <Descriptions layout="vertical" column={1} bordered={true}>
                 <Descriptions.Item label={ <><CalendarOutlined /> Erstellt am</> }>
@@ -229,10 +269,32 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                     { new Date(course.updatedAt).toLocaleDateString() }
                 </Descriptions.Item>
                 <Descriptions.Item label={ <><UserOutlined /> Trainer</> }>
-                    {
-                        course.instructors?.
-                        map(instructor => instructor.firstname + " " + instructor.lastname).
-                        join(", ") || "-"
+                    { !isEditMode &&
+                        (course.instructors?.
+                            map(instructor => instructor.firstname + " " + instructor.lastname).
+                            join(", ") || "-")
+                    }
+                    { isEditMode &&
+                        (<>
+                        {course.instructors?.map(instructor => <Tag>{instructor.firstname + " " + instructor.lastname}</Tag>)}
+                        {inputVisible && (
+                            // <Input
+                            //     type="text"
+                            //     size="small"
+                            //     className="tag-input"
+                            //     value={inputValue}
+                            //     onChange={(e) => setInputValue(e.currentTarget.value)}
+                            //     onBlur={(e) => handleInputConfirm(e.currentTarget.value)}
+                            //     onPressEnter={(e) => handleInputConfirm(e.currentTarget.value)}
+                            // />
+                            <>{searchField}</>
+                        )}
+                        {!inputVisible && (
+                            <Tag className="site-tag-plus" onClick={showInput}>
+                                <PlusOutlined /> Trainer hinzufügen
+                            </Tag>
+                        )}
+                        </>)
                     }
                 </Descriptions.Item>
                 <Descriptions.Item label={ <><TagOutlined /> Labels</> }>

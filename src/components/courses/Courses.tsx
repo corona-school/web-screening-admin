@@ -122,6 +122,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     const [category, setCategory] = useState<CourseCategory>(course.category);
     const [imageUrl, setImageUrl] = useState(course.imageUrl);
     const [screeningComment, setScreeningComment] = useState(course.screeningComment);
+    const [courseInstructors, setCourseInstructors] = useState<Student[]>(course.instructors ?? []);
     const [isEditMode, setIsEditMode] = useState(false);
 
     const isEdited = 
@@ -262,6 +263,10 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
 		        setInstructorOptions(value ? searchResult(value) : []);
 		    };
 
+		    const handleChange = (value: string[]) => {
+		        console.log(value);
+            }
+
 		    return (
 		        <>
                     { !isEditMode &&
@@ -274,8 +279,9 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                             size="small"
                             mode="multiple"
                             options={instructorOptions}
-                            onChange={handleSearch}
-                            onSearch={handleSearch} />
+                            onChange={handleChange}
+                            onSearch={handleSearch}
+                            defaultValue={courseInstructors.map(i => `${i.firstname} ${i.lastname}`)} />
                     }
                 </>
             );

@@ -10,7 +10,11 @@ import useCourses from "../../api/useCourses";
 import useInstructors from "../../api/useInstructors";
 // import { Student } from "../../api";
 import { Student, ScreeningStatus } from "../../types/Student";
+import useDebounce from "../../utils/useDebounce";
+import Select, { SelectProps } from "antd/lib/select";
+import { SearchProps } from "antd/lib/input";
 
+const { Option } = Select;
 
 const { TextArea } = Input;
 
@@ -223,42 +227,37 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
 
     const MetaDetails = () => {
 
-        const [inputVisible, setInputVisible] = useState(false);
-        const [inputValue, setInputValue] = useState("");
         const { instructors, loadInstructors } = useInstructors({ initialStatus: ScreeningStatus.Accepted, initialSearch: "" });
         const [search, setSearch] = useState<string>("");
+        const debouncedSearch = useDebounce(search);
+        const [options, setOptions] = useState<SelectProps<object>["options"]>([]);
 
-        useEffect(() => { loadInstructors({ screeningStatus : ScreeningStatus.Accepted, search: search }); }, [ScreeningStatus.Accepted, search]);
+        useEffect(() => { loadInstructors({ screeningStatus : ScreeningStatus.Accepted, search: debouncedSearch }); }, [debouncedSearch]);
 
-        console.log(instructors);
-        console.log(course.instructors);
-
-        const showInput = () => {
-            setInputVisible(true);
-        }
-
-        const handleInputConfirm = (input : string) => {
-            const student : Student = {
-                id: 1,
-                firstname: input,
-                lastname: "",
-                email: "",
-                subjects: "",
-                msg: "",
-                isStudent: true,
-            }
-            course.instructors?.push(student);
-            setInputVisible(false);
-        }
-
-        const searchField =<AutoComplete
-            className="tag-input"
-            size="small"
-            placeholder="Name"
-            allowClear
-            onChange={setSearch}
-            onSearch={setSearch}
-        />
+        const searchResult = (query: string) => {
+            setSearch(query);
+            return instructors?.map((instructor) => {
+					return {
+						value: `${instructor.firstname} ${instructor.lastname}`,
+						label: ( // optional: add additional instructor info to dropdown items
+							<div
+								style={{
+									display: "flex",
+									flexDirection: "column",
+								}}>
+								<span>
+                                {instructor.firstname} {instructor.lastname}
+								</span>
+							</div>
+						),
+					};
+				});
+        };
+        
+		const handleSearch = (value: string) => {
+            console.log(searchResult(value));
+            setOptions(value ? searchResult(value) : []);
+		};
 
         return <div className="meta-details" >
             <Descriptions layout="vertical" column={1} bordered={true}>
@@ -274,27 +273,15 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                             map(instructor => instructor.firstname + " " + instructor.lastname).
                             join(", ") || "-")
                     }
-                    { isEditMode &&
-                        (<>
-                        {course.instructors?.map(instructor => <Tag>{instructor.firstname + " " + instructor.lastname}</Tag>)}
-                        {inputVisible && (
-                            // <Input
-                            //     type="text"
-                            //     size="small"
-                            //     className="tag-input"
-                            //     value={inputValue}
-                            //     onChange={(e) => setInputValue(e.currentTarget.value)}
-                            //     onBlur={(e) => handleInputConfirm(e.currentTarget.value)}
-                            //     onPressEnter={(e) => handleInputConfirm(e.currentTarget.value)}
-                            // />
-                            <>{searchField}</>
-                        )}
-                        {!inputVisible && (
-                            <Tag className="site-tag-plus" onClick={showInput}>
-                                <PlusOutlined /> Trainer hinzufügen
-                            </Tag>
-                        )}
-                        </>)
+                    {isEditMode &&
+                        <Select
+                            style={{ width: "300px" }}
+                            size="small"
+                            mode="multiple"
+                            options={options}
+                            onChange={handleSearch}
+                            onSearch={handleSearch}>
+                        </Select>
                     }
                 </Descriptions.Item>
                 <Descriptions.Item label={ <><TagOutlined /> Labels</> }>

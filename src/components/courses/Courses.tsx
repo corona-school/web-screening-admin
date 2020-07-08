@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, ReactNode} from "react";
 import {Button, Tabs, Table, Tag, Space, Card, Descriptions, Input, Dropdown, Menu, AutoComplete} from "antd";
 import Title from "antd/lib/typography/Title";
 import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, EditOutlined, DownOutlined, TagOutlined, PlusOutlined} from "@ant-design/icons/lib";
@@ -238,11 +238,10 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
 
 		const instructorNames = () => {
 
-		    const searchResult = (query: string) => {
-                setInstructorSearch(query);
+		    const getOptions = (instructors: Student[]) => {
                 return instructors?.map((instructor) => {
                     return {
-                        value: `${instructor.firstname} ${instructor.lastname}`,
+                        value: instructor.email,
                         label: ( // optional: add additional instructor info to dropdown items
                             <div
                                 style={{
@@ -256,15 +255,19 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                         ),
                     };
                 });
+            }
+
+            const searchResult = (query: string) => {
+                setInstructorSearch(query);
+                return getOptions(instructors);
 		    };
 
 		    const handleSearch = (value: string) => {
-		        console.log(searchResult(value));
 		        setInstructorOptions(value ? searchResult(value) : []);
 		    };
 
-		    const handleChange = (value: string[]) => {
-		        console.log(value);
+		    const handleChange = (update: {value: string, label: ReactNode}[]) => {
+		        console.log(update.map(u => u.value));
             }
 
 		    return (
@@ -281,7 +284,8 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                             options={instructorOptions}
                             onChange={handleChange}
                             onSearch={handleSearch}
-                            defaultValue={courseInstructors.map(i => `${i.firstname} ${i.lastname}`)} />
+                            labelInValue
+                            defaultValue={getOptions(courseInstructors)} />
                     }
                 </>
             );

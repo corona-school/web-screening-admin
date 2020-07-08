@@ -226,38 +226,60 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     };
 
     const MetaDetails = () => {
-
         const { instructors, loadInstructors } = useInstructors({ initialStatus: ScreeningStatus.Accepted, initialSearch: "" });
-        const [search, setSearch] = useState<string>("");
-        const debouncedSearch = useDebounce(search);
-        const [options, setOptions] = useState<SelectProps<object>["options"]>([]);
+        const [instructorSearch, setInstructorSearch] = useState<string>("");
+        const debouncedInstructorSearch = useDebounce(instructorSearch);
+        const [instructorOptions, setInstructorOptions] = useState<SelectProps<object>["options"]>([]);
 
-        useEffect(() => { loadInstructors({ screeningStatus : ScreeningStatus.Accepted, search: debouncedSearch }); }, [debouncedSearch]);
+        useEffect(() => {
+            loadInstructors({ screeningStatus : ScreeningStatus.Accepted, search: debouncedInstructorSearch });
+            }, [debouncedInstructorSearch]);
 
-        const searchResult = (query: string) => {
-            setSearch(query);
-            return instructors?.map((instructor) => {
-					return {
-						value: `${instructor.firstname} ${instructor.lastname}`,
-						label: ( // optional: add additional instructor info to dropdown items
-							<div
-								style={{
-									display: "flex",
-									flexDirection: "column",
-								}}>
-								<span>
-                                {instructor.firstname} {instructor.lastname}
-								</span>
-							</div>
-						),
-					};
-				});
-        };
-        
-		const handleSearch = (value: string) => {
-            console.log(searchResult(value));
-            setOptions(value ? searchResult(value) : []);
-		};
+		const instructorNames = () => {
+
+		    const searchResult = (query: string) => {
+                setInstructorSearch(query);
+                return instructors?.map((instructor) => {
+                    return {
+                        value: `${instructor.firstname} ${instructor.lastname}`,
+                        label: ( // optional: add additional instructor info to dropdown items
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}>
+                                <span>
+                                    {instructor.firstname} {instructor.lastname}
+                                </span>
+                            </div>
+                        ),
+                    };
+                });
+		    };
+
+		    const handleSearch = (value: string) => {
+		        console.log(searchResult(value));
+		        setInstructorOptions(value ? searchResult(value) : []);
+		    };
+
+		    return (
+		        <>
+                    { !isEditMode &&
+                    (
+                        course.instructors?.map(instructor => instructor.firstname + " " + instructor.lastname).join(", ") || "-"
+                    )
+                    }
+                    {isEditMode &&
+                    <Select style={{ width: "300px" }}
+                            size="small"
+                            mode="multiple"
+                            options={instructorOptions}
+                            onChange={handleSearch}
+                            onSearch={handleSearch} />
+                    }
+                </>
+            );
+        }
 
         return <div className="meta-details" >
             <Descriptions layout="vertical" column={1} bordered={true}>
@@ -268,21 +290,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                     { new Date(course.updatedAt).toLocaleDateString() }
                 </Descriptions.Item>
                 <Descriptions.Item label={ <><UserOutlined /> Trainer</> }>
-                    { !isEditMode &&
-                        (course.instructors?.
-                            map(instructor => instructor.firstname + " " + instructor.lastname).
-                            join(", ") || "-")
-                    }
-                    {isEditMode &&
-                        <Select
-                            style={{ width: "300px" }}
-                            size="small"
-                            mode="multiple"
-                            options={options}
-                            onChange={handleSearch}
-                            onSearch={handleSearch}>
-                        </Select>
-                    }
+                    { instructorNames() }
                 </Descriptions.Item>
                 <Descriptions.Item label={ <><TagOutlined /> Labels</> }>
                     { 

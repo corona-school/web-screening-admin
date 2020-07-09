@@ -7,12 +7,13 @@ import "./Courses.less";
 import { CourseState, Course, ApiCourseUpdate, CourseCategory, CourseTag } from "../../types/Course";
 
 import useCourses from "../../api/useCourses";
-import useInstructors from "../../api/useInstructors";
+import useInstructors, { Instructor } from "../../api/useInstructors";
 // import { Student } from "../../api";
 import { Student, ScreeningStatus } from "../../types/Student";
 import useDebounce from "../../utils/useDebounce";
 import Select, { SelectProps } from "antd/lib/select";
 import { SearchProps } from "antd/lib/input";
+import InstructorSelector from "./InstructorSelector";
 
 const { Option } = Select;
 
@@ -122,7 +123,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     const [category, setCategory] = useState<CourseCategory>(course.category);
     const [imageUrl, setImageUrl] = useState(course.imageUrl);
     const [screeningComment, setScreeningComment] = useState(course.screeningComment);
-    const [courseInstructors, setCourseInstructors] = useState<Student[]>(course.instructors ?? []);
+    const [courseInstructors, setCourseInstructors] = useState<Instructor[]>(course.instructors ?? []);
     const [isEditMode, setIsEditMode] = useState(false);
 
     const isEdited = 
@@ -227,69 +228,6 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     };
 
     const MetaDetails = () => {
-        const { instructors, loadInstructors } = useInstructors({ initialStatus: ScreeningStatus.Accepted, initialSearch: "" });
-        const [instructorSearch, setInstructorSearch] = useState<string>("");
-        const debouncedInstructorSearch = useDebounce(instructorSearch);
-        const [instructorOptions, setInstructorOptions] = useState<SelectProps<object>["options"]>([]);
-
-        useEffect(() => {
-            loadInstructors({ screeningStatus : ScreeningStatus.Accepted, search: debouncedInstructorSearch });
-            }, [debouncedInstructorSearch]);
-
-		const instructorNames = () => {
-
-		    const getOptions = (instructors: Student[]) => {
-                return instructors?.map((instructor) => {
-                    return {
-                        value: instructor.email,
-                        label: ( // optional: add additional instructor info to dropdown items
-                            <div
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                }}>
-                                <span>
-                                    {instructor.firstname} {instructor.lastname}
-                                </span>
-                            </div>
-                        ),
-                    };
-                });
-            }
-
-            const searchResult = (query: string) => {
-                setInstructorSearch(query);
-                return getOptions(instructors);
-		    };
-
-		    const handleSearch = (value: string) => {
-		        setInstructorOptions(value ? searchResult(value) : []);
-		    };
-
-		    const handleChange = (update: {value: string, label: ReactNode}[]) => {
-		        console.log(update.map(u => u.value));
-            }
-
-		    return (
-		        <>
-                    { !isEditMode &&
-                    (
-                        course.instructors?.map(instructor => instructor.firstname + " " + instructor.lastname).join(", ") || "-"
-                    )
-                    }
-                    {isEditMode &&
-                    <Select style={{ width: "300px" }}
-                            size="small"
-                            mode="multiple"
-                            options={instructorOptions}
-                            onChange={handleChange}
-                            onSearch={handleSearch}
-                            labelInValue
-                            defaultValue={getOptions(courseInstructors)} />
-                    }
-                </>
-            );
-        }
 
         return <div className="meta-details" >
             <Descriptions layout="vertical" column={1} bordered={true}>
@@ -300,7 +238,9 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                     { new Date(course.updatedAt).toLocaleDateString() }
                 </Descriptions.Item>
                 <Descriptions.Item label={ <><UserOutlined /> Trainer</> }>
-                    { instructorNames() }
+                    {!isEditMode && (course.instructors?.map(instructor => instructor.firstname + " " + instructor.lastname).join(", ") || "-")}
+                    {isEditMode && <InstructorSelector instructors={courseInstructors} setInstructors={setCourseInstructors} />}
+
                 </Descriptions.Item>
                 <Descriptions.Item label={ <><TagOutlined /> Labels</> }>
                     { 

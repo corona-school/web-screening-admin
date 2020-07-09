@@ -1,4 +1,5 @@
 import { Student } from "./Student";
+import { Instructor } from "../api/useInstructors";
 
 
 // TODO: Do we serialize the Many to Many relations and send them to this backend?
@@ -6,7 +7,7 @@ export interface Course {
     id: number;
     createdAt: Date;
     updatedAt: Date;
-    instructors?: Student[];
+    instructors?: Instructor[];
     name: string;
     outline: string;
     description: string;

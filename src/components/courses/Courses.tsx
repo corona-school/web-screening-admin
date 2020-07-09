@@ -194,17 +194,17 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
 
         return (
             <div className="course-details">
+                <Card title={ <><FileTextOutlined /> Kurzbeschreibung:</> }>
+                    { !isEditMode && outline }
+                    { isEditMode && <TextArea value={ outline }
+                                              onChange={(e) => setOutline(e.target.value)}/>
+                    }
+                </Card>
+                <br/>
                 <Card title={ <><FileTextOutlined /> Beschreibung:</> }>
                     { !isEditMode && description }
                     { isEditMode && <TextArea value={ description }
                                               onChange={(e) => setDescription(e.target.value) }/>
-                    }
-                </Card>
-                <br/>
-                <Card title={ <><FileTextOutlined /> Gliederung:</> }>
-                    { !isEditMode && outline }
-                    { isEditMode && <TextArea value={ outline }
-                                              onChange={(e) => setOutline(e.target.value)}/>
                     }
                 </Card>
                 <br/>

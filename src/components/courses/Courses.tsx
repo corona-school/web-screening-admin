@@ -123,7 +123,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     const [category, setCategory] = useState<CourseCategory>(course.category);
     const [imageUrl, setImageUrl] = useState(course.imageUrl);
     const [screeningComment, setScreeningComment] = useState(course.screeningComment);
-    const [courseInstructors, setCourseInstructors] = useState<Instructor[]>(course.instructors ?? []);
+    const [instructors, setInstructors] = useState<Instructor[]>(course.instructors ?? []);
     const [isEditMode, setIsEditMode] = useState(false);
 
     const isEdited = 
@@ -136,7 +136,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
 
     function update(courseState: CourseState.ALLOWED | CourseState.CANCELLED | CourseState.DENIED | undefined) {
         updateCourse(course, {
-            category, courseState, description, imageUrl, name, outline, screeningComment
+            category, courseState, description, imageUrl, name, outline, screeningComment, instructors
         }).then(close);
     }
 
@@ -239,7 +239,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                 </Descriptions.Item>
                 <Descriptions.Item label={ <><UserOutlined /> Trainer</> }>
                     {!isEditMode && (course.instructors?.map(instructor => instructor.firstname + " " + instructor.lastname).join(", ") || "-")}
-                    {isEditMode && <InstructorSelector instructors={courseInstructors} setInstructors={setCourseInstructors} />}
+                    {isEditMode && <InstructorSelector instructors={instructors} setInstructors={setInstructors} />}
 
                 </Descriptions.Item>
                 <Descriptions.Item label={ <><TagOutlined /> Labels</> }>

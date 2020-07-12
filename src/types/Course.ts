@@ -27,6 +27,7 @@ export interface ApiCourseUpdate {
     category?: CourseCategory;
     imageUrl?: string | null;
     screeningComment?: string | null;
+    instructors?: { id: number }[];
 }
 
 export enum CourseState {

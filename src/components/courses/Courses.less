@@ -50,6 +50,7 @@
 	overflow: auto;
 	flex-direction: column;
 	width: 67%;
+	white-space: pre-line;
 }
 
 .meta-details {
@@ -65,4 +66,12 @@ widens the size of the title in edit mode
 .course-header .ant-space-item:nth-child(2) {
 	width: 100%;
 	margin-right: 5%;
+}
+
+
+/* Support screening mode with small window size */
+@media (max-width: 1000px) {
+	.course-details, .meta-details {
+		width: 100%;
+	}
 }

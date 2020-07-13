@@ -1,14 +1,21 @@
-import React, { useState } from "react";
-import {Button, Tabs, Table, Tag, Space, Card, Descriptions, Input, Dropdown, Menu} from "antd";
+import React, {useState, useEffect, ReactNode} from "react";
+import {Button, Tabs, Table, Tag, Space, Card, Descriptions, Input, Dropdown, Menu, AutoComplete} from "antd";
 import Title from "antd/lib/typography/Title";
-import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, EditOutlined, DownOutlined, TagOutlined } from "@ant-design/icons/lib";
+import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, EditOutlined, DownOutlined, TagOutlined, PlusOutlined} from "@ant-design/icons/lib";
 
 import "./Courses.less";
 import { CourseState, Course, ApiCourseUpdate, CourseCategory, CourseTag } from "../../types/Course";
 
 import useCourses from "../../api/useCourses";
-import { Student } from "../../api";
+import useInstructors, { Instructor } from "../../api/useInstructors";
+// import { Student } from "../../api";
+import { Student, ScreeningStatus } from "../../types/Student";
+import useDebounce from "../../utils/useDebounce";
+import Select, { SelectProps } from "antd/lib/select";
+import { SearchProps } from "antd/lib/input";
+import InstructorSelector from "./InstructorSelector";
 
+const { Option } = Select;
 
 const { TextArea } = Input;
 
@@ -21,9 +28,9 @@ const courseStates: { [key in CourseState]: string } = {
 };
 
 const categoryName: { [key in CourseCategory]: string } = {
-    club: "Club",
-    revision: "Wiederholung",
-    coaching: "Coaching"
+    club: "AG",
+    revision: "Repetitorium",
+    coaching: "Lern-Coaching"
 }
 
 
@@ -116,6 +123,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     const [category, setCategory] = useState<CourseCategory>(course.category);
     const [imageUrl, setImageUrl] = useState(course.imageUrl);
     const [screeningComment, setScreeningComment] = useState(course.screeningComment);
+    const [instructors, setInstructors] = useState<Instructor[]>(course.instructors ?? []);
     const [isEditMode, setIsEditMode] = useState(false);
 
     const isEdited = 
@@ -128,7 +136,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
 
     function update(courseState: CourseState.ALLOWED | CourseState.CANCELLED | CourseState.DENIED | undefined) {
         updateCourse(course, {
-            category, courseState, description, imageUrl, name, outline, screeningComment
+            category, courseState, description, imageUrl, name, outline, screeningComment, instructors
         }).then(close);
     }
 
@@ -186,17 +194,17 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
 
         return (
             <div className="course-details">
+                <Card title={ <><FileTextOutlined /> Kurzbeschreibung:</> }>
+                    { !isEditMode && outline }
+                    { isEditMode && <TextArea value={ outline }
+                                              onChange={(e) => setOutline(e.target.value)}/>
+                    }
+                </Card>
+                <br/>
                 <Card title={ <><FileTextOutlined /> Beschreibung:</> }>
                     { !isEditMode && description }
                     { isEditMode && <TextArea value={ description }
                                               onChange={(e) => setDescription(e.target.value) }/>
-                    }
-                </Card>
-                <br/>
-                <Card title={ <><FileTextOutlined /> Gliederung:</> }>
-                    { !isEditMode && outline }
-                    { isEditMode && <TextArea value={ outline }
-                                              onChange={(e) => setOutline(e.target.value)}/>
                     }
                 </Card>
                 <br/>
@@ -220,6 +228,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     };
 
     const MetaDetails = () => {
+
         return <div className="meta-details" >
             <Descriptions layout="vertical" column={1} bordered={true}>
                 <Descriptions.Item label={ <><CalendarOutlined /> Erstellt am</> }>
@@ -229,11 +238,9 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                     { new Date(course.updatedAt).toLocaleDateString() }
                 </Descriptions.Item>
                 <Descriptions.Item label={ <><UserOutlined /> Trainer</> }>
-                    {
-                        course.instructors?.
-                        map(instructor => instructor.firstname + " " + instructor.lastname).
-                        join(", ") || "-"
-                    }
+                    {!isEditMode && (course.instructors?.map(instructor => instructor.firstname + " " + instructor.lastname).join(", ") || "-")}
+                    {isEditMode && <InstructorSelector instructors={instructors} setInstructors={setInstructors} />}
+
                 </Descriptions.Item>
                 <Descriptions.Item label={ <><TagOutlined /> Labels</> }>
                     { 

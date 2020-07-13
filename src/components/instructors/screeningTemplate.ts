@@ -1,5 +1,5 @@
 export const screeningTemplateAG = `
-### Breits in der Corona School?
+### Bereits in der Corona School?
 
 ### Wie auf die AGs aufmerksam geworden?
 

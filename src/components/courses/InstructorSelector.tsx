@@ -27,7 +27,7 @@ export default function InstructorSelector({ instructors, setInstructors }: { in
         console.log("addInstructor", value);
 
         let newInstructor = JSON.parse(value);
-        {!alreadyChosen(newInstructor) && setInstructors([...instructors, newInstructor])};
+        if (!alreadyChosen(newInstructor)) setInstructors([...instructors, newInstructor])
     };
     
     const removeInstructor = ({ value } : { value: string }) => {

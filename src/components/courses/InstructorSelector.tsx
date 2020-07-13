@@ -19,10 +19,15 @@ export default function InstructorSelector({ instructors, setInstructors }: { in
 
     const instructorTags = useMemo(() => toTags(instructors), [instructors]);
 
+    function alreadyChosen(newInstructor: Instructor) {
+        return instructors.map(i => i.id).indexOf(newInstructor.id) !== -1;
+    }
+
     const addInstructor = ({ value }: { value: string }) => {
         console.log("addInstructor", value);
 
-        setInstructors([...instructors, JSON.parse(value)]);
+        let newInstructor = JSON.parse(value);
+        {!alreadyChosen(newInstructor) && setInstructors([...instructors, newInstructor])};
     };
     
     const removeInstructor = ({ value } : { value: string }) => {
@@ -42,7 +47,7 @@ export default function InstructorSelector({ instructors, setInstructors }: { in
                     onDeselect={removeInstructor}
                     labelInValue
             >
-                {foundInstructors.map(instructor => <Select.Option key={instructor.email} value={JSON.stringify(instructor)}>{instructor.firstname} {instructor.lastname}</Select.Option>)}
+                {foundInstructors.filter(instructor => !alreadyChosen(instructor)).map(instructor => <Select.Option key={instructor.email} value={JSON.stringify(instructor)}>{instructor.firstname} {instructor.lastname}</Select.Option>)}
             </Select>
             
         </>

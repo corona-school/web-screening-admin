@@ -14,7 +14,7 @@ export interface Course {
     imageUrl: string | null;
     category: CourseCategory;
     tags?: CourseTag[];
-    // subcourses?: Subcourse[];
+    subcourses?: Subcourse[];
     courseState: CourseState;
     screeningComment: string | null;
 }
@@ -49,4 +49,15 @@ export interface CourseTag {
     identifier: string;
     name: string;
     category: string;
+}
+
+export interface Subcourse {
+    id: number;
+    lectures: Lecture[];
+}
+
+export interface Lecture {
+    id: number;
+    subcourse: Subcourse;
+    start: Date;
 }

@@ -217,6 +217,10 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                     </Dropdown.Button>}
                 </Card>
                 <br/>
+                <Card title={<><CalendarOutlined /> Kurstage: </>}>
+                    {!isEditMode && (course.subcourses ? course.subcourses[0].lectures.map(l => <Tag>{ new Date(l.start).toLocaleDateString() }</Tag>) : "")}
+                </Card>
+                <br/>
                 <Card title={ <><FileTextOutlined /> Kommentar:</> }>
                     { !isEditMode && screeningComment }
                     { isEditMode && <TextArea value={ screeningComment || "" }

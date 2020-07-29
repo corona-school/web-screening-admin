@@ -101,7 +101,7 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
     const searchField = <Input
         size="large"
         style={{ width: "400px" }}
-        placeholder="Suche nach Nachname oder Email"
+        placeholder="Suche nach Name oder Beschreibung"
         allowClear
         onChange={onSearch}
     />;

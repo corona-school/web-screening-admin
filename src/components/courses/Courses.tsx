@@ -35,23 +35,25 @@ const categoryName: { [key in CourseCategory]: string } = {
 
 
 const Courses = () => {
-    const [courseState, _setCourseState] = useState<CourseState>(CourseState.SUBMITTED);
+    const [courseState, setCourseState] = useState<CourseState>(CourseState.SUBMITTED);
+    const [_search, setSearch] = useState("");
+    const search = useDebounce(_search);
+
     const [editCourse, setEditCourse] = useState<Course | null>(null);
 
     const { courses, loadCourses, loading, updateCourse } = useCourses({ initial: CourseState.SUBMITTED });
 
-    function setCourseState(courseState: CourseState) {
-        _setCourseState(courseState);
-        loadCourses({ courseState });
-    }
+    useEffect(() => {
+        loadCourses({ courseState, search });
+    }, [courseState, search]);
 
     return <div className="course-container">
         {editCourse && <UpdateCourse course={editCourse} updateCourse={updateCourse} close={() => setEditCourse(null)} />}
-        {!editCourse && <CourseTable courseState={courseState} courses={courses} loading={loading} setCourseState={setCourseState} setEditCourse={setEditCourse} />}
+        {!editCourse && <CourseTable courseState={courseState} courses={courses} loading={loading} setCourseState={setCourseState} setEditCourse={setEditCourse} setSearch={setSearch} />}
     </div>
 }
 
-function CourseTable({ courseState, setCourseState, courses, loading, setEditCourse }: { courseState: CourseState, setCourseState(courseState: CourseState): void, courses: Course[], loading: boolean, setEditCourse(course: Course): void }) {
+function CourseTable({ courseState, setCourseState, courses, loading, setEditCourse, setSearch }: { courseState: CourseState, setCourseState(courseState: CourseState): void, courses: Course[], loading: boolean, setEditCourse(course: Course): void, setSearch(search: string): void }) {
 
     const columns = [
         {
@@ -90,7 +92,19 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
             return 'red';
 
         return '';
-    }
+    };
+
+    const onSearch = (event: { target: { value: string; }; }) => {
+        setSearch(event.target.value);
+    };
+
+    const searchField = <Input
+        size="large"
+        style={{ width: "400px" }}
+        placeholder="Suche nach Name oder Beschreibung"
+        allowClear
+        onChange={onSearch}
+    />;
     
     return (
         <div className="queue">
@@ -100,6 +114,7 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
                 </Title>
             </div>
             <Tabs
+                tabBarExtraContent={searchField}
                 defaultActiveKey={`submitted`}
                 activeKey={courseState}
                 onChange={k => setCourseState(k as CourseState)}>

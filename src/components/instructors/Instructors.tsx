@@ -283,16 +283,13 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
                         <SubjectList subjects={createSubjects(subjects)}
                                      setSubjects={(s) => setSubjects(subjectToString(s))} />}
                     {!isEditMode &&
-                        <table>
-                            <tbody>
-                                {createSubjects(subjects).map(s =>
-                                    <tr>
-                                        <td>{s.subject}</td>
-                                        <td>{`Klasse ${s.min} bis ${s.max}`}</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>}
+                        <Descriptions bordered size="small" layout="horizontal" column={1}>
+                            {createSubjects(subjects).map((s) =>
+                                <Descriptions.Item label={s.subject}>
+                                    {`Klasse ${s.min} bis ${s.max}`}
+                                </Descriptions.Item>
+                            )}
+                        </Descriptions>}
                 </Card>
             )
         }

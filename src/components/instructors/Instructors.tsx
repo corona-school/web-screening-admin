@@ -277,17 +277,15 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
         }
 
         const subjectInformation = () => {
-            const subjects = createSubjects(instructor.subjects)
-
             return (
                 <Card title={ <> <TableOutlined /> Fächer </> }>
                     {isEditMode &&
-                        <SubjectList subjects={subjects}
-                                     setSubjects={(subjects) => setSubjects(subjectToString(subjects))} />}
+                        <SubjectList subjects={createSubjects(subjects)}
+                                     setSubjects={(s) => setSubjects(subjectToString(s))} />}
                     {!isEditMode &&
                         <table>
                             <tbody>
-                                {subjects.map(s =>
+                                {createSubjects(subjects).map(s =>
                                     <tr>
                                         <td>{s.subject}</td>
                                         <td>{`Klasse ${s.min} bis ${s.max}`}</td>

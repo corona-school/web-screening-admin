@@ -13,10 +13,11 @@ import {
     TeacherModulePretty
 } from "../../types/Student";
 import useDebounce from "../../utils/useDebounce";
-import { createSubjects } from "../../utils/subjectUtils";
+import {createSubjects, subjectToString} from "../../utils/subjectUtils";
 import {ArrowLeftOutlined, EditOutlined, FileTextOutlined, MailOutlined, PhoneOutlined, TableOutlined, IdcardOutlined, ProfileOutlined } from "@ant-design/icons";
 import { screeningTemplateAG, screeningTemplateIntern } from "./screeningTemplate";
 import { ISubject } from "../../api";
+import SubjectList from "../userList/SubjectList";
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
@@ -275,11 +276,30 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
             )
         }
 
+        const subjectInformation = () => {
+            return (
+                <Card title={ <> <TableOutlined /> Fächer </> }>
+                    {isEditMode &&
+                        <SubjectList subjects={createSubjects(subjects)}
+                                     setSubjects={(s) => setSubjects(subjectToString(s))} />}
+                    {!isEditMode &&
+                        <Descriptions bordered size="small" layout="horizontal" column={1}>
+                            {createSubjects(subjects).map((s) =>
+                                <Descriptions.Item label={s.subject}>
+                                    {`Klasse ${s.min} bis ${s.max}`}
+                                </Descriptions.Item>
+                            )}
+                        </Descriptions>}
+                </Card>
+            )
+        }
+
         return (
             <div className="custom-details">
                 <Space direction="vertical" style={{width: "100%"}}>
                     { studentField() }
                     { commentField }
+                    { subjectInformation() }
                     { instructorFeedback() }
                 </Space>
             </div>
@@ -311,22 +331,6 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
             <Descriptions.Item label={ <> <PhoneOutlined /> Telefonnummer </> }>
                 {phone ?? "-"}
             </Descriptions.Item>
-        )
-
-        const subjects = createSubjects(instructor.subjects);
-        const subjectField = (
-            <Descriptions.Item label={<> <TableOutlined /> Fächer </>}>
-                    {<table>
-                        <tbody>
-                            {subjects.map(s =>
-                            <tr>
-                                <td>{s.subject}</td>
-                                <td>{`Klasse ${s.min} bis ${s.max}`}</td>
-                            </tr>
-                            )}
-                        </tbody>
-                    </table>}
-                </Descriptions.Item>
         )
 
         const teacherData = (
@@ -361,7 +365,6 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
                     { message }
                     { emailField }
                     { phoneField }
-                    { (subjects.length != 0) && subjectField }
                     { (instructor.module != undefined) && teacherData}
                 </Descriptions>
             </div>

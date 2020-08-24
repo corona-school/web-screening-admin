@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {Button, Card, Input, Space, Table, Tabs, Descriptions, Checkbox, Typography, Tag, AutoComplete } from "antd";
 import Markdown from "react-markdown";
+import { useHistory } from "react-router-dom"
 
 import "./Instructors.less"
 import useInstructors, {Instructor} from "../../api/useInstructors";
@@ -150,6 +151,7 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
 
 function UpdateInstructor({ instructor, updateInstructor, close }: { instructor: Instructor, updateInstructor(instructor: Instructor, update: ApiScreeningResult): Promise<void>, close(): void }) {
     const screening = instructor.__instructorScreening__ ?? { comment: (instructor.module ? screeningTemplateIntern : screeningTemplateAG), knowsCoronaSchoolFrom: "", success: null };
+    const history = useHistory();
 
     const [phone, setPhone] = useState(instructor.phone);
     const [commentScreener, setCommentScreener] = useState(screening.comment);
@@ -186,6 +188,14 @@ function UpdateInstructor({ instructor, updateInstructor, close }: { instructor:
 
                 {!isEditMode &&
                 <Space size="small">
+                    <Button
+                        onClick={() => {
+                            update(false);
+                            history.push(`/student/${instructor.email}`);
+                        }}
+                    >
+                        Nur für Eins-zu-Eins-Betreuung verifizieren
+                    </Button>
                     { showAcceptButton &&
                         <Button onClick={() => update(true)} style={{ background: "#B5F1BB" }}>
                             Annehmen

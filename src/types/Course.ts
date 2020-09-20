@@ -60,4 +60,5 @@ export interface Lecture {
     id: number;
     subcourse: Subcourse;
     start: Date;
+    duration: number;
 }

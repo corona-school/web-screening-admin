@@ -14,6 +14,7 @@ import useDebounce from "../../utils/useDebounce";
 import Select, { SelectProps } from "antd/lib/select";
 import { SearchProps } from "antd/lib/input";
 import InstructorSelector from "./InstructorSelector";
+import moment from "moment";
 
 const { Option } = Select;
 
@@ -232,8 +233,8 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                     </Dropdown.Button>}
                 </Card>
                 <br/>
-                <Card title={<><CalendarOutlined /> Kurstage: </>}>
-                    {!isEditMode && (course.subcourses ? course.subcourses[0].lectures.map(l => <Tag>{ new Date(l.start).toLocaleDateString() }</Tag>) : "")}
+                <Card title={<><CalendarOutlined /> Kurszeiten: </>}>
+                    {course.subcourses ? course.subcourses[0].lectures.map(l => <Tag>{ moment(l.start).format("DD.MM.YY hh:mm") }</Tag>) : ""}
                 </Card>
                 <br/>
                 <Card title={ <><FileTextOutlined /> Kommentar:</> }>

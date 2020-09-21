@@ -236,8 +236,8 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                 <Card title={<><CalendarOutlined /> Kurszeiten: </>}>
                     {course.subcourses ? course.subcourses[0].lectures.map(l => {
                         const date = moment(l.start).format("DD.MM.YY");
-                        const startTime = moment(l.start).format("hh:mm");
-                        const endTime = moment(l.start).add(l.duration, "minutes").format("hh:mm");
+                        const startTime = moment(l.start).format("HH:mm");
+                        const endTime = moment(l.start).add(l.duration, "minutes").format("HH:mm");
 
                         return ( <Tag>{`${date} ${startTime} - ${endTime}`}</Tag> )
                     }) : ""}

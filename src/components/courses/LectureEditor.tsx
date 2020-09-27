@@ -7,7 +7,7 @@ import locale from 'antd/lib/calendar/locale/de_DE';
 
 const { Text } = Typography;
 
-function lectureTimeToString (l: Lecture){
+function lectureTimeToString (l: Lecture | ApiAddLecture){
     const date = moment(l.start).format("DD.MM.YY");
     const startTime = moment(l.start).format("HH:mm");
     const endTime = moment(l.start).add(l.duration, "minutes").format("HH:mm");
@@ -44,6 +44,21 @@ export default function ({currentLectures, newLectures, setNewLectures, oldLectu
         )
     }
 
+    const DisplayNewLecture = ({ lecture }: { lecture: ApiAddLecture }) => {
+        const lectureTime = lectureTimeToString(lecture);
+
+        const handleRemove = () => {
+            setNewLectures(newLectures.filter(l => l != lecture))
+        }
+
+        return (
+            <Tag>
+                <Text>{lectureTime}</Text>
+                <CloseOutlined onClick={handleRemove} />
+            </Tag>
+        )
+    }
+
     const AddLecture = () => {
         const [start, setStart] = useState<Moment | null>(null);
         const [duration, setDuration] = useState<number>(0);
@@ -75,6 +90,7 @@ export default function ({currentLectures, newLectures, setNewLectures, oldLectu
     return (
         <div>
             { currentLectures.map(l => <DisplayCurrentLecture lecture={l} />) }
+            { newLectures.map(l => <DisplayNewLecture lecture={l} />) }
             <AddLecture />
         </div>
     )

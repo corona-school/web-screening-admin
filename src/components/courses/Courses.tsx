@@ -151,7 +151,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     const [instructors, setInstructors] = useState<Instructor[]>(course.instructors ?? []);
     const [isEditMode, setIsEditMode] = useState(false);
     const [newLectures, setNewLectures] = useState<ApiAddLecture[]>([]);
-    const [oldLectures, setOldLectures] = useState<Lecture[]>([]);
+    const [removeLectures, setRemoveLectures] = useState<Lecture[]>([]);
 
     const isEdited =
         name !== course.name ||
@@ -163,7 +163,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
 
     function update(courseState: CourseState.ALLOWED | CourseState.CANCELLED | CourseState.DENIED | undefined) {
         updateCourse(course, {
-            category, courseState, description, imageUrl, name, outline, screeningComment, instructors
+            category, courseState, description, imageUrl, name, outline, screeningComment, instructors, newLectures, removeLectures
         }).then(close);
     }
 
@@ -259,8 +259,8 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                             <LectureEditor currentLectures={course.subcourses[0].lectures}
                                            newLectures={newLectures}
                                            setNewLectures={setNewLectures}
-                                           oldLectures={oldLectures}
-                                           setOldLectures={setOldLectures}
+                                           removeLectures={removeLectures}
+                                           setRemoveLectures={setRemoveLectures}
                                            subcourse={course.subcourses[0]} />
                                            : ''
                     )}

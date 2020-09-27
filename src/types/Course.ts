@@ -28,6 +28,8 @@ export interface ApiCourseUpdate {
     imageUrl?: string | null;
     screeningComment?: string | null;
     instructors?: { id: number }[];
+    newLectures?: ApiAddLecture[];
+    removeLectures?: Lecture[];
 }
 
 export enum CourseState {

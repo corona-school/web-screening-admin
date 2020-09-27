@@ -15,16 +15,16 @@ function lectureTimeToString (l: Lecture | ApiAddLecture){
     return (`${date} ${startTime} - ${endTime}`)
 }
 
-export default function ({currentLectures, newLectures, setNewLectures, oldLectures, setOldLectures, subcourse}: { currentLectures: Lecture[], newLectures: ApiAddLecture[], setNewLectures(newLectures: ApiAddLecture[]): void, oldLectures: Lecture[], setOldLectures(oldLectures: Lecture[]): void, subcourse: Subcourse }) {
+export default function ({currentLectures, newLectures, setNewLectures, removeLectures, setRemoveLectures, subcourse}: { currentLectures: Lecture[], newLectures: ApiAddLecture[], setNewLectures(newLectures: ApiAddLecture[]): void, removeLectures: Lecture[], setRemoveLectures(oldLectures: Lecture[]): void, subcourse: Subcourse }) {
     const DisplayCurrentLecture = ({ lecture }: { lecture: Lecture }) => {
-        const active = oldLectures.indexOf(lecture) == -1;
+        const active = removeLectures.indexOf(lecture) == -1;
         const lectureTime = lectureTimeToString(lecture)
 
         const handleEdit = () => {
             if (active) {
-                setOldLectures([...oldLectures, lecture]);
+                setRemoveLectures([...removeLectures, lecture]);
             } else {
-                setOldLectures(oldLectures.filter(l => l != lecture));
+                setRemoveLectures(removeLectures.filter(l => l != lecture));
             }
         }
 

@@ -4,7 +4,15 @@ import Title from "antd/lib/typography/Title";
 import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, EditOutlined, DownOutlined, TagOutlined, PlusOutlined} from "@ant-design/icons/lib";
 
 import "./Courses.less";
-import {CourseState, Course, ApiCourseUpdate, CourseCategory, CourseTag, Lecture} from "../../types/Course";
+import {
+    CourseState,
+    Course,
+    ApiCourseUpdate,
+    CourseCategory,
+    CourseTag,
+    Lecture,
+    ApiAddLecture
+} from "../../types/Course";
 
 import useCourses from "../../api/useCourses";
 import useInstructors, { Instructor } from "../../api/useInstructors";
@@ -142,7 +150,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     const [screeningComment, setScreeningComment] = useState(course.screeningComment);
     const [instructors, setInstructors] = useState<Instructor[]>(course.instructors ?? []);
     const [isEditMode, setIsEditMode] = useState(false);
-    const [newLectures, setNewLectures] = useState<Lecture[]>([]);
+    const [newLectures, setNewLectures] = useState<ApiAddLecture[]>([]);
     const [oldLectures, setOldLectures] = useState<Lecture[]>([]);
 
     const isEdited =
@@ -252,7 +260,8 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                                            newLectures={newLectures}
                                            setNewLectures={setNewLectures}
                                            oldLectures={oldLectures}
-                                           setOldLectures={setOldLectures} />
+                                           setOldLectures={setOldLectures}
+                                           subcourse={course.subcourses[0]} />
                                            : ''
                     )}
                 </Card>

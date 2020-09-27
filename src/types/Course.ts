@@ -62,3 +62,9 @@ export interface Lecture {
     start: Date;
     duration: number;
 }
+
+export interface ApiAddLecture {
+    subcourse: Subcourse;
+    start: Date;
+    duration: number;
+}

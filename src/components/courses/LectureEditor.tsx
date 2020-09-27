@@ -28,20 +28,21 @@ export default function ({currentLectures, newLectures, setNewLectures, oldLectu
             }
         }
 
-        return (
-            <div>
-                {active &&
+        if (active) {
+            return (
                 <Tag>
                     <Text>{lectureTime}</Text>
-                    <CloseOutlined onClick={handleEdit} />
-                </Tag>}
-                {!active &&
+                    <CloseOutlined onClick={handleEdit}/>
+                </Tag>
+            )
+        } else {
+            return (
                 <Tag>
                     <Text delete>{lectureTime}</Text>
-                    <UndoOutlined onClick={handleEdit} />
-                </Tag>}
-            </div>
-        )
+                    <UndoOutlined onClick={handleEdit}/>
+                </Tag>
+            )
+        }
     }
 
     const DisplayNewLecture = ({ lecture }: { lecture: ApiAddLecture }) => {
@@ -89,9 +90,14 @@ export default function ({currentLectures, newLectures, setNewLectures, oldLectu
 
     return (
         <div>
-            { currentLectures.map(l => <DisplayCurrentLecture lecture={l} />) }
-            { newLectures.map(l => <DisplayNewLecture lecture={l} />) }
-            <AddLecture />
+            <div>
+                { currentLectures.map(l => <DisplayCurrentLecture lecture={l} />) }
+                { newLectures.map(l => <DisplayNewLecture lecture={l} />) }
+            </div>
+            <div style={{ marginTop: "8px" }}>
+                <AddLecture />
+            </div>
+
         </div>
     )
 }

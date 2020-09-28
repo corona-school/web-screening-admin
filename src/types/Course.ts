@@ -69,4 +69,5 @@ export interface ApiAddLecture {
     subcourse: { id: number };
     start: Date;
     duration: number;
+    instructor: { id: number };
 }

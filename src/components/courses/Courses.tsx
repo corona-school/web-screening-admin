@@ -261,7 +261,8 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                                            setNewLectures={setNewLectures}
                                            removeLectures={removeLectures}
                                            setRemoveLectures={setRemoveLectures}
-                                           subcourse={course.subcourses[0]} />
+                                           subcourse={course.subcourses[0]}
+                                           instructors={instructors}/>
                                            : ''
                     )}
                 </Card>

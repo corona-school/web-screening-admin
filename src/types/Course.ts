@@ -29,7 +29,7 @@ export interface ApiCourseUpdate {
     screeningComment?: string | null;
     instructors?: { id: number }[];
     newLectures?: ApiAddLecture[];
-    removeLectures?: Lecture[];
+    removeLectures?: { id: number }[];
 }
 
 export enum CourseState {
@@ -66,7 +66,7 @@ export interface Lecture {
 }
 
 export interface ApiAddLecture {
-    subcourse: Subcourse;
+    subcourse: { id: number };
     start: Date;
     duration: number;
 }

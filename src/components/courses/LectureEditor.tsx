@@ -16,31 +16,23 @@ function lectureTimeToString (l: Lecture | ApiAddLecture){
     return (`${date} ${startTime} - ${endTime}`)
 }
 
-export default function ({currentLectures, newLectures, setNewLectures, removeLectures, setRemoveLectures, subcourse, instructors }: { currentLectures: Lecture[], newLectures: ApiAddLecture[], setNewLectures(newLectures: ApiAddLecture[]): void, removeLectures: Lecture[], setRemoveLectures(oldLectures: Lecture[]): void, subcourse: Subcourse, instructors: Instructor[] }) {
+export default function LectureEditor ({currentLectures, newLectures, setNewLectures, removeLectures, setRemoveLectures, subcourse, instructors }: { currentLectures: Lecture[], newLectures: ApiAddLecture[], setNewLectures(newLectures: ApiAddLecture[]): void, removeLectures: Lecture[], setRemoveLectures(oldLectures: Lecture[]): void, subcourse: Subcourse, instructors: Instructor[] }) {
     const DisplayCurrentLecture = ({ lecture }: { lecture: Lecture }) => {
-        const active = removeLectures.indexOf(lecture) == -1;
-        const lectureTime = lectureTimeToString(lecture)
-
-        const handleEdit = () => {
-            if (active) {
-                setRemoveLectures([...removeLectures, lecture]);
-            } else {
-                setRemoveLectures(removeLectures.filter(l => l != lecture));
-            }
-        }
+        const active = !removeLectures.includes(lecture);
+        const lectureTime = lectureTimeToString(lecture);
 
         if (active) {
             return (
                 <Tag>
                     <Text>{lectureTime}</Text>
-                    <CloseOutlined onClick={handleEdit}/>
+                    <CloseOutlined onClick={() => setRemoveLectures([...removeLectures, lecture])}/>
                 </Tag>
             )
         } else {
             return (
                 <Tag>
                     <Text delete>{lectureTime}</Text>
-                    <UndoOutlined onClick={handleEdit}/>
+                    <UndoOutlined onClick={() => setRemoveLectures(removeLectures.filter(l => l !== lecture))}/>
                 </Tag>
             )
         }
@@ -66,12 +58,15 @@ export default function ({currentLectures, newLectures, setNewLectures, removeLe
         const [duration, setDuration] = useState<number>(0);
         const [instructor, setInstructor] = useState<{ id: number }>(instructors[0]);
 
-        const OnPickTime = (value: Moment | null) => {
-            start && setDuration(value?.diff(start, "minute") ?? 0)
-            !start && message.error("Bitte zuerst eine Startzeit wählen.")
+        const onPickTime = (value: Moment | null) => {
+            if (start) {
+                setDuration(value?.diff(start, "minute") ?? 0);
+            } else {
+                message.error("Bitte zuerst eine Startzeit wählen.");
+            }
         }
 
-        const OnAddClicked = () => {
+        const onAddClicked = () => {
             start && setNewLectures(
                 [...newLectures, {subcourse: subcourse, start: start.toDate(), duration: duration, instructor: instructor}]
             );
@@ -85,8 +80,8 @@ export default function ({currentLectures, newLectures, setNewLectures, removeLe
                     <TimePicker format="HH:mm"
                                 locale={locale}
                                 value={start && moment(start).add(duration, "minute")}
-                                onChange={(time) => OnPickTime(time)} />
-                    <Button icon={<PlusOutlined />} onClick={OnAddClicked} />
+                                onChange={(time) => onPickTime(time)} />
+                    <Button icon={<PlusOutlined />} onClick={onAddClicked} />
                 </div>
                 { instructors.length > 1 &&
                 <Select value={instructor.id}

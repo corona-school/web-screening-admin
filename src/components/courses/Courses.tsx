@@ -4,7 +4,15 @@ import Title from "antd/lib/typography/Title";
 import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, EditOutlined, DownOutlined, TagOutlined, PlusOutlined} from "@ant-design/icons/lib";
 
 import "./Courses.less";
-import { CourseState, Course, ApiCourseUpdate, CourseCategory, CourseTag } from "../../types/Course";
+import {
+    CourseState,
+    Course,
+    ApiCourseUpdate,
+    CourseCategory,
+    CourseTag,
+    Lecture,
+    ApiAddLecture
+} from "../../types/Course";
 
 import useCourses from "../../api/useCourses";
 import useInstructors, { Instructor } from "../../api/useInstructors";
@@ -15,6 +23,7 @@ import Select, { SelectProps } from "antd/lib/select";
 import { SearchProps } from "antd/lib/input";
 import InstructorSelector from "./InstructorSelector";
 import moment from "moment";
+import LectureEditor from "./LectureEditor";
 
 const { Option } = Select;
 
@@ -106,7 +115,7 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
         allowClear
         onChange={onSearch}
     />;
-    
+
     return (
         <div className="queue">
             <div className="header">
@@ -128,7 +137,7 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
                 })}
             </Tabs>
         </div>
-        
+
     );
 };
 
@@ -141,8 +150,10 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
     const [screeningComment, setScreeningComment] = useState(course.screeningComment);
     const [instructors, setInstructors] = useState<Instructor[]>(course.instructors ?? []);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [newLectures, setNewLectures] = useState<ApiAddLecture[]>([]);
+    const [removeLectures, setRemoveLectures] = useState<Lecture[]>([]);
 
-    const isEdited = 
+    const isEdited =
         name !== course.name ||
         outline !== course.outline ||
         description !== course.description ||
@@ -152,7 +163,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
 
     function update(courseState: CourseState.ALLOWED | CourseState.CANCELLED | CourseState.DENIED | undefined) {
         updateCourse(course, {
-            category, courseState, description, imageUrl, name, outline, screeningComment, instructors
+            category, courseState, description, imageUrl, name, outline, screeningComment, instructors, newLectures, removeLectures
         }).then(close);
     }
 
@@ -162,10 +173,10 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
             <div className="course-header">
                 <Space size="large" style={{ width: "100%"}}>
                     <Button onClick={() => (!isEdited || window.confirm("Willst du die Änderungen verwerfen?")) && close()} icon={<ArrowLeftOutlined />}/>
-                    
+
                     { !isEditMode && <Title style={{ color: "#6c757d"}} level={4}>{name}</Title> }
                     { isEditMode && <Input style={{ width: "100%"}} size="large" value={ name } className = "" onChange={ e => setName(e.target.value) } /> }
-                    
+
                 </Space>
                 {!isEditMode && <Space size="small">
                     {course.courseState !== "allowed" && <Button onClick={() => update(CourseState.ALLOWED)} style={{ background: "#B5F1BB" }}>
@@ -198,13 +209,13 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
         const categoryMenu = (
             <Menu>
                 {Object.entries(categoryName)
-                    .map(([category, name]) => 
+                    .map(([category, name]) =>
                         <Menu.Item onClick={() => setCategory(category as CourseCategory)}>
                                 {name}
-                        </Menu.Item>    
+                        </Menu.Item>
                 )}
-        
-        
+
+
             </Menu>
         );
 
@@ -234,13 +245,26 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
                 </Card>
                 <br/>
                 <Card title={<><CalendarOutlined /> Kurszeiten: </>}>
-                    {course.subcourses ? course.subcourses[0].lectures.map(l => {
-                        const date = moment(l.start).format("DD.MM.YY");
-                        const startTime = moment(l.start).format("HH:mm");
-                        const endTime = moment(l.start).add(l.duration, "minutes").format("HH:mm");
+                    {!isEditMode && (
+                        course.subcourses ? course.subcourses[0].lectures.map(l => {
+                            const date = moment(l.start).format("DD.MM.YY");
+                            const startTime = moment(l.start).format("HH:mm");
+                            const endTime = moment(l.start).add(l.duration, "minutes").format("HH:mm");
 
-                        return ( <Tag>{`${date} ${startTime} - ${endTime}`}</Tag> )
-                    }) : ""}
+                            return (<Tag>{`${date} ${startTime} - ${endTime}`}</Tag>)
+                        }) : ""
+                    )}
+                    {isEditMode && (
+                        course.subcourses ?
+                            <LectureEditor currentLectures={course.subcourses[0].lectures}
+                                           newLectures={newLectures}
+                                           setNewLectures={setNewLectures}
+                                           removeLectures={removeLectures}
+                                           setRemoveLectures={setRemoveLectures}
+                                           subcourse={course.subcourses[0]}
+                                           instructors={instructors}/>
+                                           : ''
+                    )}
                 </Card>
                 <br/>
                 <Card title={ <><FileTextOutlined /> Kommentar:</> }>
@@ -269,7 +293,7 @@ function UpdateCourse({ course, updateCourse, close }: { course: Course, updateC
 
                 </Descriptions.Item>
                 <Descriptions.Item label={ <><TagOutlined /> Labels</> }>
-                    { 
+                    {
                         course.tags?.map(tag => <Tag>{tag.name}</Tag>)
                     }
                 </Descriptions.Item>

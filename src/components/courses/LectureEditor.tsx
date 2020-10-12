@@ -75,12 +75,12 @@ export default function LectureEditor ({currentLectures, newLectures, setNewLect
         return (
             <div>
                 <div style={{width: "fit-content"}}>
-                    <DatePicker format="DD.MM.YYYY HH:mm" showTime locale={locale} onChange={(value) => setStart(value as any /*hotfix for Moment version missmatch */)} />
+                    <DatePicker format="DD.MM.YYYY HH:mm" showTime locale={locale} onChange={(value) => setStart(value)} />
                     {" - "}
                     <TimePicker format="HH:mm"
                                 locale={locale}
-                                value={start && moment(start).add(duration, "minute") as any /*hotfix for Moment version missmatch */}
-                                onChange={(time) => onPickTime(time as Moment)} />
+                                value={start && moment(start).add(duration, "minute")}
+                                onChange={(time) => onPickTime(time)} />
                     <Button icon={<PlusOutlined />} onClick={onAddClicked} />
                 </div>
                 { instructors.length > 1 &&

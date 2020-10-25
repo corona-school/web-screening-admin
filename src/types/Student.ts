@@ -44,9 +44,9 @@ export interface IRawStudent {
 }
 
 export enum ScreeningStatus {
-  Unscreened = "UNSCREENED",
-  Accepted = "ACCEPTED",
-  Rejected = "REJECTED",
+  Unscreened = 'UNSCREENED',
+  Accepted = 'ACCEPTED',
+  Rejected = 'REJECTED',
 }
 
 export interface ApiScreeningResult {
@@ -60,25 +60,25 @@ export interface ApiScreeningResult {
 }
 
 export interface Screening {
-    id: number;
-    success: boolean; //verified or not verified
-    comment: string;
-    knowsCoronaSchoolFrom: string;
-    createdAt: Date;
-    updatedAt: Date;
-    screener?: any;
-    student?: Student;
+  id: number;
+  success: boolean; //verified or not verified
+  comment: string;
+  knowsCoronaSchoolFrom: string;
+  createdAt: Date;
+  updatedAt: Date;
+  screener?: any;
+  student?: Student;
 }
 
 export enum TeacherModule {
-  INTERNSHIP = "internship",
-  SEMINAR = "seminar"
+  INTERNSHIP = 'internship',
+  SEMINAR = 'seminar',
 }
 
 export const TeacherModulePretty: { [key in TeacherModule]: string } = {
-  internship: "Praktikum",
-  seminar: "Seminar"
-}
+  internship: 'Praktikum',
+  seminar: 'Seminar',
+};
 
 export enum State {
   BW = 'bw',
@@ -97,25 +97,25 @@ export enum State {
   ST = 'st',
   SH = 'sh',
   TH = 'th',
-  OTHER = 'other'
+  OTHER = 'other',
 }
 
 export const StateLong: { [key in State]: string } = {
-  bw: "Baden-Württemberg",
-  by: "Bayern",
-  be: "Berlin",
-  bb: "Brandenburg",
-  hb: "Bremen",
-  hh: "Hamburg",
-  he: "Hessen",
-  mv: "Mecklenburg-Vorpommern",
-  ni: "Niedersachsen",
-  nw: "Nordrhein-Westfalen",
-  rp: "Rheinland-Pfalz",
-  sl: "Saarland",
-  sn: "Sachsen",
-  st: "Sachsen-Anhalt",
-  sh: "Schleswig-Holstein",
-  th: "Thüringen",
-  other: "Sonstiges"
-}
+  bw: 'Baden-Württemberg',
+  by: 'Bayern',
+  be: 'Berlin',
+  bb: 'Brandenburg',
+  hb: 'Bremen',
+  hh: 'Hamburg',
+  he: 'Hessen',
+  mv: 'Mecklenburg-Vorpommern',
+  ni: 'Niedersachsen',
+  nw: 'Nordrhein-Westfalen',
+  rp: 'Rheinland-Pfalz',
+  sl: 'Saarland',
+  sn: 'Sachsen',
+  st: 'Sachsen-Anhalt',
+  sh: 'Schleswig-Holstein',
+  th: 'Thüringen',
+  other: 'Sonstiges',
+};

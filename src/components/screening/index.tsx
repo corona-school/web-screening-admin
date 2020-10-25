@@ -48,7 +48,7 @@ const Screening = (props: RouteComponentProps) => {
       return;
     }
     context
-      .postChangeStatusCall(job.data, decision ? 'SET_DONE' : 'SET_REJECTED')
+      .postChangeStatusCall(job.data, job.id, decision ? 'SET_DONE' : 'SET_REJECTED')
       .then(() => {
         message.success('Änderungen wurden erfolgreich gespeichert.');
         props.history.push('/screening');

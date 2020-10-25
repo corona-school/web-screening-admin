@@ -52,7 +52,7 @@ const Queue = (props: RouteComponentProps) => {
 
   const startVideoCall = (selectedJob: IJobInfo) => {
     const job: IJobInfo = { ...selectedJob, status: 'active' };
-    postChangeStatusCall(job.data, 'SET_ACTIVE')
+    postChangeStatusCall(job.data, job.id, 'SET_ACTIVE')
       .then((_newJob: IJobInfo) => {
         setModalOpen(false);
         const room = new URL(job.data.jitsi).pathname;
@@ -70,7 +70,7 @@ const Queue = (props: RouteComponentProps) => {
     setModalOpen(false);
     setFilterType(isVerified ? 4 : 5);
 
-    postChangeStatusCall(job.data, isVerified ? 'SET_DONE' : 'SET_REJECTED')
+    postChangeStatusCall(job.data, job.id, isVerified ? 'SET_DONE' : 'SET_REJECTED')
       .then(() => message.success('Änderungen wurden erfolgreich gespeichert.'))
       .catch(() =>
         message.error('Änderungen konnten nicht gespeichert werden')

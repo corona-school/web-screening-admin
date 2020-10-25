@@ -1,4 +1,4 @@
-export interface Student {
+export interface CourseStudent {
   id: number;
   firstname: string;
   lastname: string;
@@ -19,28 +19,6 @@ export interface SearchStudent {
   firstname: string;
   lastname: string;
   email: string;
-}
-
-export interface IRawStudent2 {
-  firstname: string;
-  lastname: string;
-  email: string;
-  subjects: string;
-  msg?: string;
-  verified: boolean;
-  alreadyScreened: boolean;
-}
-
-export interface IRawStudent {
-  firstName: string;
-  lastName: string;
-  email: string;
-  subjects: string;
-  msg?: string;
-  verified: boolean;
-  alreadyScreened: boolean;
-  phone?: string;
-  birthday?: Date;
 }
 
 export enum ScreeningStatus {
@@ -67,7 +45,67 @@ export interface Screening {
   createdAt: Date;
   updatedAt: Date;
   screener?: any;
-  student?: Student;
+  student?: CourseStudent;
+}
+
+export interface IStudentInfo {
+  firstname: string;
+  lastname: string;
+  email: string;
+  subjects: string;
+  phone?: string;
+  msg?: string;
+  verified?: boolean;
+}
+
+export interface IStudent {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isTutor: boolean;
+  isInstructor: boolean;
+  isProjectCoach: boolean;
+  screenings: {
+    tutor?: ScreeningInfo;
+    instructor?: ScreeningInfo;
+    projectCoach?: ScreeningInfo;
+  };
+  projectFields: ProjectFieldWithGradeInfoType[];
+  subjects: StudentSubject[];
+  feedback?: string;
+  phone?: string;
+  newsletter: boolean;
+  msg?: string;
+  university?: string;
+  state?: string;
+  isUniversityStudent?: boolean;
+  official?: {
+    hours: number;
+    module: string;
+  };
+  screenerEmail: string;
+  jitsi: string;
+}
+
+export interface ProjectFieldWithGradeInfoType {
+  name: string;
+  min?: number;
+  max?: number;
+}
+
+export interface StudentSubject {
+  name: string;
+  grade: {
+    min: number;
+    max: number;
+  };
+}
+
+export interface ScreeningInfo {
+  verified: boolean;
+  comment?: string;
+  knowsCoronaSchoolFrom?: string;
 }
 
 export enum TeacherModule {

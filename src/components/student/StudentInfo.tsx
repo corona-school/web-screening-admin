@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import classes from './StudentInfo.module.less';
-import useStudent, { IStudentScreeningResult } from '../../api/useStudent';
+import useStudent from '../../api/useStudent';
 import {
   Descriptions,
   Spin,
@@ -16,6 +16,7 @@ import { PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { ApiContext } from '../../api/ApiContext';
 import SubjectList from '../userList/SubjectList';
 import { createSubjects, subjectToString } from '../../utils/subjectUtils';
+import { IStudent } from '../../types/Student';
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -28,10 +29,7 @@ interface MatchParams {
 const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
   const context = useContext(ApiContext);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [
-    screeningResult,
-    setScreeningResult,
-  ] = useState<IStudentScreeningResult | null>(null);
+  const [screeningResult, setScreeningResult] = useState<IStudent | null>(null);
   const [knowsFrom, setKnowsFrom] = useState('13');
   const email = props.match.params.email;
 
@@ -60,7 +58,7 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
     if (!screeningResult) {
       return;
     }
-    const newResult: IStudentScreeningResult = {
+    const newResult: IStudent = {
       ...screeningResult,
       [key]: value,
     };
@@ -79,7 +77,7 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
             if (!screeningResult) {
               return;
             }
-            const newResult: IStudentScreeningResult = {
+            const newResult: IStudent = {
               ...screeningResult,
               feedback: e.target.value,
             };
@@ -115,7 +113,7 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
           <TextArea
             rows={1}
             placeholder="anderes"
-            value={screeningResult?.knowscsfrom}
+            value={screeningResult?.screenings.tutor?.knowsCoronaSchoolFrom}
             onChange={(e) => changeJob('knowcsfrom', e.target.value)}
           />
         )}
@@ -124,20 +122,20 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
         <TextArea
           style={{ marginBottom: '16px' }}
           rows={2}
-          value={screeningResult?.commentScreener}
+          value={screeningResult?.screenings.tutor?.comment}
           placeholder="Hier ein Kommentar (Optional)"
           onChange={(e) => changeJob('commentScreener', e.target.value)}
         />
         <div className="label">Fächer: </div>
         <SubjectList
-          subjects={createSubjects(screeningResult?.subjects || '')}
+          subjects={screeningResult?.subjects || []}
           setSubjects={(subjects) => {
-            changeJob('subjects', subjectToString(subjects));
+            changeJob('subjects', subjects);
           }}
         />
         <div style={{ marginTop: '8px' }}>
           <Radio.Group
-            value={screeningResult?.verified ? 'a' : 'b'}
+            value={screeningResult?.screenings.tutor?.verified ? 'a' : 'b'}
             onChange={(change) => {
               if (change.target.value === 'a') {
                 changeJob('verified', true);
@@ -197,17 +195,17 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
         </Descriptions>
         <Button
           onClick={() => {
-            if (!context || !context.user || !context.user.email) {
-              return;
-            }
-            const initialResult: IStudentScreeningResult = {
-              verified: true,
-              screenerEmail: context.user.email,
-              subjects: studentInfo.subjects,
-            };
-
-            setScreeningResult(initialResult);
-            setOpenEdit(true);
+            // TODO
+            // if (!context || !context.user || !context.user.email) {
+            //   return;
+            // }
+            // const initialResult: IStudentScreeningResult = {
+            //   verified: true,
+            //   screenerEmail: context.user.email,
+            //   subjects: studentInfo.subjects,
+            // };
+            // setScreeningResult(initialResult);
+            // setOpenEdit(true);
           }}
           type="primary"
           style={{ width: '180px' }}

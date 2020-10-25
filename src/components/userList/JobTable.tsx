@@ -1,11 +1,27 @@
 import React from 'react';
 import moment from 'moment';
 import 'moment/locale/de';
-import { StatusMap } from './data';
+import {
+  getScreeningType,
+  ScreeningColorMap,
+  StatusMap,
+  ScreeningTypeText,
+} from './data';
 import { Button, Tag, Table, Modal } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import { CheckOutlined, DeleteOutlined } from '@ant-design/icons';
+import { IJobInfo, IScreenerInfo } from '../../api';
+import Text from 'antd/lib/typography/Text';
 
 const { confirm } = Modal;
+
+interface Props {
+  data: IJobInfo[];
+  handleColumnClick: (job: IJobInfo) => void;
+  user: IScreenerInfo;
+  allJobs: IJobInfo[];
+  handleRemoveJob: (email: string) => void;
+  reverse: boolean;
+}
 
 const JobTable = ({
   data,
@@ -14,19 +30,24 @@ const JobTable = ({
   allJobs,
   handleRemoveJob,
   reverse,
-}) => {
-  const getTextFromJob = (job) => {
+}: Props) => {
+  const getTextFromJob = (job: IJobInfo) => {
     if (job.status === 'waiting') {
       if (job.assignedTo && job.assignedTo.email !== user.email) {
         return 'Übernehmen';
       }
-      return 'Verifizieren';
     }
-
-    return 'Ergebnis';
+    if (
+      job.status === 'completed' &&
+      job.assignedTo &&
+      job.assignedTo.email === user.email
+    ) {
+      return 'Ändern';
+    }
+    return null;
   };
 
-  const showDeleteConfirm = (email) => {
+  const showDeleteConfirm = (email: string) => {
     confirm({
       title: 'Willst du diesen Job wirklich löschen?',
       content:
@@ -38,7 +59,7 @@ const JobTable = ({
         handleRemoveJob(email);
       },
       onCancel() {},
-    });
+    } as any);
   };
 
   const hasActiveStudent = () =>
@@ -49,7 +70,7 @@ const JobTable = ({
         job.assignedTo.email === user.email
     );
 
-  const showConfirm = (job) => {
+  const showConfirm = (job: IJobInfo) => {
     confirm({
       title: 'Willst du diesen Job übernehemen?',
       content: 'Ein andere Screener ist bereits eingetragen für diesen Job.',
@@ -64,7 +85,7 @@ const JobTable = ({
     });
   };
 
-  const renderActions = (job) => {
+  const renderActions = (job: IJobInfo) => {
     const isSelfAssignedJob =
       job.assignedTo && job.assignedTo.email === user.email;
 
@@ -77,7 +98,9 @@ const JobTable = ({
       return (
         <>
           <Button
-            style={{ width: '116px' }}
+            type="primary"
+            icon={getTextFromJob(job) === null && <CheckOutlined />}
+            style={{ margin: '4px' }}
             onClick={() =>
               isNotMyJob ? showConfirm(job) : handleColumnClick(job)
             }
@@ -85,7 +108,7 @@ const JobTable = ({
             {getTextFromJob(job)}
           </Button>
           <Button
-            style={{ width: '36px' }}
+            style={{ margin: '4px' }}
             icon={<DeleteOutlined />}
             onClick={() => showDeleteConfirm(job.data.email)}
           />
@@ -94,9 +117,9 @@ const JobTable = ({
     }
   };
 
-  const renderScreener = (screener) => {
+  const renderScreener = (screener: IScreenerInfo | undefined) => {
     if (!screener) {
-      return;
+      return '-';
     }
     if (screener.email === user.email) {
       return (
@@ -117,39 +140,56 @@ const JobTable = ({
       title: 'Name',
       dataIndex: 'lastName',
       key: 'lastName',
-      render: (lastName, job) => {
-        return `${job.data.firstName} ${job.data.lastName}`;
+      render: (_: string, job: IJobInfo) => {
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <Text>{`${job.data.firstName} ${job.data.lastName}`}</Text>
+            <Text type="secondary">{job.data.email}</Text>
+          </div>
+        );
       },
-    },
-    {
-      title: 'E-Mail',
-      dataIndex: 'data.email',
-      key: 'email',
-      render: (lastName, job) => job.data.email,
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      render: (tag) => (
+      render: (tag: string) => (
         <Tag color={StatusMap.get(tag)} key={tag}>
           {tag.toUpperCase()}
         </Tag>
       ),
     },
     {
+      title: 'Art des Screenings',
+      dataIndex: 'kind',
+      key: 'kind',
+      render: (_: string, job: IJobInfo) => {
+        return getScreeningType(job).map((type) => {
+          return (
+            <Tag
+              color={ScreeningColorMap.get(type)}
+              key={job.id}
+              style={{ margin: '4px' }}
+            >
+              {ScreeningTypeText.get(type)}
+            </Tag>
+          );
+        });
+      },
+    },
+    {
       title: 'Zeit',
       dataIndex: 'timeWaiting',
       key: 'time',
-      render: (time) => <span>{moment(time).fromNow()}</span>,
+      render: (time: number) => <span>{moment(time).fromNow()}</span>,
       defaultSortOrder: reverse ? 'descend' : 'ascend',
-      sorter: (a, b) => a.time - b.time,
+      sorter: (a: any, b: any) => a.time - b.time,
     },
     {
       title: 'Video-Link',
       dataIndex: 'jitsi',
       key: 'jitsi',
-      render: (_, job) => (
+      render: (_: string, job: IJobInfo) => (
         <a href={job.data.jitsi} target="blank">
           Link
         </a>
@@ -159,13 +199,13 @@ const JobTable = ({
       title: 'Screener',
       dataIndex: 'screener',
       key: 'screener',
-      render: (_, job) => renderScreener(job.assignedTo),
+      render: (_: string, job: IJobInfo) => renderScreener(job.assignedTo),
     },
     {
       title: 'Action',
       dataIndex: 'action',
       key: 'action',
-      render: (text, job) => renderActions(job),
+      render: (_: string, job: IJobInfo) => renderActions(job),
     },
   ];
 
@@ -189,7 +229,7 @@ const JobTable = ({
           );
         },
       }}
-      columns={columns}
+      columns={columns as any}
       dataSource={data}
     />
   );

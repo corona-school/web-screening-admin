@@ -114,7 +114,7 @@ const JobScreeningEdit = ({
             target="_blank"
             rel="noopener noreferrer"
           >
-            Jitsi-Link
+            Video-Link
           </a>
         </Descriptions.Item>
       </Descriptions>
@@ -170,7 +170,7 @@ const JobScreeningEdit = ({
       {showButtons && (
         <div style={{ marginTop: '32px' }}>
           <Button
-            style={{ width: '100px', marginLeft: '0' }}
+            style={{ margin: '4px 4px 4px 0px' }}
             danger
             key="back"
             onClick={() => done(selectedJob, comment, knowsFrom, false)}
@@ -178,7 +178,7 @@ const JobScreeningEdit = ({
             Ablehen
           </Button>
           <Button
-            style={{ width: '140px' }}
+            style={{ margin: '4px' }}
             key="submit"
             type="primary"
             onClick={() => done(selectedJob, comment, knowsFrom, true)}
@@ -186,7 +186,7 @@ const JobScreeningEdit = ({
             Freischalten
           </Button>
           <Button
-            style={{ width: '36px' }}
+            style={{ margin: '4px' }}
             icon={<DeleteOutlined />}
             onClick={() => showDeleteConfirm(selectedJob.data.email)}
           ></Button>

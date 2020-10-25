@@ -37,7 +37,7 @@ const Screening = (props: RouteComponentProps) => {
     if (job) {
       setSelectedJob(job);
     }
-  }, [params.email]);
+  }, [params.email, context]);
 
   if (!params.room || !params.email || !selectedJob) {
     return <div>Error</div>;
@@ -64,14 +64,14 @@ const Screening = (props: RouteComponentProps) => {
 
   return (
     <div className={classes.container}>
-      <Jitsi
+      {/* <Jitsi
         containerStyle={{ width: '100%', height: '100%' }}
         roomName={params.room}
         loadingComponent={LoadingJitsi}
         onAPILoad={(JitsiMeetAPI) => {
           console.log('Jitsi API Loaded..', JitsiMeetAPI);
         }}
-      />
+      /> */}
       <div className={classes.editContainer}>
         <JobScreeningEdit
           showButtons

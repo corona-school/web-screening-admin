@@ -11,6 +11,7 @@ import renderStatus from '../RenderStatus';
 import './UserList.less';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import VerifyStudent from "../../utils/studentVerification";
 
 const { confirm } = Modal;
 const { TabPane } = Tabs;
@@ -69,6 +70,8 @@ const Queue = (props: RouteComponentProps) => {
   const completeJob = (job: IJobInfo, isVerified: boolean) => {
     setModalOpen(false);
     setFilterType(isVerified ? 4 : 5);
+
+    VerifyStudent({ student: job.data, decision: isVerified });
 
     postChangeStatusCall(job.data, job.id, isVerified ? 'SET_DONE' : 'SET_REJECTED')
       .then(() => message.success('Änderungen wurden erfolgreich gespeichert.'))

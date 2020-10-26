@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Descriptions, Tag, Select, Button, Modal, Checkbox } from 'antd';
 import { IJobInfo } from '../../api';
 import {StatusMap, knowsFromMap, getScreeningType, ScreeningColorMap, ScreeningTypeText} from './data';
@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
 
 import classes from './JobScreeningEdit.module.less';
-import {ProjectFieldWithGradeInfoType, State, StateLong, TeacherModule, TeacherModulePretty} from "../../types/Student";
+import {State, StateLong, TeacherModule, TeacherModulePretty} from "../../types/Student";
 import ProjectList from "./ProjectList";
 
 const { Option } = Select;
@@ -39,16 +39,27 @@ const JobScreeningEdit = ({
     knowsFrom: string,
     decision: boolean
   ) => {
+
     const completedJob: IJobInfo = {
       ...job,
       data: {
         ...job.data,
         screenings: {
-          tutor: {
+          tutor: screeningTypes.includes('tutor') ? {
             comment,
             knowsCoronaSchoolFrom: knowsFrom,
             verified: decision,
-          },
+          } : job.data.screenings.tutor,
+          instructor: screeningTypes.includes('instructor') ? {
+            comment,
+            knowsCoronaSchoolFrom: knowsFrom,
+            verified: decision,
+          } : job.data.screenings.instructor,
+          projectCoach: screeningTypes.includes('projectCoach') ? {
+            comment,
+            knowsCoronaSchoolFrom: knowsFrom,
+            verified: decision,
+          } : job.data.screenings.projectCoach,
         },
       },
     };
@@ -208,7 +219,11 @@ const JobScreeningEdit = ({
         />
         <Checkbox
             checked={selectedJob.data.isUniversityStudent}
-            onChange={(event) => changeJob('isUniversityStudent', event.target.checked)}
+            onChange={(event) => {
+              changeJob('isUniversityStudent', event.target.checked);
+              changeJob('isStudent', event.target.checked);
+              setScreeningTypes(getScreeningType(selectedJob));
+            }}
             style={{ marginTop: '16px' }}
         >
           Eingeschriebener Student
@@ -218,7 +233,10 @@ const JobScreeningEdit = ({
       { screeningTypes.includes("instructor") &&
           <Checkbox
             checked={selectedJob.data.isTutor}
-            onChange={(event) => changeJob("isTutor", event.target.checked)}
+            onChange={(event) => {
+              changeJob("isTutor", event.target.checked);
+              setScreeningTypes(getScreeningType(selectedJob));
+            }}
             style={{ marginTop: "8px" }}
           >
             Für 1-zu-1-Betreuung geeignet

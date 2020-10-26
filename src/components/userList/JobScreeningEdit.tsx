@@ -215,6 +215,15 @@ const JobScreeningEdit = ({
         </Checkbox>
         </>
       }
+      { screeningTypes.includes("instructor") &&
+          <Checkbox
+            checked={selectedJob.data.isTutor}
+            onChange={(event) => changeJob("isTutor", event.target.checked)}
+            style={{ marginTop: "8px" }}
+          >
+            Für 1-zu-1-Betreuung geeignet
+          </Checkbox>
+      }
       {showButtons && (
         <div style={{ marginTop: '32px' }}>
           <Button

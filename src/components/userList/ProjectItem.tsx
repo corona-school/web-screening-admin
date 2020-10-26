@@ -1,35 +1,47 @@
 import React from 'react';
-import { Button, Input, InputNumber } from 'antd';
+import { Select, Button, Input, InputNumber } from 'antd';
+import { pure } from 'recompose';
 import { CloseOutlined } from '@ant-design/icons';
 import {ProjectFieldWithGradeInfoType} from "../../types/Student";
 
+const { Option } = Select;
 interface Props {
     project: ProjectFieldWithGradeInfoType;
     changeProjectRange: (
         project: ProjectFieldWithGradeInfoType,
-        [min, max]: [number, number]
+        [min, max]: [number | undefined, number | undefined]
     ) => void;
-    changeProjectName: (project: ProjectFieldWithGradeInfoType, newProjectName: string) => void;
+    changeProjectName: (project: ProjectFieldWithGradeInfoType, newProject: string) => void;
+    options: string[];
     removeProject: (project: ProjectFieldWithGradeInfoType) => void;
 }
 const ProjectItem = ({
                          project,
                          changeProjectRange,
                          changeProjectName,
-                         removeProject
-}: Props) => {
+                         options,
+                         removeProject,
+                     }: Props) => {
     return (
         <div
             key={project.name}
             style={{ display: 'flex', width: '100%', marginTop: '8px' }}
         >
             <Input.Group compact>
-                <Input
+                <Select
                     key={`${project.name}-input`}
-                    onChange={(e) => changeProjectName(project, e.target.value)}
+                    onChange={(value) => changeProjectName(project, value)}
                     defaultValue={project.name}
-                    style={{ width: 300 }}
-                />
+                    style={{ width: 120 }}
+                >
+                    {options.map((project) => {
+                        return (
+                            <Option key={project} value={project}>
+                                {project}
+                            </Option>
+                        );
+                    })}
+                </Select>
                 <InputNumber
                     key={`${project.name}-min`}
                     style={{
@@ -38,12 +50,12 @@ const ProjectItem = ({
                         textAlign: 'center',
                     }}
                     value={project.min}
-                    max={project.max? + 1 : 13}
+                    max={project.max ? project.max + 1 : 13}
                     min={1}
                     placeholder="Minimum"
                     onChange={(v) => {
                         if (v) {
-                            changeProjectRange(project, [v, project.max || v]);
+                            changeProjectRange(project, [v, project.max]);
                         }
                     }}
                 />
@@ -63,11 +75,11 @@ const ProjectItem = ({
                     key={`${project.name}-max`}
                     className="site-input-right"
                     value={project.max}
-                    min={project.min? + 1 : 1}
+                    min={project.min ? project.min : 1}
                     max={13}
                     onChange={(v) => {
                         if (v) {
-                            changeProjectRange(project, [project.min || v, v]);
+                            changeProjectRange(project, [project.min, v]);
                         }
                     }}
                     style={{
@@ -87,4 +99,4 @@ const ProjectItem = ({
     );
 };
 
-export default ProjectItem;
+export default pure(ProjectItem);

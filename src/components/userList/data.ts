@@ -108,3 +108,13 @@ export const knowsFromMap = new Map([
   ['Werbeanzeige', 'Über eine Werbeanzeige'],
   ['13', 'anders'],
 ]);
+
+export const ProjectFields = [
+  "Arbeitswelt",
+  "Biologie",
+  "Chemie",
+  "Geo-und-Raumwissenschaften",
+  "Mathematik/Informatik",
+  "Physik",
+  "Technik"
+]

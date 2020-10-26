@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button } from 'antd';
-import {ProjectFieldWithGradeInfoType} from '../../types/Student';
+import { pure } from 'recompose';
+import { ProjectFields } from './data';
+import {ProjectFieldWithGradeInfoType} from "../../types/Student";
 import ProjectItem from "./ProjectItem";
 
 interface Props {
@@ -8,17 +10,17 @@ interface Props {
     setProjects: (projects: ProjectFieldWithGradeInfoType[]) => void;
 }
 
-const ProjectList = ({ projects, setProjects }: Props) => {
-    const changeProjectName = (oldProject: ProjectFieldWithGradeInfoType, newProjectName: string) => {
-        const projectList: ProjectFieldWithGradeInfoType[] = projects.map((p) => {
-            if (p.name === oldProject.name) {
+const SubjectList = ({ projects, setProjects }: Props) => {
+    const changeProjectName = (oldProject: ProjectFieldWithGradeInfoType, newProject: string) => {
+        const projectList: ProjectFieldWithGradeInfoType[] = projects.map((s) => {
+            if (s.name === oldProject.name) {
                 return {
-                    name: newProjectName,
+                    name: newProject,
                     min: oldProject.min,
                     max: oldProject.max
                 };
             }
-            return p;
+            return s;
         });
 
         setProjects(projectList);
@@ -26,7 +28,7 @@ const ProjectList = ({ projects, setProjects }: Props) => {
 
     const changeProjectRange = (
         obj: ProjectFieldWithGradeInfoType,
-        [min, max]: [number, number]
+        [min, max]: [number | undefined, number | undefined]
     ) => {
         const projectList = projects.map((p) => {
             if (p.name === obj.name) {
@@ -36,15 +38,23 @@ const ProjectList = ({ projects, setProjects }: Props) => {
         });
         console.log(min, max, obj, projectList);
 
-        setProjects(projectList)
+        setProjects(projectList);
     };
 
     const addProject = () => {
-        setProjects([...projects, { name: "", min: 1, max: 13 },]);
+        const remainingProject = ProjectFields.find(
+            (n) => !projects.find((i) => i.name === n)
+        );
+        if (remainingProject) {
+            setProjects([
+                ...projects,
+                { name: remainingProject, min: undefined, max: undefined  },
+            ]);
+        }
     };
 
     const removeProject = (obj: ProjectFieldWithGradeInfoType) => {
-        const newList = projects.filter((p) => obj.name !== p.name);
+        const newList = projects.filter((s) => obj.name !== s.name);
         setProjects([...newList]);
     };
 
@@ -57,6 +67,9 @@ const ProjectList = ({ projects, setProjects }: Props) => {
                     changeProjectName={changeProjectName}
                     project={obj}
                     removeProject={removeProject}
+                    options={ProjectFields.filter(
+                        (n) => !projects.find((i) => i.name === n)
+                    )}
                 />
             ))}
             <Button
@@ -70,4 +83,4 @@ const ProjectList = ({ projects, setProjects }: Props) => {
     );
 };
 
-export default ProjectList;
+export default pure(SubjectList);

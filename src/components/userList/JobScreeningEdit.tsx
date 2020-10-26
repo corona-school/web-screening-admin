@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Descriptions, Tag, Select, Button, Modal } from 'antd';
+import { Descriptions, Tag, Select, Button, Modal, Checkbox } from 'antd';
 import { IJobInfo } from '../../api';
 import {StatusMap, knowsFromMap, getScreeningType, ScreeningColorMap, ScreeningTypeText} from './data';
 import TextArea from 'antd/lib/input/TextArea';
@@ -201,11 +201,18 @@ const JobScreeningEdit = ({
       }
       { screeningTypes.includes("projectCoach") &&
       <>
-        <div className="label">Projekt-Feld: </div>
+        <div className="label">JuFo-Projekte: </div>
         <ProjectList
             projects={selectedJob.data.projectFields}
             setProjects={(projects) => changeJob('projectFields', projects)}
         />
+        <Checkbox
+            checked={selectedJob.data.isUniversityStudent}
+            onChange={(event) => changeJob('isUniversityStudent', event.target.checked)}
+            style={{ marginTop: '16px' }}
+        >
+          Eingeschriebener Student
+        </Checkbox>
         </>
       }
       {showButtons && (

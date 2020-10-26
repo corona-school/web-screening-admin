@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Descriptions, Tag, Select, Button, Modal } from 'antd';
 import { IJobInfo } from '../../api';
-import { StatusMap, knowsFromMap } from './data';
+import {StatusMap, knowsFromMap, getScreeningType} from './data';
 import TextArea from 'antd/lib/input/TextArea';
 import SubjectList from './SubjectList';
 import { Link } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
 
 import classes from './JobScreeningEdit.module.less';
+import {State, StateLong, TeacherModule, TeacherModulePretty} from "../../types/Student";
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -27,6 +28,7 @@ const JobScreeningEdit = ({
   removeJob,
   showButtons,
 }: Props) => {
+  const [screeningTypes, setScreeningTypes] = useState<string[]>(getScreeningType(selectedJob));
   const [knowsFrom, setKnowsFrom] = useState('13');
   const [comment, setComment] = useState('');
 
@@ -118,6 +120,24 @@ const JobScreeningEdit = ({
           </a>
         </Descriptions.Item>
       </Descriptions>
+      { screeningTypes.includes('instructor') &&
+      <Descriptions
+        title="DLL-Spezifisch"
+        layout="horizontal"
+        column={2}>
+        <Descriptions.Item label="Bundesland">
+          {StateLong[selectedJob.data.state as State]}
+        </Descriptions.Item>
+        <Descriptions.Item label="Universität">
+          {selectedJob.data.university}
+        </Descriptions.Item>
+        <Descriptions.Item label="Modul-Typ">
+          {TeacherModulePretty[selectedJob.data.official?.module as TeacherModule]}
+        </Descriptions.Item>
+        <Descriptions.Item label="Modulstunden">
+          {selectedJob.data.official?.hours}
+        </Descriptions.Item>
+      </Descriptions>}
       <div className="title">Screening Angaben</div>
       <div className="label">Feedback des Studenten: </div>
       <TextArea

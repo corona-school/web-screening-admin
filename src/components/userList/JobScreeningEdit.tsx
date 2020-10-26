@@ -189,11 +189,15 @@ const JobScreeningEdit = ({
         placeholder="Hier ein Kommentar (Optional)"
         onChange={(e) => setComment(e.target.value)}
       />
-      <div className="label">Fächer: </div>
-      <SubjectList
-        subjects={selectedJob.data.subjects}
-        setSubjects={(subjects) => changeJob('subjects', subjects)}
-      />
+      { screeningTypes.includes('tutor') &&
+      <>
+        <div className="label">Fächer: </div>
+        <SubjectList
+            subjects={selectedJob.data.subjects}
+            setSubjects={(subjects) => changeJob('subjects', subjects)}
+        />
+        </>
+      }
       {showButtons && (
         <div style={{ marginTop: '32px' }}>
           <Button

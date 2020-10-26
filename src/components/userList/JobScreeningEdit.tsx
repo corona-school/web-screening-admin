@@ -8,7 +8,8 @@ import { Link } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
 
 import classes from './JobScreeningEdit.module.less';
-import {State, StateLong, TeacherModule, TeacherModulePretty} from "../../types/Student";
+import {ProjectFieldWithGradeInfoType, State, StateLong, TeacherModule, TeacherModulePretty} from "../../types/Student";
+import ProjectList from "./ProjectList";
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -144,7 +145,7 @@ const JobScreeningEdit = ({
         <Descriptions.Item label="Modulstunden">
           {selectedJob.data.official?.hours}
         </Descriptions.Item>
-      </Descriptions>}
+      </Descriptions> }
       <div className="title">Screening Angaben</div>
       <div className="label">Feedback des Studenten: </div>
       <TextArea
@@ -195,6 +196,15 @@ const JobScreeningEdit = ({
         <SubjectList
             subjects={selectedJob.data.subjects}
             setSubjects={(subjects) => changeJob('subjects', subjects)}
+        />
+        </>
+      }
+      { screeningTypes.includes("projectCoach") &&
+      <>
+        <div className="label">Projekt-Feld: </div>
+        <ProjectList
+            projects={selectedJob.data.projectFields}
+            setProjects={(projects) => changeJob('projectFields', projects)}
         />
         </>
       }

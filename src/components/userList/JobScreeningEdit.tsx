@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Descriptions, Tag, Select, Button, Modal } from 'antd';
 import { IJobInfo } from '../../api';
-import {StatusMap, knowsFromMap, getScreeningType} from './data';
+import {StatusMap, knowsFromMap, getScreeningType, ScreeningColorMap, ScreeningTypeText} from './data';
 import TextArea from 'antd/lib/input/TextArea';
 import SubjectList from './SubjectList';
 import { Link } from 'react-router-dom';
@@ -93,6 +93,13 @@ const JobScreeningEdit = ({
         </Descriptions.Item>
         <Descriptions.Item label="E-Mail">
           {selectedJob.data.email}
+        </Descriptions.Item>
+        <Descriptions.Item label="Art des Screenings">
+          { screeningTypes.map(type =>
+              <Tag color={ScreeningColorMap.get(type)}>
+                {ScreeningTypeText.get(type)}
+              </Tag>)
+          }
         </Descriptions.Item>
         <Descriptions.Item label="Nachricht">
           {selectedJob.data.msg ? selectedJob.data.msg : '-'}

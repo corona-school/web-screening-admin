@@ -11,7 +11,7 @@ import renderStatus from '../RenderStatus';
 import './UserList.less';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import VerifyStudent from "../../utils/studentVerification";
+import { VerifyStudent } from "../../utils/studentVerification";
 
 const { confirm } = Modal;
 const { TabPane } = Tabs;

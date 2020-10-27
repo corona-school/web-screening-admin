@@ -50,16 +50,34 @@ export const StatusMap = new Map([
 ]);
 export const getScreeningType = (j: IJobInfo) => {
   const screenings = [];
-  if (j.data.isInstructor && j.data.screenings.instructor === undefined) {
-    screenings.push('instructor');
+
+  switch (j.status) {
+    case "waiting":
+    case "active":
+      if (j.data.isInstructor && j.data.screenings.instructor === undefined) {
+        screenings.push('instructor');
+      }
+      if (j.data.isTutor && j.data.screenings.tutor === undefined) {
+        screenings.push('tutor');
+      }
+      if (j.data.isProjectCoach && j.data.screenings.projectCoach === undefined) {
+        screenings.push('projectCoach');
+      }
+      return screenings;
+    case "completed":
+    case "rejected":
+      if (j.data.isInstructor) {
+        screenings.push('instructor');
+      }
+      if (j.data.isTutor) {
+        screenings.push('tutor');
+      }
+      if (j.data.isProjectCoach) {
+        screenings.push('projectCoach');
+      }
+      return screenings;
   }
-  if (j.data.isTutor && j.data.screenings.tutor === undefined) {
-    screenings.push('tutor');
-  }
-  if (j.data.isProjectCoach && j.data.screenings.projectCoach === undefined) {
-    screenings.push('projectCoach');
-  }
-  return screenings;
+
 };
 export const ScreeningTypeText = new Map([
   ['instructor', 'Kursleiter*in'],

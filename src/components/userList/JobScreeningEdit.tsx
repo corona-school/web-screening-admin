@@ -8,8 +8,9 @@ import { Link } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
 
 import classes from './JobScreeningEdit.module.less';
-import {State, StateLong, TeacherModule, TeacherModulePretty} from "../../types/Student";
+import {ScreeningInfo, State, StateLong, TeacherModule, TeacherModulePretty} from "../../types/Student";
 import ProjectList from "./ProjectList";
+import {CompleteJob} from "../../utils/studentVerification";
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -17,7 +18,7 @@ const { confirm } = Modal;
 interface Props {
   selectedJob: IJobInfo;
   setSelectedJob: (job: IJobInfo) => void;
-  completeJob: (job: IJobInfo, decision: boolean) => void;
+  completeJob: (job: IJobInfo, screening: ScreeningInfo) => void;
   removeJob: (email: string) => void;
   showButtons?: boolean;
 }
@@ -39,31 +40,7 @@ const JobScreeningEdit = ({
     knowsFrom: string,
     decision: boolean
   ) => {
-
-    const completedJob: IJobInfo = {
-      ...job,
-      data: {
-        ...job.data,
-        screenings: {
-          tutor: screeningTypes.includes('tutor') ? {
-            comment,
-            knowsCoronaSchoolFrom: knowsFrom,
-            verified: decision,
-          } : job.data.screenings.tutor,
-          instructor: screeningTypes.includes('instructor') ? {
-            comment,
-            knowsCoronaSchoolFrom: knowsFrom,
-            verified: decision,
-          } : job.data.screenings.instructor,
-          projectCoach: screeningTypes.includes('projectCoach') ? {
-            comment,
-            knowsCoronaSchoolFrom: knowsFrom,
-            verified: decision,
-          } : job.data.screenings.projectCoach,
-        },
-      },
-    };
-    completeJob(completedJob, decision);
+    completeJob(job,{ verified: decision, knowsCoronaSchoolFrom: knowsFrom, comment: comment });
   };
 
   useEffect(() => {

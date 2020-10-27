@@ -66,6 +66,10 @@ const JobScreeningEdit = ({
     completeJob(completedJob, decision);
   };
 
+  useEffect(() => {
+    setScreeningTypes(getScreeningType(selectedJob));
+  }, [selectedJob]);
+
   const changeJob = (key: string, value: any) => {
     setSelectedJob({
       ...selectedJob,
@@ -139,24 +143,27 @@ const JobScreeningEdit = ({
           </a>
         </Descriptions.Item>
       </Descriptions>
-      { screeningTypes.includes('instructor') &&
-      <Descriptions
-        title="DLL-Spezifisch"
-        layout="horizontal"
-        column={2}>
-        <Descriptions.Item label="Bundesland">
-          {StateLong[selectedJob.data.state as State]}
-        </Descriptions.Item>
-        <Descriptions.Item label="Universität">
-          {selectedJob.data.university}
-        </Descriptions.Item>
-        <Descriptions.Item label="Modul-Typ">
-          {TeacherModulePretty[selectedJob.data.official?.module as TeacherModule]}
-        </Descriptions.Item>
-        <Descriptions.Item label="Modulstunden">
-          {selectedJob.data.official?.hours}
-        </Descriptions.Item>
-      </Descriptions> }
+
+      {
+        screeningTypes.includes('instructor') &&
+        <Descriptions
+          title="DLL-Spezifisch"
+          layout="horizontal"
+          column={2}>
+          <Descriptions.Item label="Bundesland">
+            {StateLong[selectedJob.data.state as State]}
+          </Descriptions.Item>
+          <Descriptions.Item label="Universität">
+            {selectedJob.data.university}
+          </Descriptions.Item>
+          <Descriptions.Item label="Modul-Typ">
+            {TeacherModulePretty[selectedJob.data.official?.module as TeacherModule]}
+          </Descriptions.Item>
+          <Descriptions.Item label="Modulstunden">
+            {selectedJob.data.official?.hours}
+          </Descriptions.Item>
+        </Descriptions>
+      }
       <div className="title">Screening Angaben</div>
       <div className="label">Feedback des Studenten: </div>
       <TextArea
@@ -210,35 +217,33 @@ const JobScreeningEdit = ({
         />
         </>
       }
-      { screeningTypes.includes("projectCoach") &&
-      <>
-        <div className="label">JuFo-Projekte: </div>
-        <ProjectList
-            projects={selectedJob.data.projectFields}
-            setProjects={(projects) => changeJob('projectFields', projects)}
-        />
-        <Checkbox
-            checked={selectedJob.data.isUniversityStudent}
-            onChange={(event) => {
-              changeJob('isUniversityStudent', event.target.checked);
-              changeJob('isStudent', event.target.checked);
-              setScreeningTypes(getScreeningType(selectedJob));
-            }}
-            style={{ marginTop: '16px' }}
-        >
-          Eingeschriebener Student
-        </Checkbox>
-        </>
+      {
+        screeningTypes.includes("projectCoach") &&
+          <div>
+            <div className="label">JuFo-Projekte: </div>
+              <ProjectList
+                  projects={selectedJob.data.projectFields}
+                  setProjects={(projects) => changeJob('projectFields', projects)}
+              />
+              <Checkbox
+                  checked={selectedJob.data.isUniversityStudent}
+                  onChange={(event) => {
+                    changeJob("isUniversityStudent", event.target.checked);
+                  }}
+                  style={{ marginTop: "8px" }}
+              >
+                Eingeschriebener Student
+              </Checkbox>
+          </div>
       }
-      { screeningTypes.includes("instructor") &&
+      {
+        (screeningTypes.includes("instructor") || screeningTypes.includes("projectCoach")) &&
           <Checkbox
             checked={selectedJob.data.isTutor}
             onChange={(event) => {
               changeJob("isTutor", event.target.checked);
-              setScreeningTypes(getScreeningType(selectedJob));
             }}
-            style={{ marginTop: "8px" }}
-          >
+            style={{ marginTop: "8px" }}>
             Für 1-zu-1-Betreuung geeignet
           </Checkbox>
       }

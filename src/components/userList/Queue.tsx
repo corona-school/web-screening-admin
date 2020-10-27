@@ -83,7 +83,8 @@ const Queue = (props: RouteComponentProps) => {
   const handleColumnClick = (job: IJobInfo) => {
     if (job.status !== 'waiting') {
       setSelectedJob(job);
-      setModalOpen(true);
+      const room = new URL(job.data.jitsi).pathname;
+      props.history.push(`screening/${job.data.email}${room}`);
       return;
     }
 

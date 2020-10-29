@@ -48,7 +48,7 @@ const SubjectList = ({ projects, setProjects }: Props) => {
         if (remainingProject) {
             setProjects([
                 ...projects,
-                { name: remainingProject, min: undefined, max: undefined  },
+                { name: remainingProject, min: 1, max: 13 },
             ]);
         }
     };

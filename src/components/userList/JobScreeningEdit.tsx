@@ -73,7 +73,7 @@ const JobScreeningEdit = ({
     confirm({
       title: 'Willst du diesen Job wirklich löschen?',
       content:
-        'Der Job wird von der Warteschalgen entfernt und der Student muss sich neu anmelden, um sich verifizieren zu lassen.',
+        'Der Job wird aus der Warteschlange entfernt und die/ der Student*in muss sich neu anmelden, um sich verifizieren zu lassen.',
       okText: 'Ja',
       cancelText: 'Nein',
       onOk() {
@@ -92,7 +92,7 @@ const JobScreeningEdit = ({
   return (
     <div className={classes.container}>
       <Descriptions
-        title="Studenten-Information"
+        title="Studierenden-Information"
         layout="horizontal"
         column={2}
       >
@@ -157,14 +157,14 @@ const JobScreeningEdit = ({
         </Descriptions>
       }
       <div className="title">Screening Angaben</div>
-      <div className="label">Feedback des Studenten: </div>
+      <div className="label">Feedback des Studierenden: </div>
       <TextArea
         rows={2}
-        placeholder="Feedback des Studenten"
+        placeholder="Feedback des Studierenden"
         value={selectedJob.data.feedback}
         onChange={feedback}
       />
-      <div className="label">Wie hat der Student von uns erfahren?</div>
+      <div className="label">Wie hat die/ der Student*in von uns erfahren?</div>
       <Select
         onChange={(v) => {
           setDraftKnowsFrom(v);
@@ -179,7 +179,7 @@ const JobScreeningEdit = ({
       >
         <Option value="Bekannte"> Über Bekannte/Familie</Option>
         <Option value="Empfehlung"> Über eine Empfehlung</Option>
-        <Option value="Schule"> Über Lehrer/Schule</Option>
+        <Option value="Schule"> Über Lehrer*in/Schule</Option>
         <Option value="Universität"> Über die Universität</Option>
         <Option value="Pressebericht"> Über einen Pressebericht</Option>
         <Option value="Radiobeitrag"> Über einen Radiobeitrag</Option>
@@ -231,7 +231,7 @@ const JobScreeningEdit = ({
                   }}
                   style={{ marginTop: "8px" }}
               >
-                Eingeschriebener Student
+                Eingeschriebene*r Student*in
               </Checkbox>
           </div>
       }

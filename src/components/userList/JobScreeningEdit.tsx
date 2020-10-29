@@ -31,8 +31,23 @@ const JobScreeningEdit = ({
   showButtons,
 }: Props) => {
   const [screeningTypes, setScreeningTypes] = useState<string[]>(getScreeningType(selectedJob));
-  const [knowsFrom, setKnowsFrom] = useState('13');
-  const [comment, setComment] = useState('');
+
+  const getInitialScreening = () => {
+    if (screeningTypes.includes('tutor')) {
+      return selectedJob.data.screenings.tutor;
+    } else if (screeningTypes.includes('instructor')) {
+      return selectedJob.data.screenings.instructor;
+    } else if (screeningTypes.includes('projectCoach')) {
+      return selectedJob.data.screenings.projectCoach;
+    } else {
+      return undefined;
+    }
+  };
+  const initialScreening = getInitialScreening();
+
+  const [knowsFrom, setKnowsFrom] = useState(initialScreening?.knowsCoronaSchoolFrom || '');
+  const [draftKnowsFrom, setDraftKnowsFrom] = useState(knowsFrom);
+  const [comment, setComment] = useState(initialScreening?.comment || '');
 
   const done = (
     job: IJobInfo,
@@ -151,7 +166,14 @@ const JobScreeningEdit = ({
       />
       <div className="label">Wie hat der Student von uns erfahren?</div>
       <Select
-        onChange={setKnowsFrom}
+        onChange={(v) => {
+          setDraftKnowsFrom(v);
+          if (v !== "13") {
+            setKnowsFrom(v);
+          } else {
+            setKnowsFrom("");
+          }
+        }}
         defaultValue={knowsFrom}
         style={{ marginBottom: '16px', marginTop: '16px', width: '100%' }}
       >
@@ -169,7 +191,7 @@ const JobScreeningEdit = ({
         <Option value="Werbeanzeige"> Über eine Werbeanzeige</Option>
         <Option value="13"> anders</Option>
       </Select>
-      {knowsFrom === '13' && (
+      {draftKnowsFrom === '13' && (
         <TextArea
           rows={1}
           placeholder="anderes"

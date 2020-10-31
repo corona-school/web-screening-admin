@@ -35,7 +35,7 @@ const useStudent = (email: string) => {
       });
   };
 
-  const save = (screeningResult: IStudent) => {
+  const save = (screeningResult: IStudentInfo) => {
     setLoading(true);
     console.log('request', baseUrl + studentManualVerification, {
       screeningResult,
@@ -58,7 +58,7 @@ const useStudent = (email: string) => {
       });
   };
 
-  return { studentInfo, loading, save, reload };
+  return { studentInfo, setStudentInfo, loading, save, reload };
 };
 
 export default useStudent;

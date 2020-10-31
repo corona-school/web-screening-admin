@@ -49,16 +49,6 @@ export interface Screening {
 }
 
 export interface IStudentInfo {
-  firstname: string;
-  lastname: string;
-  email: string;
-  subjects: string;
-  phone?: string;
-  msg?: string;
-  verified?: boolean;
-}
-
-export interface IStudent {
   id: number;
   firstName: string;
   lastName: string;
@@ -80,10 +70,17 @@ export interface IStudent {
   university?: string;
   state?: string;
   isUniversityStudent?: boolean;
+  jufoPastParticipationConfirmed?: boolean;
+  wasJufoParticipant?: TutorJufoParticipationIndication;
+  hasJufoCertificate?: boolean;
+  jufoPastParticipationInfo?: string;
   official?: {
     hours: number;
     module: string;
   };
+}
+
+export interface IStudent extends IStudentInfo{
   screenerEmail: string;
   jitsi: string;
 }
@@ -157,3 +154,9 @@ export const StateLong: { [key in State]: string } = {
   th: 'Thüringen',
   other: 'Sonstiges',
 };
+
+export enum TutorJufoParticipationIndication {
+  YES = "yes", //was past jufo participant
+  NO = "no", //was no past jufo participant
+  IDK = "idk" //don't know whether she*he was jufo participant
+}

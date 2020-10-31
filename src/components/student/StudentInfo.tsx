@@ -1,22 +1,19 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import React, {useContext, useState} from 'react';
+import {RouteComponentProps, withRouter} from 'react-router-dom';
 import classes from './StudentInfo.module.less';
 import useStudent from '../../api/useStudent';
+import {Checkbox, Descriptions, Input, Select, Spin, Tag, Typography,} from 'antd';
+import {ApiContext} from '../../api/ApiContext';
 import {
-  Descriptions,
-  Spin,
-  Typography,
-  Tag,
-  Button,
-  Select,
-  Input,
-  Radio,
-} from 'antd';
-import { PlusOutlined, SaveOutlined } from '@ant-design/icons';
-import { ApiContext } from '../../api/ApiContext';
-import SubjectList from '../userList/SubjectList';
-import { createSubjects, subjectToString } from '../../utils/subjectUtils';
-import { IStudent } from '../../types/Student';
+    IStudentInfo,
+    ScreeningInfo,
+    State,
+    StateLong,
+    TeacherModule,
+    TeacherModulePretty,
+    TutorJufoParticipationIndication
+} from '../../types/Student';
+import {ScreeningColorMap, ScreeningTypeText} from "../userList/data";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -29,192 +26,229 @@ interface MatchParams {
 const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
   const context = useContext(ApiContext);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [screeningResult, setScreeningResult] = useState<IStudent | null>(null);
-  const [knowsFrom, setKnowsFrom] = useState('13');
   const email = props.match.params.email;
 
   if (!email) {
     props.history.push('/');
   }
 
-  useEffect(() => {
-    setOpenEdit(false);
-  }, [email]);
+  const { studentInfo, setStudentInfo, loading, save } = useStudent(email || '');
 
-  const { studentInfo, loading, save } = useStudent(email || '');
+  const changeStudentInfo = (key: string, value: any) => {
+      if (!studentInfo) {
+          return;
+      }
+      const newStudentInfo: IStudentInfo = {
+          ...studentInfo,
+          [key]: value,
+      };
+      setStudentInfo(newStudentInfo);
+  };
 
-  if (loading || !studentInfo) {
-    return (
-      <div
-        className={classes.box}
-        style={{ justifyContent: 'center', alignItems: 'center' }}
-      >
-        <Spin size="large"></Spin>
-      </div>
-    );
+  const BooleanTag = ({value}: {value: boolean}) => {
+      if (value) {
+          return <Tag color="green">Ja</Tag>;
+      } else {
+          return <Tag color="red">Nein</Tag>;
+      }
   }
 
-  const changeJob = (key: string, value: any) => {
-    if (!screeningResult) {
-      return;
+  const TutorJufoParticipationIndicationTag = ({value}: {value: TutorJufoParticipationIndication}) => {
+      switch (value) {
+          case TutorJufoParticipationIndication.IDK:
+              return <Tag color="default">Weiß nicht</Tag>;
+          case TutorJufoParticipationIndication.YES:
+              return <Tag color="green">Ja</Tag>;
+          case TutorJufoParticipationIndication.NO:
+              return <Tag color="red">Nein</Tag>;
+      };
+  };
+
+    const BasicStaticInformation = () => {
+        return (
+            <Descriptions column={1} bordered className={classes.descriptionsStyle}>
+                <Descriptions.Item label="Name">
+                    {`${studentInfo?.firstName} ${studentInfo?.lastName}`}
+                </Descriptions.Item>
+                <Descriptions.Item label="E-Mail">
+                    <a href={'mailto: ' + studentInfo?.email}>{studentInfo?.email}</a>
+                </Descriptions.Item>
+            </Descriptions>
+        );
     }
-    const newResult: IStudent = {
-      ...screeningResult,
-      [key]: value,
-    };
-    setScreeningResult(newResult);
-  };
 
-  const renderEdit = () => {
+    const BasicEditableInfoDisplay = () => {
+        return (
+            <Descriptions column={1} bordered className={classes.descriptionsStyle}>
+                <Descriptions.Item label="Telefonnummer">
+                    <Input
+                        value={studentInfo?.phone}
+                        onChange={e => changeStudentInfo("phone", e.target.value)}/>
+                </Descriptions.Item>
+                <Descriptions.Item label="Nachricht">
+                    <TextArea
+                        value={studentInfo?.msg}
+                        onChange={e => changeStudentInfo("msg", e.target.value)}/>
+                </Descriptions.Item>
+                <Descriptions.Item label="Feedback">
+                    <TextArea
+                        value={studentInfo?.feedback}
+                        onChange={e => changeStudentInfo("feedback", e.target.value)}/>
+                </Descriptions.Item>
+                <Descriptions.Item label="Newsletter">
+                    <Checkbox
+                        checked={studentInfo?.newsletter}
+                        onChange={e => changeStudentInfo("newsletter", e.target.checked)}/>
+                </Descriptions.Item>
+            </Descriptions>
+        );
+    }
+
+    const BasicEditableInfoEdit = () => {
+        return (
+            <Descriptions column={1} bordered className={classes.descriptionsStyle}>
+                <Descriptions.Item label="Telefonnummer">{studentInfo?.phone || "-"}</Descriptions.Item>
+                <Descriptions.Item label="Nachricht">{studentInfo?.msg || "-"}</Descriptions.Item>
+                <Descriptions.Item label="Feedback">{studentInfo?.feedback || "-"}</Descriptions.Item>
+                <Descriptions.Item label="Newsletter">
+                    <BooleanTag value={studentInfo?.newsletter || false} />
+                </Descriptions.Item>
+            </Descriptions>
+        );
+    }
+
+    const TypeDisplay = () => {
+        return (
+            <Descriptions bordered column={1} className={classes.descriptionsStyle}>
+                <Descriptions.Item label="Berechtigungen">
+                    { studentInfo?.isTutor &&
+                        <Tag color={ScreeningColorMap.get("tutor")}>
+                            { ScreeningTypeText.get("tutor") }
+                        </Tag> }
+                    { studentInfo?.isInstructor &&
+                        <Tag color={ScreeningColorMap.get("instructor")}>
+                            { ScreeningTypeText.get("instructor") }
+                        </Tag> }
+                    { studentInfo?.isProjectCoach &&
+                        <Tag color={ScreeningColorMap.get("projectCoach")}>
+                            { ScreeningTypeText.get("projectCoach")}
+                        </Tag> }
+                </Descriptions.Item>
+            </Descriptions>
+        );
+    }
+
+    const ScreeningDisplay = ({screening}: {screening: ScreeningInfo}) => {
+        return (
+            <Descriptions bordered size="small" column={1}>
+                <Descriptions.Item label="Verifiziert">
+                    <BooleanTag value={screening.verified}/>
+                </Descriptions.Item>
+                <Descriptions.Item label="Kommentar">
+                    {screening.comment || "-"}
+                </Descriptions.Item>
+                <Descriptions.Item label="Kennt uns durch">
+                    {screening.comment || "-"}
+                </Descriptions.Item>
+            </Descriptions>
+        );
+    }
+
+    const TutorInformationDisplay = () => {
+        return (
+            <Descriptions column={1} bordered title="Tutoren-Information" className={classes.descriptionsStyle}>
+                <Descriptions.Item label="Fächer">
+                    <Descriptions bordered size="small" column={1}>
+                        {studentInfo?.subjects.map((s) => (
+                            <Descriptions.Item label={s.name}>
+                                {`Klasse ${s.grade.min} bis ${s.grade.max}`}
+                            </Descriptions.Item>
+                        ))}
+                    </Descriptions>
+                </Descriptions.Item>
+                <Descriptions.Item label="Screening">
+                    <ScreeningDisplay screening={studentInfo?.screenings.tutor || { verified: false }} />
+                </Descriptions.Item>
+            </Descriptions>
+        )
+    }
+
+    const InstructorInformationDisplay = () => {
+      return (
+          <Descriptions column={1} bordered title="Kursleiter-Information" className={classes.descriptionsStyle}>
+              <Descriptions.Item label="Bundesland">
+                  { StateLong[studentInfo?.state as State] || "-" }
+              </Descriptions.Item>
+              <Descriptions.Item label="Universität">{ studentInfo?.university || "-" }</Descriptions.Item>
+              <Descriptions.Item label="Modul-Typ">
+                  { TeacherModulePretty[studentInfo?.official?.module as TeacherModule] || "-" }
+              </Descriptions.Item>
+              <Descriptions.Item label="Modulstunden">{ studentInfo?.official?.hours || "-" }</Descriptions.Item>
+              <Descriptions.Item label="Screening">
+                  <ScreeningDisplay screening={studentInfo?.screenings.instructor || { verified: false }} />
+              </Descriptions.Item>
+          </Descriptions>
+      )
+    }
+
+    const JuFoInformationDisplay = () => {
+      return (
+          <Descriptions column={1} bordered title="JuFo-Informationen" className={classes.descriptionsStyle}>
+              <Descriptions.Item label="Projekte">
+                  <Descriptions bordered size="small" column={1}>
+                      {studentInfo?.projectFields.map((s) => (
+                          <Descriptions.Item label={s.name}>
+                              {`Klasse ${s.min || "-"} bis ${s.max || "-"}`}
+                          </Descriptions.Item>
+                      ))}
+                  </Descriptions>
+              </Descriptions.Item>
+              <Descriptions.Item label="JuFo-Alumni">
+                  <TutorJufoParticipationIndicationTag
+                      value={studentInfo?.wasJufoParticipant || TutorJufoParticipationIndication.IDK} />
+              </Descriptions.Item>
+              <Descriptions.Item label="Nachweis für frühere JuFo-Teilnahme">
+                  <BooleanTag value={studentInfo?.hasJufoCertificate || false} />
+              </Descriptions.Item>
+              <Descriptions.Item label="Frühere Teilnahme bestätigt">
+                  <BooleanTag value={studentInfo?.jufoPastParticipationConfirmed || false} />
+              </Descriptions.Item>
+              <Descriptions.Item label="Informationen zu früherer Teilnahme">
+                  { studentInfo?.jufoPastParticipationInfo || "-" }
+              </Descriptions.Item>
+              <Descriptions.Item label="Eingeschriebene*r Student*in">
+                  <BooleanTag value={studentInfo?.isUniversityStudent || false} />
+              </Descriptions.Item>
+              <Descriptions.Item label="Screening">
+                  <ScreeningDisplay screening={studentInfo?.screenings.projectCoach || { verified: false }} />
+              </Descriptions.Item>
+          </Descriptions>
+      )
+    }
+
     return (
-      <div className={classes.editContainer}>
-        <div className="label">Feedback des Studenten: </div>
-        <TextArea
-          rows={2}
-          placeholder="Feedback des Studenten"
-          value={screeningResult?.feedback}
-          onChange={(e) => {
-            if (!screeningResult) {
-              return;
-            }
-            const newResult: IStudent = {
-              ...screeningResult,
-              feedback: e.target.value,
-            };
-            setScreeningResult(newResult);
-          }}
-        />
-        <div className="label">Wie hat der Student von uns erfahren?</div>
-        <Select
-          onChange={(v) => {
-            setKnowsFrom(v);
-            if (v !== '13') {
-              changeJob('knowcsfrom', v);
-            }
-          }}
-          defaultValue={knowsFrom}
-          style={{ marginBottom: '16px', marginTop: '16px', width: '100%' }}
-        >
-          <Option value="Bekannte"> Über Bekannte/Familie</Option>
-          <Option value="Empfehlung"> Über eine Empfehlung</Option>
-          <Option value="Schule"> Über Lehrer/Schule</Option>
-          <Option value="Universität"> Über die Universität</Option>
-          <Option value="Pressebericht"> Über einen Pressebericht</Option>
-          <Option value="Radiobeitrag"> Über einen Radiobeitrag</Option>
-          <Option value="Fernsehbeitrag"> Über einen Fernsehbeitrag</Option>
-          <Option value="Facebook"> Über Facebook</Option>
-          <Option value="Instagram"> Über Instagram</Option>
-          <Option value="TikTok"> Über TikTok</Option>
-          <Option value="Suchmaschine"> Über eine Suchmaschinen-Suche</Option>
-          <Option value="Werbeanzeige"> Über eine Werbeanzeige</Option>
-          <Option value="13"> anders</Option>
-        </Select>
-        {knowsFrom === '13' && (
-          <TextArea
-            rows={1}
-            placeholder="anderes"
-            value={screeningResult?.screenings.tutor?.knowsCoronaSchoolFrom}
-            onChange={(e) => changeJob('knowcsfrom', e.target.value)}
-          />
-        )}
-
-        <div className="label">Kommentar: </div>
-        <TextArea
-          style={{ marginBottom: '16px' }}
-          rows={2}
-          value={screeningResult?.screenings.tutor?.comment}
-          placeholder="Hier ein Kommentar (Optional)"
-          onChange={(e) => changeJob('commentScreener', e.target.value)}
-        />
-        <div className="label">Fächer: </div>
-        <SubjectList
-          subjects={screeningResult?.subjects || []}
-          setSubjects={(subjects) => {
-            changeJob('subjects', subjects);
-          }}
-        />
-        <div style={{ marginTop: '8px' }}>
-          <Radio.Group
-            value={screeningResult?.screenings.tutor?.verified ? 'a' : 'b'}
-            onChange={(change) => {
-              if (change.target.value === 'a') {
-                changeJob('verified', true);
-                return;
-              }
-              changeJob('verified', false);
-            }}
-          >
-            <Radio.Button value="a">Freischalten</Radio.Button>
-            <Radio.Button value="b">Ablehnen</Radio.Button>
-          </Radio.Group>
-        </div>
-        <Button
-          style={{ margin: '8px 0px' }}
-          type="primary"
-          onClick={() => {
-            if (screeningResult) {
-              save(screeningResult);
-            }
-          }}
-        >
-          <SaveOutlined />
-          Save
-        </Button>
-      </div>
-    );
-  };
-
-  return (
     <div className={classes.box}>
-      <div className={classes.container}>
-        <Title level={4} style={{ color: '#6c757d' }}>
-          Studenten Information
-        </Title>
-        <Descriptions layout="horizontal" column={2}>
-          <Descriptions.Item label="Name">
-            {studentInfo.firstname} {studentInfo.lastname}
-          </Descriptions.Item>
-          <Descriptions.Item label="E-Mail">
-            {studentInfo.email}
-          </Descriptions.Item>
-
-          <Descriptions.Item label="Telefonnummer">
-            {studentInfo.phone ? studentInfo.phone : '-'}
-          </Descriptions.Item>
-
-          <Descriptions.Item label="Status">
-            {studentInfo.verified ? (
-              <Tag color="green">Verifiziert</Tag>
-            ) : (
-              <Tag>-</Tag>
-            )}
-          </Descriptions.Item>
-          <Descriptions.Item label="Nachricht">
-            {studentInfo.msg ? studentInfo.msg : '-'}
-          </Descriptions.Item>
-        </Descriptions>
-        <Button
-          onClick={() => {
-            // TODO
-            // if (!context || !context.user || !context.user.email) {
-            //   return;
-            // }
-            // const initialResult: IStudentScreeningResult = {
-            //   verified: true,
-            //   screenerEmail: context.user.email,
-            //   subjects: studentInfo.subjects,
-            // };
-            // setScreeningResult(initialResult);
-            // setOpenEdit(true);
-          }}
-          type="primary"
-          style={{ width: '180px' }}
-          icon={<PlusOutlined />}
-        >
-          Manuel verifizieren
-        </Button>
-      </div>
-      <div>{openEdit && renderEdit()}</div>
+        <div className={classes.header}>
+            <Title style={{ color: '#6c757d', marginTop: 0 }} level={4}>
+                Persönliche Informationen
+            </Title>
+        </div>
+        {loading &&
+            <div style={{ textAlign: "center", margin: "20px 0" }}>
+                <Spin size="large" />
+            </div>
+        }
+        {!loading &&
+            <>
+                <BasicStaticInformation />
+                { openEdit && <BasicEditableInfoDisplay /> }
+                { !openEdit && <BasicEditableInfoEdit /> }
+                { !openEdit && <TypeDisplay /> }
+                { (studentInfo?.isTutor && !openEdit) && <TutorInformationDisplay /> }
+                { (studentInfo?.isInstructor && !openEdit) && <InstructorInformationDisplay /> }
+                { (studentInfo?.isProjectCoach && !openEdit) && <JuFoInformationDisplay /> }
+            </>
+        }
     </div>
   );
 };

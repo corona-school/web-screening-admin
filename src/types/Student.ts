@@ -80,7 +80,7 @@ export interface IStudentInfo {
   };
 }
 
-export interface IStudent extends IStudentInfo{
+export interface IStudent extends IStudentInfo {
   screenerEmail: string;
   jitsi: string;
 }
@@ -156,7 +156,7 @@ export const StateLong: { [key in State]: string } = {
 };
 
 export enum TutorJufoParticipationIndication {
-  YES = "yes", //was past jufo participant
-  NO = "no", //was no past jufo participant
-  IDK = "idk" //don't know whether she*he was jufo participant
+  YES = 'yes', //was past jufo participant
+  NO = 'no', //was no past jufo participant
+  IDK = 'idk', //don't know whether she*he was jufo participant
 }

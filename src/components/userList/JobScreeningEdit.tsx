@@ -1,16 +1,37 @@
-import React, {useEffect, useState} from 'react';
-import { Descriptions, Tag, Select, Button, Modal, Checkbox } from 'antd';
+import React, { useEffect, useState } from 'react';
+import {
+  Descriptions,
+  Tag,
+  Select,
+  Button,
+  Modal,
+  Checkbox,
+  Radio,
+  Tooltip,
+} from 'antd';
 import { IJobInfo } from '../../api';
-import {StatusMap, knowsFromMap, getScreeningType, ScreeningColorMap, ScreeningTypeText} from './data';
+import {
+  StatusMap,
+  getScreeningType,
+  ScreeningColorMap,
+  ScreeningTypeText,
+} from './data';
 import TextArea from 'antd/lib/input/TextArea';
 import SubjectList from './SubjectList';
 import { Link } from 'react-router-dom';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
 import classes from './JobScreeningEdit.module.less';
-import {ScreeningInfo, State, StateLong, TeacherModule, TeacherModulePretty} from "../../types/Student";
-import ProjectList from "./ProjectList";
-import {CompleteJob} from "../../utils/studentVerification";
+import {
+  ScreeningInfo,
+  State,
+  StateLong,
+  TeacherModule,
+  TeacherModulePretty,
+} from '../../types/Student';
+import ProjectList from './ProjectList';
+import { RadioChangeEvent } from 'antd/lib/radio';
+import { getJufoParticipantStatus } from '../../utils/student';
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -30,7 +51,9 @@ const JobScreeningEdit = ({
   removeJob,
   showButtons,
 }: Props) => {
-  const [screeningTypes, setScreeningTypes] = useState<string[]>(getScreeningType(selectedJob));
+  const [screeningTypes, setScreeningTypes] = useState<string[]>(
+    getScreeningType(selectedJob)
+  );
 
   const getInitialScreening = () => {
     if (screeningTypes.includes('tutor')) {
@@ -45,7 +68,9 @@ const JobScreeningEdit = ({
   };
   const initialScreening = getInitialScreening();
 
-  const [knowsFrom, setKnowsFrom] = useState(initialScreening?.knowsCoronaSchoolFrom || '');
+  const [knowsFrom, setKnowsFrom] = useState(
+    initialScreening?.knowsCoronaSchoolFrom || ''
+  );
   const [draftKnowsFrom, setDraftKnowsFrom] = useState(knowsFrom);
   const [comment, setComment] = useState(initialScreening?.comment || '');
 
@@ -55,7 +80,11 @@ const JobScreeningEdit = ({
     knowsFrom: string,
     decision: boolean
   ) => {
-    completeJob(job,{ verified: decision, knowsCoronaSchoolFrom: knowsFrom, comment: comment });
+    completeJob(job, {
+      verified: decision,
+      knowsCoronaSchoolFrom: knowsFrom,
+      comment: comment,
+    });
   };
 
   useEffect(() => {
@@ -87,6 +116,14 @@ const JobScreeningEdit = ({
     changeJob('feedback', e.target.value);
   };
 
+  const handleInput = (key: string) => (
+    e:
+      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      | RadioChangeEvent
+  ) => {
+    changeJob(key, e.target.value);
+  };
+
   const room = new URL(selectedJob.data.jitsi).pathname;
 
   return (
@@ -103,11 +140,14 @@ const JobScreeningEdit = ({
           {selectedJob.data.email}
         </Descriptions.Item>
         <Descriptions.Item label="Art des Screenings">
-          { screeningTypes.map(type =>
-              <Tag color={ScreeningColorMap.get(type)}>
-                {ScreeningTypeText.get(type)}
-              </Tag>)
-          }
+          {screeningTypes.map((type) => (
+            <Tag
+              color={ScreeningColorMap.get(type)}
+              key={ScreeningColorMap.get(type)}
+            >
+              {ScreeningTypeText.get(type)}
+            </Tag>
+          ))}
         </Descriptions.Item>
         <Descriptions.Item label="Nachricht">
           {selectedJob.data.msg ? selectedJob.data.msg : '-'}
@@ -135,13 +175,19 @@ const JobScreeningEdit = ({
           </a>
         </Descriptions.Item>
       </Descriptions>
-
-      {
-        screeningTypes.includes('instructor') &&
+      {screeningTypes.includes('projectCoach') && (
         <Descriptions
-          title="DLL-Spezifisch"
+          title="Jugend Forscht Informationen"
           layout="horizontal"
-          column={2}>
+          column={1}
+        >
+          <Descriptions.Item label="Hat ein Jufo Nachweise">
+            {getJufoParticipantStatus(selectedJob.data.wasJufoParticipant)}
+          </Descriptions.Item>
+        </Descriptions>
+      )}
+      {screeningTypes.includes('instructor') && (
+        <Descriptions title="DLL-Spezifisch" layout="horizontal" column={2}>
           <Descriptions.Item label="Bundesland">
             {StateLong[selectedJob.data.state as State]}
           </Descriptions.Item>
@@ -149,13 +195,17 @@ const JobScreeningEdit = ({
             {selectedJob.data.university}
           </Descriptions.Item>
           <Descriptions.Item label="Modul-Typ">
-            {TeacherModulePretty[selectedJob.data.official?.module as TeacherModule]}
+            {
+              TeacherModulePretty[
+                selectedJob.data.official?.module as TeacherModule
+              ]
+            }
           </Descriptions.Item>
           <Descriptions.Item label="Modulstunden">
             {selectedJob.data.official?.hours}
           </Descriptions.Item>
         </Descriptions>
-      }
+      )}
       <div className="title">Screening Angaben</div>
       <div className="label">Feedback des Studierenden: </div>
       <TextArea
@@ -168,14 +218,14 @@ const JobScreeningEdit = ({
       <Select
         onChange={(v) => {
           setDraftKnowsFrom(v);
-          if (v !== "13") {
+          if (v !== '13') {
             setKnowsFrom(v);
           } else {
-            setKnowsFrom("");
+            setKnowsFrom('');
           }
         }}
         defaultValue={knowsFrom}
-        style={{ marginBottom: '16px', marginTop: '16px', width: '100%' }}
+        style={{ marginBottom: '16px', width: '100%' }}
       >
         <Option value="Bekannte"> Über Bekannte/Familie</Option>
         <Option value="Empfehlung"> Über eine Empfehlung</Option>
@@ -207,45 +257,88 @@ const JobScreeningEdit = ({
         placeholder="Hier ein Kommentar (Optional)"
         onChange={(e) => setComment(e.target.value)}
       />
-      { screeningTypes.includes('tutor') &&
-      <>
-        <div className="label">Fächer: </div>
-        <SubjectList
+      {screeningTypes.includes('tutor') && (
+        <>
+          <div className="label">Fächer: </div>
+          <SubjectList
             subjects={selectedJob.data.subjects}
             setSubjects={(subjects) => changeJob('subjects', subjects)}
-        />
+          />
         </>
-      }
-      {
-        screeningTypes.includes("projectCoach") &&
-          <div>
-            <div className="label">JuFo-Projekte: </div>
-              <ProjectList
-                  projects={selectedJob.data.projectFields}
-                  setProjects={(projects) => changeJob('projectFields', projects)}
-              />
-              <Checkbox
-                  checked={selectedJob.data.isUniversityStudent}
-                  onChange={(event) => {
-                    changeJob("isUniversityStudent", event.target.checked);
-                  }}
-                  style={{ marginTop: "8px" }}
-              >
-                Eingeschriebene*r Student*in
-              </Checkbox>
-          </div>
-      }
-      {
-        (screeningTypes.includes("instructor") || screeningTypes.includes("projectCoach")) &&
+      )}
+      {screeningTypes.includes('projectCoach') && (
+        <div>
+          <div className="label">JuFo-Projekte: </div>
+          <ProjectList
+            projects={selectedJob.data.projectFields}
+            setProjects={(projects) => changeJob('projectFields', projects)}
+          />
           <Checkbox
-            checked={selectedJob.data.isTutor}
+            checked={selectedJob.data.isUniversityStudent}
             onChange={(event) => {
-              changeJob("isTutor", event.target.checked);
+              changeJob('isUniversityStudent', event.target.checked);
             }}
-            style={{ marginTop: "8px" }}>
-            Für 1-zu-1-Betreuung geeignet
+            style={{ marginTop: '16px' }}
+          >
+            Eingeschriebene*r Student*in
           </Checkbox>
-      }
+          <div>
+            <div className="label">
+              Hat die/der Student*in ein gültigen Nachweis über die Teilnahme
+              bei JugendForscht?{' '}
+              <Tooltip
+                placement="bottom"
+                title="Zum freischalten einer/eines Jufo-Teilnehmer*in wird kein güliger Nachweis benötigt. Dieser wird sonst manuell bei JugendForscht angefordert und nachträglich eingetragen."
+              >
+                <QuestionCircleOutlined style={{ cursor: 'pointer' }} />
+              </Tooltip>
+            </div>
+            <Radio.Group
+              style={{ marginTop: '8px' }}
+              name="radiogroup"
+              defaultValue={!!selectedJob.data.hasJufoCertificate}
+              onChange={handleInput('hasJufoCertificate')}
+            >
+              <Radio value={true}>Ja</Radio>
+              <Radio value={false}>Nein</Radio>
+            </Radio.Group>
+          </div>
+          <div>
+            <div className="label">
+              War die/der Student*in früher schon bei JugendForscht?
+            </div>
+            <Radio.Group
+              style={{ marginTop: '8px' }}
+              name="radiogroup"
+              defaultValue={!!selectedJob.data.jufoPastParticipationConfirmed}
+              onChange={handleInput('jufoPastParticipationConfirmed')}
+            >
+              <Radio value={true}>Ja</Radio>
+              <Radio value={false}>Nein</Radio>
+            </Radio.Group>
+          </div>
+          <div>
+            <div className="label">Informationen zu früherer Teilnahme</div>
+            <TextArea
+              placeholder="Der/Die Student*in hat an folgendem Projekt teilgenommen.."
+              value={selectedJob.data.jufoPastParticipationInfo || ''}
+              onChange={handleInput('jufoPastParticipationInfo')}
+            />
+          </div>
+        </div>
+      )}
+      {(screeningTypes.includes('instructor') ||
+        screeningTypes.includes('projectCoach')) && (
+        <Checkbox
+          checked={selectedJob.data.isTutor}
+          onChange={(event) => {
+            changeJob('isTutor', event.target.checked);
+          }}
+          style={{ marginTop: '16px' }}
+        >
+          Für 1-zu-1-Betreuung geeignet
+        </Checkbox>
+      )}
       {showButtons && (
         <div style={{ marginTop: '32px' }}>
           <Button

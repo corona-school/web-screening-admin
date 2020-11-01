@@ -49,7 +49,7 @@ const SubjectItem = ({
             marginLeft: '8px',
             textAlign: 'center',
           }}
-          value={subject.grade?.min}
+          value={subject.grade?.min || 1}
           max={subject.grade?.max + 1}
           min={1}
           placeholder="Minimum"
@@ -74,7 +74,7 @@ const SubjectItem = ({
         <InputNumber
           key={`${subject.name}-max`}
           className="site-input-right"
-          value={subject.grade?.max}
+          value={subject.grade?.max || 13}
           min={subject.grade?.min + 1}
           max={13}
           onChange={(v) => {

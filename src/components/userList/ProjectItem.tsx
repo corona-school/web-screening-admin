@@ -49,7 +49,7 @@ const ProjectItem = ({
                         marginLeft: '8px',
                         textAlign: 'center',
                     }}
-                    value={project.min}
+                    value={project.min || 1}
                     max={project.max ? project.max + 1 : 13}
                     min={1}
                     placeholder="Minimum"
@@ -74,7 +74,7 @@ const ProjectItem = ({
                 <InputNumber
                     key={`${project.name}-max`}
                     className="site-input-right"
-                    value={project.max}
+                    value={project.max || 13}
                     min={project.min ? project.min : 1}
                     max={13}
                     onChange={(v) => {

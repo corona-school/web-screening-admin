@@ -7,6 +7,9 @@ import classes from './index.module.less';
 import { ApiContext, IJobInfo } from '../../api/ApiContext';
 import JobScreeningEdit from '../userList/JobScreeningEdit';
 import { message } from 'antd';
+import {ScreeningInfo} from "../../types/Student";
+import {getScreeningType} from "../userList/data";
+import {CleanScreenings, CompleteJob} from "../../utils/studentVerification";
 
 interface MatchParams {
   room: string | undefined;
@@ -37,15 +40,23 @@ const Screening = (props: RouteComponentProps) => {
     if (job) {
       setSelectedJob(job);
     }
-  }, [params.email]);
+  }, [params.email, context]);
 
   if (!params.room || !params.email || !selectedJob) {
     return <div>Error</div>;
   }
 
-  const completeJob = (job: IJobInfo, decision: boolean) => {
+  const completeJob = (job: IJobInfo, screening: ScreeningInfo) => {
+    if (!context) {
+      return;
+    }
+
+    const screeningTypes = getScreeningType(job);
+    const completedJob = CompleteJob({ job, screening, screeningTypes });
+    CleanScreenings(completedJob.data);
+
     context
-      ?.postChangeStatusCall(job.data, decision ? 'SET_DONE' : 'SET_REJECTED')
+      .postChangeStatusCall(completedJob.data, completedJob.id, screening.verified ? 'SET_DONE' : 'SET_REJECTED')
       .then(() => {
         message.success('Änderungen wurden erfolgreich gespeichert.');
         props.history.push('/screening');
@@ -61,14 +72,14 @@ const Screening = (props: RouteComponentProps) => {
 
   return (
     <div className={classes.container}>
-      <Jitsi
+      {/* <Jitsi
         containerStyle={{ width: '100%', height: '100%' }}
         roomName={params.room}
         loadingComponent={LoadingJitsi}
         onAPILoad={(JitsiMeetAPI) => {
           console.log('Jitsi API Loaded..', JitsiMeetAPI);
         }}
-      />
+      /> */}
       <div className={classes.editContainer}>
         <JobScreeningEdit
           showButtons

@@ -5,10 +5,10 @@ import {
   ScreeningStatus,
   ApiScreeningResult,
   Screening,
-  Student,
+  CourseStudent,
 } from '../types/Student';
 
-export type Instructor = Student & { __instructorScreening__: Screening };
+export type Instructor = CourseStudent & { __instructorScreening__: Screening };
 
 export default function useInstructors({
   initialStatus,

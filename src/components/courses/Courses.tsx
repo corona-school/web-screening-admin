@@ -36,7 +36,7 @@ import {
 
 import useCourses from '../../api/useCourses';
 import { Instructor } from '../../api/useInstructors';
-import { Student } from '../../types/Student';
+import { CourseStudent } from '../../types/Student';
 import useDebounce from '../../utils/useDebounce';
 
 import InstructorSelector from './InstructorSelector';
@@ -124,7 +124,7 @@ function CourseTable({
       title: 'Autoren',
       dataIndex: 'instructors',
       key: 'instructors',
-      render: (instructors: Student[]) =>
+      render: (instructors: CourseStudent[]) =>
         instructors
           .map((instructor) => instructor.firstname + ' ' + instructor.lastname)
           .join(', ') || '-',

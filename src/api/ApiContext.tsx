@@ -18,6 +18,7 @@ import { message, notification } from 'antd';
 import * as Sentry from '@sentry/browser';
 
 import { isNotificationEnabled, notify } from '../utils/notification';
+import { IStudent } from '../types/Student';
 
 const ApiContext = React.createContext<IProviderProps | null>(null);
 axios.defaults.withCredentials = true;
@@ -31,23 +32,9 @@ const socket = io(baseUrl, {
   reconnectionAttempts: 99999,
 });
 
-export interface IStudentData {
-  firstname: string;
-  lastname: string;
-  email: string;
-  subjects: ISubject[];
-  phone?: string;
-  msg?: string;
-  invited?: boolean;
-  feedback?: string;
-  knowcsfrom: string;
-  commentScreener?: string;
-  jitsi: string;
-}
-
 export interface IJobInfo {
   id: string;
-  data: IStudentData;
+  data: IStudent;
   assignedTo?: IScreenerInfo;
   status: Status;
   timeWaiting: number;
@@ -95,7 +82,7 @@ export interface IProviderProps {
   getJobsCall: () => void;
   studentData: IJobInfo[];
   checkLoginStatus: () => Promise<{ data: IScreenerInfo; status: number }>;
-  postChangeStatusCall: (data: IStudentData, action: string) => Promise<any>;
+  postChangeStatusCall: (data: IStudent, jobId: string, action: string) => Promise<any>;
   userIsLoggedIn: boolean;
   setUserIsLoggedIn: (isLoggedIn: boolean) => void;
   loginCall: (data: { email: string; password: string }) => Promise<void>;
@@ -325,11 +312,12 @@ class ApiContextComponent extends React.Component<RouteComponentProps> {
     return axios.get(baseUrl + getLoginStatus);
   };
 
-  postChangeStatusCall = (data: IStudentData, action: string) => {
+  postChangeStatusCall = (data: IStudent, jobId: string, action: string) => {
     return axios.post(
       baseUrl + postChangeStatus,
       {
         data,
+        jobId,
         action,
       },
       { params: { key: 'StudentQueue' } }

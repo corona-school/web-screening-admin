@@ -1,6 +1,6 @@
-import { ISubject } from '../api';
+import { StudentSubject } from '../types/Student';
 
-export const createSubjects = (rawSubject: string): ISubject[] => {
+export const createSubjects = (rawSubject: string): StudentSubject[] => {
   const getSubject = (subject: string): string | null => {
     try {
       return subject.replace(/[0-9]+|:/g, '');
@@ -26,14 +26,18 @@ export const createSubjects = (rawSubject: string): ISubject[] => {
       if (getSubject(s)) {
         return {
           subject: getSubject(s),
-          min: getValues(s)[0],
-          max: getValues(s)[1],
+          grade: {
+            min: getValues(s)[0],
+            max: getValues(s)[1],
+          },
         };
       } else {
         return {
           subject: s.name,
-          min: s.minGrade,
-          max: s.maxGrade,
+          grade: {
+            min: s.minGrade,
+            max: s.maxGrade,
+          },
         };
       }
     });
@@ -43,8 +47,10 @@ export const createSubjects = (rawSubject: string): ISubject[] => {
   }
 };
 
-export const subjectToString = (subjects: ISubject[]) => {
+export const subjectToString = (subjects: StudentSubject[]) => {
   return JSON.stringify(
-    subjects.map((s: ISubject) => `${s.subject}${s.min}:${s.max}`)
+    subjects.map(
+      (s: StudentSubject) => `${s.name}${s.grade.min}:${s.grade.max}`
+    )
   );
 };

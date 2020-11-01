@@ -1,41 +1,14 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import { baseUrl, studentInfoPath, studentManualVerification } from './urls';
 import { message } from 'antd';
-import { ISubject } from './ApiContext';
-
-export interface IStudentInfo {
-  firstname: string;
-  lastname: string;
-  email: string;
-  subjects: string;
-  phone?: string;
-  msg?: string;
-  verified?: boolean;
-}
-
-export interface IStudentScreeningResult {
-  verified: boolean;
-  birthday?: Date;
-  commentScreener?: string;
-  knowscsfrom?: string;
-  subjects?: string;
-  feedback?: string;
-  screenerEmail: string;
-}
-export interface IStudentScreeningResult2 {
-  verified: boolean;
-  birthday?: Date;
-  commentScreener?: string;
-  knowscsfrom?: string;
-  subjects?: ISubject[];
-  feedback?: string;
-  screenerEmail: string;
-}
+import { IStudent, IStudentInfo } from '../types/Student';
+import {ApiContext} from "./ApiContext";
 
 const useStudent = (email: string) => {
   const [studentInfo, setStudentInfo] = useState<IStudentInfo | null>(null);
   const [loading, setLoading] = useState(false);
+  const context = useContext(ApiContext);
 
   useEffect(() => {
     axios
@@ -64,16 +37,16 @@ const useStudent = (email: string) => {
       });
   };
 
-  const save = (screeningResult: IStudentScreeningResult) => {
+  const save = (studentInfo: IStudentInfo) => {
     setLoading(true);
     console.log('request', baseUrl + studentManualVerification, {
-      screeningResult,
+      screeningResult: {...studentInfo, screenerMail: context?.user?.email},
       studentEmail: email,
     });
 
     axios
       .post(baseUrl + studentManualVerification, {
-        screeningResult,
+        screeningResult: {...studentInfo, screenerEmail: context?.user?.email},
         studentEmail: email,
       })
       .then(({ data }) => {
@@ -87,7 +60,7 @@ const useStudent = (email: string) => {
       });
   };
 
-  return { studentInfo, loading, save, reload };
+  return { studentInfo, setStudentInfo, loading, save, reload };
 };
 
 export default useStudent;

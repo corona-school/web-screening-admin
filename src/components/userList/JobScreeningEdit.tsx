@@ -23,6 +23,7 @@ import { DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
 import classes from './JobScreeningEdit.module.less';
 import {
+  IStudent,
   ScreeningInfo,
   State,
   StateLong,
@@ -124,6 +125,54 @@ const JobScreeningEdit = ({
     changeJob(key, e.target.value);
   };
 
+  const handleProjectCoachCertificateValidation = (checked: boolean) => {
+    if (selectedJob.data.hasJufoCertificate && checked) {
+      changeJob('jufoPastParticipationConfirmed', true);
+    }
+    if (selectedJob.data.hasJufoCertificate && !checked) {
+      changeJob('hasJufoCertificate', false);
+    }
+    if (!selectedJob.data.hasJufoCertificate && checked) {
+      changeJob('hasJufoCertificate', true);
+      changeJob('jufoPastParticipationConfirmed', true);
+    }
+    if (!selectedJob.data.hasJufoCertificate && !checked) {
+      // do nothing wait for manual jufo check
+    }
+  };
+
+  const getCertificateText = () => {
+    if (selectedJob.data.hasJufoCertificate) {
+      return (
+        <>
+          Hat die/der Student*in ein gültigen Nachweis über die Teilnahme bei
+          JugendForscht?{' '}
+          <Tooltip
+            placement="bottom"
+            title="Zum freischalten einer/eines Jufo-Teilnehmer*in wird kein güliger Nachweis benötigt. Dieser wird sonst manuell bei JugendForscht angefordert und nachträglich eingetragen."
+          >
+            <QuestionCircleOutlined style={{ cursor: 'pointer' }} />
+          </Tooltip>
+        </>
+      );
+    }
+
+    return <>Hat der/die Student*in doch ein gültigen Nachweis?</>;
+  };
+
+  const getJufoStatus = (job: IStudent) => {
+    console.log(job.jufoPastParticipationConfirmed);
+
+    if (job.jufoPastParticipationConfirmed == undefined) {
+      return <Tag color="geekblue">Wird überprüft</Tag>;
+    }
+    if (job.jufoPastParticipationConfirmed === false) {
+      return <Tag color="red">Abgelehnt</Tag>;
+    }
+
+    return <Tag color="green">Bestätigt</Tag>;
+  };
+
   const room = new URL(selectedJob.data.jitsi).pathname;
 
   return (
@@ -187,6 +236,12 @@ const JobScreeningEdit = ({
           <Descriptions.Item label="Hat ein Jufo-Zertifikat">
             {selectedJob.data.hasJufoCertificate ? 'Ja' : 'Nein'}
           </Descriptions.Item>
+
+          {!selectedJob.data.hasJufoCertificate && (
+            <Descriptions.Item label="Status Jugend Forscht:">
+              {getJufoStatus(selectedJob.data)}
+            </Descriptions.Item>
+          )}
         </Descriptions>
       )}
       {screeningTypes.includes('instructor') && (
@@ -285,27 +340,24 @@ const JobScreeningEdit = ({
           >
             Eingeschriebene*r Student*in
           </Checkbox>
-          <div>
-            <div className="label">
-              Hat die/der Student*in ein gültigen Nachweis über die Teilnahme
-              bei JugendForscht?{' '}
-              <Tooltip
-                placement="bottom"
-                title="Zum freischalten einer/eines Jufo-Teilnehmer*in wird kein güliger Nachweis benötigt. Dieser wird sonst manuell bei JugendForscht angefordert und nachträglich eingetragen."
+
+          {!selectedJob.data.jufoPastParticipationConfirmed && (
+            // has certificate true
+            <div>
+              <div className="label">{getCertificateText()}</div>
+              <Radio.Group
+                style={{ marginTop: '8px' }}
+                name="radiogroup"
+                defaultValue={!!selectedJob.data.jufoPastParticipationConfirmed}
+                onChange={(v) =>
+                  handleProjectCoachCertificateValidation(v.target.checked)
+                }
               >
-                <QuestionCircleOutlined style={{ cursor: 'pointer' }} />
-              </Tooltip>
+                <Radio value={true}>Ja</Radio>
+                <Radio value={false}>Nein</Radio>
+              </Radio.Group>
             </div>
-            <Radio.Group
-              style={{ marginTop: '8px' }}
-              name="radiogroup"
-              defaultValue={!!selectedJob.data.jufoPastParticipationConfirmed}
-              onChange={handleInput('jufoPastParticipationConfirmed')}
-            >
-              <Radio value={true}>Ja</Radio>
-              <Radio value={false}>Nein</Radio>
-            </Radio.Group>
-          </div>
+          )}
 
           <div>
             <div className="label">Informationen zu früherer Teilnahme</div>

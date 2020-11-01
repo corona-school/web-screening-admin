@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import classes from './StudentInfo.module.less';
 import useStudent from '../../api/useStudent';
-import {Checkbox, Descriptions, Input, Select, Spin, Tag, Typography,} from 'antd';
+import {Button, Checkbox, Descriptions, Input, Select, Spin, Tag, Typography, Modal, Space} from 'antd';
 import {ApiContext} from '../../api/ApiContext';
 import {
     IStudentInfo,
@@ -22,10 +22,12 @@ import {
     TutorInformationEditor,
     TypeEditor
 } from "./InfoEditor";
+import {DeleteOutlined, EditOutlined, SaveOutlined} from "@ant-design/icons";
 
 const { Title } = Typography;
 const { TextArea } = Input;
 const { Option } = Select;
+const { confirm } = Modal;
 
 interface MatchParams {
   email: string | undefined;
@@ -33,14 +35,14 @@ interface MatchParams {
 
 const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
   const context = useContext(ApiContext);
-  const [openEdit, setOpenEdit] = useState<boolean>(true);
+  const [openEdit, setOpenEdit] = useState<boolean>(false);
   const email = props.match.params.email;
 
   if (!email) {
     props.history.push('/');
   }
 
-  const { studentInfo, setStudentInfo, loading, save } = useStudent(email || '');
+  const { studentInfo, setStudentInfo, loading, save, reload } = useStudent(email || '');
 
     if (loading) {
         return (
@@ -58,6 +60,7 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
           ...studentInfo,
           [key]: value,
       };
+      console.log(newStudentInfo);
       setStudentInfo(newStudentInfo);
   };
 
@@ -101,6 +104,27 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
             }
         }
         setStudentInfo(newStudentInfo);
+    }
+
+    const SaveChanges = () => {
+        if (!studentInfo) {
+            return;
+        }
+        save(studentInfo);
+        setOpenEdit(false);
+    }
+
+    const Abort = () => {
+        confirm({
+            title: "Möchtest du die Änderungen wirklich verwerfen?",
+            okText: 'Ja',
+            cancelText: 'Nein',
+            onOk() {
+                reload();
+                setOpenEdit(false);
+            },
+            onCancel() {},
+        });
     }
 
   const BooleanTag = ({value}: {value: boolean}) => {
@@ -192,7 +216,7 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
                     <Descriptions bordered size="small" column={1}>
                         {studentInfo?.subjects.map((s) => (
                             <Descriptions.Item label={s.name}>
-                                {`Klasse ${s.grade.min} bis ${s.grade.max}`}
+                                {`Klasse ${s.grade?.min || "-"} bis ${s.grade?.max || "-"}`}
                             </Descriptions.Item>
                         ))}
                     </Descriptions>
@@ -263,6 +287,22 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
                 <Title style={{color: '#6c757d', marginTop: 0}} level={4}>
                     Persönliche Informationen
                 </Title>
+                {!openEdit &&
+                <Button
+                    onClick={() => setOpenEdit(true)}
+                    icon={<EditOutlined/>}
+                />}
+                {openEdit &&
+                <Space size="small">
+                    <Button
+                        onClick={SaveChanges}
+                        icon={<SaveOutlined/>}
+                    />
+                    <Button
+                        onClick={Abort}
+                        icon={<DeleteOutlined/>}/>
+                </Space>
+                }
             </div>
 
             <>

@@ -20,6 +20,9 @@ const {Option} = Select;
 interface StudentInfoProps {
     studentInfo: IStudentInfo | null,
     changeStudentInfo: (key: string, value: any) => void,
+}
+
+interface StudentScreeningProps extends StudentInfoProps {
     setScreening: (screening: ScreeningInfo) => void
 }
 
@@ -93,7 +96,7 @@ const ScreeningEditor = (
     )
 }
 
-export const BasicEditableInfoDisplay = ({studentInfo, changeStudentInfo}: { studentInfo: IStudentInfo | null, changeStudentInfo: (key: string, value: any) => void }) => {
+export const BasicEditableInformationEditor = ({studentInfo, changeStudentInfo}: StudentInfoProps) => {
     return (
         <Descriptions column={1} bordered className={classes.descriptionsStyle}>
             <Descriptions.Item label="Telefonnummer">
@@ -120,7 +123,7 @@ export const BasicEditableInfoDisplay = ({studentInfo, changeStudentInfo}: { stu
     );
 }
 
-export const TypeEditor = ({studentInfo, changeStudentInfo}: { studentInfo: IStudentInfo | null, changeStudentInfo: (key: string, value: any) => void }) => {
+export const TypeEditor = ({studentInfo, changeStudentInfo}: StudentInfoProps) => {
     return (
         <Descriptions column={1} bordered className={classes.descriptionsStyle}>
             <Descriptions.Item label="Tutor*in">
@@ -142,7 +145,7 @@ export const TypeEditor = ({studentInfo, changeStudentInfo}: { studentInfo: IStu
     )
 }
 
-export const TutorInformationEditor = ({studentInfo, changeStudentInfo, setTutorScreening}: { studentInfo: IStudentInfo | null, changeStudentInfo: (key: string, value: any) => void, setTutorScreening: (screening: ScreeningInfo) => void }) => {
+export const TutorInformationEditor = ({studentInfo, changeStudentInfo, setScreening}: StudentScreeningProps) => {
     return (
         <Descriptions column={1} bordered title="Tutoren-Information" className={classes.descriptionsStyle}>
             <Descriptions.Item label="Fächer">
@@ -152,13 +155,13 @@ export const TutorInformationEditor = ({studentInfo, changeStudentInfo, setTutor
             </Descriptions.Item>
             <Descriptions.Item label="Screening">
                 <ScreeningEditor screening={studentInfo?.screenings.tutor || {verified: false}}
-                                 setScreening={setTutorScreening}/>
+                                 setScreening={setScreening}/>
             </Descriptions.Item>
         </Descriptions>
     )
 }
 
-export const InstructorInformationEditor = ({studentInfo, changeStudentInfo, setScreening}: StudentInfoProps) => {
+export const InstructorInformationEditor = ({studentInfo, changeStudentInfo, setScreening}: StudentScreeningProps) => {
     return (
         <Descriptions column={1} bordered title="Kursleiter-Information" className={classes.descriptionsStyle}>
             <Descriptions.Item label="Bundesland">
@@ -194,7 +197,7 @@ export const InstructorInformationEditor = ({studentInfo, changeStudentInfo, set
     )
 }
 
-export const JuFoInformationEditor = ({studentInfo, changeStudentInfo, setScreening}: StudentInfoProps) => {
+export const JuFoInformationEditor = ({studentInfo, changeStudentInfo, setScreening}: StudentScreeningProps) => {
     return (
         <Descriptions column={1} bordered title="JuFo-Informationen" className={classes.descriptionsStyle}>
             <Descriptions.Item label="Projekte">

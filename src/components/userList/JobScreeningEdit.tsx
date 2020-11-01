@@ -72,6 +72,9 @@ const JobScreeningEdit = ({
   const [knowsFrom, setKnowsFrom] = useState(
     initialScreening?.knowsCoronaSchoolFrom || ''
   );
+  const [isConfirmed, setConfirmed] = useState(
+    selectedJob.data.jufoPastParticipationConfirmed
+  );
   const [draftKnowsFrom, setDraftKnowsFrom] = useState(knowsFrom);
   const [comment, setComment] = useState(initialScreening?.comment || '');
 
@@ -161,8 +164,6 @@ const JobScreeningEdit = ({
   };
 
   const getJufoStatus = (job: IStudent) => {
-    console.log(job.jufoPastParticipationConfirmed);
-
     if (job.jufoPastParticipationConfirmed == undefined) {
       return <Tag color="geekblue">Wird überprüft</Tag>;
     }
@@ -341,7 +342,7 @@ const JobScreeningEdit = ({
             Eingeschriebene*r Student*in
           </Checkbox>
 
-          {!selectedJob.data.jufoPastParticipationConfirmed && (
+          {!isConfirmed && (
             // has certificate true
             <div>
               <div className="label">{getCertificateText()}</div>

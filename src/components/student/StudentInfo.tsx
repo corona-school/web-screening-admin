@@ -13,7 +13,15 @@ import {
     TeacherModulePretty,
     TutorJufoParticipationIndication
 } from '../../types/Student';
-import {ScreeningColorMap, ScreeningTypeText} from "../userList/data";
+import {knowsFromMap, ScreeningColorMap, ScreeningTypeText} from "../userList/data";
+import SubjectList from "../userList/SubjectList";
+import {
+    BasicEditableInfoDisplay,
+    InstructorInformationEditor,
+    JuFoInformationEditor,
+    TutorInformationEditor,
+    TypeEditor
+} from "./InfoEditor";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -25,7 +33,7 @@ interface MatchParams {
 
 const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
   const context = useContext(ApiContext);
-  const [openEdit, setOpenEdit] = useState<boolean>(false);
+  const [openEdit, setOpenEdit] = useState<boolean>(true);
   const email = props.match.params.email;
 
   if (!email) {
@@ -33,6 +41,14 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
   }
 
   const { studentInfo, setStudentInfo, loading, save } = useStudent(email || '');
+
+    if (loading) {
+        return (
+            <div style={{textAlign: "center", margin: "20px 0"}}>
+                <Spin size="large"/>
+            </div>
+        )
+    }
 
   const changeStudentInfo = (key: string, value: any) => {
       if (!studentInfo) {
@@ -44,6 +60,48 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
       };
       setStudentInfo(newStudentInfo);
   };
+
+  const setTutorScreening = (screening: ScreeningInfo) => {
+      if (!studentInfo) {
+          return;
+      }
+      const newStudentInfo: IStudentInfo = {
+          ...studentInfo,
+          screenings: {
+              ...studentInfo.screenings,
+              tutor: screening
+          }
+      }
+      setStudentInfo(newStudentInfo);
+  }
+
+    const setInstructorScreening = (screening: ScreeningInfo) => {
+        if (!studentInfo) {
+            return;
+        }
+        const newStudentInfo: IStudentInfo = {
+            ...studentInfo,
+            screenings: {
+                ...studentInfo.screenings,
+                instructor: screening
+            }
+        }
+        setStudentInfo(newStudentInfo);
+    }
+
+    const setProjectCoachScreening = (screening: ScreeningInfo) => {
+        if (!studentInfo) {
+            return;
+        }
+        const newStudentInfo: IStudentInfo = {
+            ...studentInfo,
+            screenings: {
+                ...studentInfo.screenings,
+                projectCoach: screening
+            }
+        }
+        setStudentInfo(newStudentInfo);
+    }
 
   const BooleanTag = ({value}: {value: boolean}) => {
       if (value) {
@@ -72,33 +130,6 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
                 </Descriptions.Item>
                 <Descriptions.Item label="E-Mail">
                     <a href={'mailto: ' + studentInfo?.email}>{studentInfo?.email}</a>
-                </Descriptions.Item>
-            </Descriptions>
-        );
-    }
-
-    const BasicEditableInfoDisplay = () => {
-        return (
-            <Descriptions column={1} bordered className={classes.descriptionsStyle}>
-                <Descriptions.Item label="Telefonnummer">
-                    <Input
-                        value={studentInfo?.phone}
-                        onChange={e => changeStudentInfo("phone", e.target.value)}/>
-                </Descriptions.Item>
-                <Descriptions.Item label="Nachricht">
-                    <TextArea
-                        value={studentInfo?.msg}
-                        onChange={e => changeStudentInfo("msg", e.target.value)}/>
-                </Descriptions.Item>
-                <Descriptions.Item label="Feedback">
-                    <TextArea
-                        value={studentInfo?.feedback}
-                        onChange={e => changeStudentInfo("feedback", e.target.value)}/>
-                </Descriptions.Item>
-                <Descriptions.Item label="Newsletter">
-                    <Checkbox
-                        checked={studentInfo?.newsletter}
-                        onChange={e => changeStudentInfo("newsletter", e.target.checked)}/>
                 </Descriptions.Item>
             </Descriptions>
         );
@@ -227,29 +258,49 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
     }
 
     return (
-    <div className={classes.box}>
-        <div className={classes.header}>
-            <Title style={{ color: '#6c757d', marginTop: 0 }} level={4}>
-                Persönliche Informationen
-            </Title>
-        </div>
-        {loading &&
-            <div style={{ textAlign: "center", margin: "20px 0" }}>
-                <Spin size="large" />
+        <div className={classes.box}>
+            <div className={classes.header}>
+                <Title style={{color: '#6c757d', marginTop: 0}} level={4}>
+                    Persönliche Informationen
+                </Title>
             </div>
-        }
-        {!loading &&
+
             <>
-                <BasicStaticInformation />
-                { openEdit && <BasicEditableInfoDisplay /> }
-                { !openEdit && <BasicEditableInfoEdit /> }
-                { !openEdit && <TypeDisplay /> }
-                { (studentInfo?.isTutor && !openEdit) && <TutorInformationDisplay /> }
-                { (studentInfo?.isInstructor && !openEdit) && <InstructorInformationDisplay /> }
-                { (studentInfo?.isProjectCoach && !openEdit) && <JuFoInformationDisplay /> }
+                <BasicStaticInformation/>
+                {openEdit &&
+                <>
+                    <BasicEditableInfoDisplay studentInfo={studentInfo} changeStudentInfo={changeStudentInfo}/>
+                    <TypeEditor studentInfo={studentInfo} changeStudentInfo={changeStudentInfo} />
+                    {studentInfo?.isTutor &&
+                    <TutorInformationEditor
+                        studentInfo={studentInfo}
+                        changeStudentInfo={changeStudentInfo}
+                        setTutorScreening={setTutorScreening}/>}
+                    {studentInfo?.isInstructor &&
+                    <InstructorInformationEditor
+                        studentInfo={studentInfo}
+                        changeStudentInfo={changeStudentInfo}
+                        setScreening={setInstructorScreening} />}
+                    {studentInfo?.isProjectCoach &&
+                    <JuFoInformationEditor
+                        studentInfo={studentInfo}
+                        changeStudentInfo={changeStudentInfo}
+                        setScreening={setProjectCoachScreening} />}
+                </>
+                }
+                {!openEdit &&
+                <>
+                    <BasicEditableInfoEdit/>
+                    <TypeDisplay/>
+                    {studentInfo?.isTutor && <TutorInformationDisplay/>}
+                    {studentInfo?.isInstructor && <InstructorInformationDisplay/>}
+                    {!openEdit && <JuFoInformationDisplay/>}
+                </>
+                }
+
+
             </>
-        }
-    </div>
+        </div>
   );
 };
 

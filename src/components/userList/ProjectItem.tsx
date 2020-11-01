@@ -32,7 +32,7 @@ const ProjectItem = ({
                     key={`${project.name}-input`}
                     onChange={(value) => changeProjectName(project, value)}
                     defaultValue={project.name}
-                    style={{ width: 120 }}
+                    style={{ width: 250 }}
                 >
                     {options.map((project) => {
                         return (

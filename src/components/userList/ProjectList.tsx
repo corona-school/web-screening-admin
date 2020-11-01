@@ -10,7 +10,7 @@ interface Props {
     setProjects: (projects: ProjectFieldWithGradeInfoType[]) => void;
 }
 
-const SubjectList = ({ projects, setProjects }: Props) => {
+const ProjectList = ({ projects, setProjects }: Props) => {
     const changeProjectName = (oldProject: ProjectFieldWithGradeInfoType, newProject: string) => {
         const projectList: ProjectFieldWithGradeInfoType[] = projects.map((s) => {
             if (s.name === oldProject.name) {
@@ -83,4 +83,4 @@ const SubjectList = ({ projects, setProjects }: Props) => {
     );
 };
 
-export default pure(SubjectList);
+export default pure(ProjectList);

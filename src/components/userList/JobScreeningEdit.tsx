@@ -179,10 +179,13 @@ const JobScreeningEdit = ({
         <Descriptions
           title="Jugend Forscht Informationen"
           layout="horizontal"
-          column={1}
+          column={2}
         >
-          <Descriptions.Item label="Hat ein Jufo Nachweise">
+          <Descriptions.Item label="Jufo-Alumni">
             {getJufoParticipantStatus(selectedJob.data.wasJufoParticipant)}
+          </Descriptions.Item>
+          <Descriptions.Item label="Hat ein Jufo-Zertifikat">
+            {selectedJob.data.hasJufoCertificate ? 'Ja' : 'Nein'}
           </Descriptions.Item>
         </Descriptions>
       )}
@@ -296,20 +299,6 @@ const JobScreeningEdit = ({
             <Radio.Group
               style={{ marginTop: '8px' }}
               name="radiogroup"
-              defaultValue={!!selectedJob.data.hasJufoCertificate}
-              onChange={handleInput('hasJufoCertificate')}
-            >
-              <Radio value={true}>Ja</Radio>
-              <Radio value={false}>Nein</Radio>
-            </Radio.Group>
-          </div>
-          <div>
-            <div className="label">
-              War die/der Student*in früher schon bei JugendForscht?
-            </div>
-            <Radio.Group
-              style={{ marginTop: '8px' }}
-              name="radiogroup"
               defaultValue={!!selectedJob.data.jufoPastParticipationConfirmed}
               onChange={handleInput('jufoPastParticipationConfirmed')}
             >
@@ -317,6 +306,7 @@ const JobScreeningEdit = ({
               <Radio value={false}>Nein</Radio>
             </Radio.Group>
           </div>
+
           <div>
             <div className="label">Informationen zu früherer Teilnahme</div>
             <TextArea

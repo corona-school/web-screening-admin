@@ -180,7 +180,7 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
                     <TypeDisplay studentInfo={studentInfo}/>
                     {studentInfo?.isTutor && <TutorInformationDisplay studentInfo={studentInfo}/>}
                     {studentInfo?.isInstructor && <InstructorInformationDisplay studentInfo={studentInfo}/>}
-                    {!openEdit && <JuFoInformationDisplay studentInfo={studentInfo}/>}
+                    {studentInfo?.isProjectCoach && <JuFoInformationDisplay studentInfo={studentInfo}/>}
                 </>
                 }
 

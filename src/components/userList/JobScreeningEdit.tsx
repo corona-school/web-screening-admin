@@ -372,15 +372,23 @@ const JobScreeningEdit = ({
       )}
       {(screeningTypes.includes('instructor') ||
         screeningTypes.includes('projectCoach')) && (
-        <Checkbox
-          checked={selectedJob.data.isTutor}
-          onChange={(event) => {
-            changeJob('isTutor', event.target.checked);
-          }}
-          style={{ marginTop: '16px' }}
-        >
-          Für 1-zu-1-Betreuung geeignet
-        </Checkbox>
+        <>
+          <Checkbox
+            checked={selectedJob.data.isTutor}
+            onChange={(event) => {
+              changeJob('isTutor', event.target.checked);
+            }}
+            style={{ marginTop: '16px' }}
+          >
+            Für 1:1-Lernunterstützung eintragen
+          </Checkbox>
+          <Tooltip
+          placement="bottom"
+          title="Hinweis: das erste Match wird nach Freischaltung automatisch zugeteilt, sofern es die freizuschaltende Person nicht in ihrem User-Bereich selbständig ändert."
+          > 
+            <QuestionCircleOutlined style={{ cursor: 'pointer' }} />
+          </Tooltip>
+        </>
       )}
       {showButtons && (
         <div style={{ marginTop: '32px' }}>

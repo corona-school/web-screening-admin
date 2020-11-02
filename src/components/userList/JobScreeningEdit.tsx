@@ -239,7 +239,7 @@ const JobScreeningEdit = ({
           </Descriptions.Item>
 
           {!selectedJob.data.hasJufoCertificate && (
-            <Descriptions.Item label="Status Jugend Forscht:">
+            <Descriptions.Item label="Status Jugend Forscht">
               {getJufoStatus(selectedJob.data)}
             </Descriptions.Item>
           )}

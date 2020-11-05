@@ -49,13 +49,11 @@ const SubjectItem = ({
             marginLeft: '8px',
             textAlign: 'center',
           }}
-          value={subject.grade?.min || 1}
-          max={subject.grade?.max + 1}
-          min={1}
+          value={subject.grade?.min}
           placeholder="Minimum"
           onChange={(v) => {
             if (v) {
-              changeSubjectRange(subject, [v, subject.grade?.max]);
+              changeSubjectRange(subject, [Math.min(Math.max(v, 1), subject.grade?.max ?? 13), subject.grade?.max]);
             }
           }}
         />
@@ -74,12 +72,10 @@ const SubjectItem = ({
         <InputNumber
           key={`${subject.name}-max`}
           className="site-input-right"
-          value={subject.grade?.max || 13}
-          min={subject.grade?.min + 1}
-          max={13}
+          value={subject.grade?.max}
           onChange={(v) => {
             if (v) {
-              changeSubjectRange(subject, [subject.grade?.min, v]);
+              changeSubjectRange(subject, [subject.grade?.min, Math.min(Math.max(v, subject.grade?.min ?? 1), 13)]);
             }
           }}
           style={{

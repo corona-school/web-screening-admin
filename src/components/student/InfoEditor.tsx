@@ -7,7 +7,7 @@ import {
     TeacherModulePretty,
     TutorJufoParticipationIndication
 } from "../../types/Student";
-import {Checkbox, Descriptions, Input, Select, InputNumber} from "antd";
+import {Checkbox, Descriptions, Input, Select, InputNumber, Button } from "antd";
 import classes from "./StudentInfo.module.less";
 import React, {useState} from "react";
 import {knowsFromMap} from "../userList/data";
@@ -23,19 +23,22 @@ interface StudentInfoProps {
 }
 
 interface StudentScreeningProps extends StudentInfoProps {
-    setScreening: (screening: ScreeningInfo) => void
+    setScreening: (screening: ScreeningInfo | undefined) => void
 }
 
 const ScreeningEditor = (
-    {screening, setScreening}: { screening: ScreeningInfo, setScreening: (screening: ScreeningInfo) => void }
+    {screening, setScreening}: { screening: ScreeningInfo | undefined, setScreening: (screening: ScreeningInfo | undefined) => void }
 ) => {
     const [knowsFrom, setKnowsFrom] = useState(
-        knowsFromMap.has(screening.knowsCoronaSchoolFrom || "")
-            ? screening.knowsCoronaSchoolFrom
+        knowsFromMap.has(screening?.knowsCoronaSchoolFrom || "")
+            ? screening?.knowsCoronaSchoolFrom
             : "13"
     );
 
     const changeScreening = (key: string, value: any) => {
+        if (!screening) {
+            return;
+        }
         const newScreening: ScreeningInfo = {
             ...screening,
             [key]: value
@@ -44,55 +47,67 @@ const ScreeningEditor = (
     }
 
     return (
-        <Descriptions bordered size="small" column={1}>
-            <Descriptions.Item label="Verifiziert">
-                <Checkbox
-                    checked={screening.verified}
-                    onChange={event => changeScreening("verified", event.target.checked)}/>
-            </Descriptions.Item>
-            <Descriptions.Item label="Kommentar">
-                <TextArea
-                    value={screening.comment || ""}
-                    onChange={event => changeScreening("comment", event.target.value)}/>
-            </Descriptions.Item>
-            <Descriptions.Item label="Kennt uns durch">
-                <Select
-                    onChange={(v) => {
-                        setKnowsFrom(v);
-                        if (v !== "13") {
-                            changeScreening("knowsCoronaSchoolFrom", v);
-                        } else {
-                            changeScreening("knowsCoronaSchoolFrom", "");
-                        }
-                    }}
-                    defaultValue={knowsFrom}
-                    style={{marginBottom: '16px', marginTop: '16px', width: '100%'}}
-                >
-                    <Option value="Bekannte"> Über Bekannte/Familie</Option>
-                    <Option value="Empfehlung"> Über eine Empfehlung</Option>
-                    <Option value="Schule"> Über Lehrer*in/Schule</Option>
-                    <Option value="Universität"> Über die Universität</Option>
-                    <Option value="Pressebericht"> Über einen Pressebericht</Option>
-                    <Option value="Radiobeitrag"> Über einen Radiobeitrag</Option>
-                    <Option value="Fernsehbeitrag"> Über einen Fernsehbeitrag</Option>
-                    <Option value="Facebook"> Über Facebook</Option>
-                    <Option value="Instagram"> Über Instagram</Option>
-                    <Option value="TikTok"> Über TikTok</Option>
-                    <Option value="Suchmaschine"> Über eine Suchmaschinen-Suche</Option>
-                    <Option value="Werbeanzeige"> Über eine Werbeanzeige</Option>
-                    <Option value="13"> anders</Option>
-                </Select>
-                {knowsFrom === '13' && (
-                    <TextArea
-                        rows={1}
-                        placeholder="anderes"
-                        value={screening.knowsCoronaSchoolFrom}
-                        onChange={(event) =>
-                            changeScreening("knowsCoronaSchoolFrom", event.target.value)}
-                    />
-                )}
-            </Descriptions.Item>
-        </Descriptions>
+        <>
+            {screening &&
+            <>
+                <Descriptions bordered size="small" column={1}>
+                    <Descriptions.Item label="Verifiziert">
+                        <Checkbox
+                            checked={screening.verified}
+                            onChange={event => changeScreening("verified", event.target.checked)}/>
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Kommentar">
+                        <TextArea
+                            value={screening.comment || ""}
+                            onChange={event => changeScreening("comment", event.target.value)}/>
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Kennt uns durch">
+                        <Select
+                            onChange={(v) => {
+                                setKnowsFrom(v);
+                                if (v !== "13") {
+                                    changeScreening("knowsCoronaSchoolFrom", v);
+                                } else {
+                                    changeScreening("knowsCoronaSchoolFrom", "");
+                                }
+                            }}
+                            defaultValue={knowsFrom}
+                            style={{marginBottom: '16px', marginTop: '16px', width: '100%'}}
+                        >
+                            <Option value="Bekannte"> Über Bekannte/Familie</Option>
+                            <Option value="Empfehlung"> Über eine Empfehlung</Option>
+                            <Option value="Schule"> Über Lehrer*in/Schule</Option>
+                            <Option value="Universität"> Über die Universität</Option>
+                            <Option value="Pressebericht"> Über einen Pressebericht</Option>
+                            <Option value="Radiobeitrag"> Über einen Radiobeitrag</Option>
+                            <Option value="Fernsehbeitrag"> Über einen Fernsehbeitrag</Option>
+                            <Option value="Facebook"> Über Facebook</Option>
+                            <Option value="Instagram"> Über Instagram</Option>
+                            <Option value="TikTok"> Über TikTok</Option>
+                            <Option value="Suchmaschine"> Über eine Suchmaschinen-Suche</Option>
+                            <Option value="Werbeanzeige"> Über eine Werbeanzeige</Option>
+                            <Option value="13"> anders</Option>
+                        </Select>
+                        {knowsFrom === '13' && (
+                            <TextArea
+                                rows={1}
+                                placeholder="anderes"
+                                value={screening.knowsCoronaSchoolFrom}
+                                onChange={(event) =>
+                                    changeScreening("knowsCoronaSchoolFrom", event.target.value)}
+                            />
+                        )}
+                    </Descriptions.Item>
+                </Descriptions>
+                <Button onClick={() => setScreening(undefined)}>
+                    Screening entfernen
+                </Button>
+            </>}
+            {!screening &&
+            <Button onClick={() => setScreening({verified: false})}>
+                Screening hinzufügen
+            </Button>}
+        </>
     )
 }
 
@@ -154,7 +169,7 @@ export const TutorInformationEditor = ({studentInfo, changeStudentInfo, setScree
                     setSubjects={(subjects) => changeStudentInfo("subjects", subjects)}/>
             </Descriptions.Item>
             <Descriptions.Item label="Screening">
-                <ScreeningEditor screening={studentInfo?.screenings.tutor || {verified: false}}
+                <ScreeningEditor screening={studentInfo?.screenings.tutor}
                                  setScreening={setScreening}/>
             </Descriptions.Item>
         </Descriptions>
@@ -190,7 +205,7 @@ export const InstructorInformationEditor = ({studentInfo, changeStudentInfo, set
                     min={0} />
             </Descriptions.Item>
             <Descriptions.Item label="Screening">
-                <ScreeningEditor screening={studentInfo?.screenings.instructor || {verified: false}}
+                <ScreeningEditor screening={studentInfo?.screenings.instructor}
                                  setScreening={setScreening}/>
             </Descriptions.Item>
         </Descriptions>
@@ -237,7 +252,7 @@ export const JuFoInformationEditor = ({studentInfo, changeStudentInfo, setScreen
             </Descriptions.Item>
             <Descriptions.Item label="Screening">
                 <ScreeningEditor
-                    screening={studentInfo?.screenings.projectCoach || {verified: false}}
+                    screening={studentInfo?.screenings.projectCoach}
                     setScreening={setScreening} />
             </Descriptions.Item>
         </Descriptions>

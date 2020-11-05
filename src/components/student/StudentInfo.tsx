@@ -60,7 +60,7 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
       setStudentInfo(newStudentInfo);
   };
 
-  const setTutorScreening = (screening: ScreeningInfo) => {
+  const setTutorScreening = (screening: ScreeningInfo | undefined) => {
       if (!studentInfo) {
           return;
       }
@@ -74,7 +74,7 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
       setStudentInfo(newStudentInfo);
   }
 
-    const setInstructorScreening = (screening: ScreeningInfo) => {
+    const setInstructorScreening = (screening: ScreeningInfo | undefined) => {
         if (!studentInfo) {
             return;
         }
@@ -88,7 +88,7 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
         setStudentInfo(newStudentInfo);
     }
 
-    const setProjectCoachScreening = (screening: ScreeningInfo) => {
+    const setProjectCoachScreening = (screening: ScreeningInfo | undefined) => {
         if (!studentInfo) {
             return;
         }

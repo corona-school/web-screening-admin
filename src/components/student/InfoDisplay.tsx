@@ -30,19 +30,23 @@ const TutorJufoParticipationIndicationTag = ({value}: {value: TutorJufoParticipa
     };
 };
 
-const ScreeningDisplay = ({screening}: {screening: ScreeningInfo}) => {
+const ScreeningDisplay = ({screening}: {screening: ScreeningInfo | undefined}) => {
     return (
-        <Descriptions bordered size="small" column={1}>
-            <Descriptions.Item label="Verifiziert">
-                <BooleanTag value={screening.verified}/>
-            </Descriptions.Item>
-            <Descriptions.Item label="Kommentar">
-                {screening.comment || "-"}
-            </Descriptions.Item>
-            <Descriptions.Item label="Kennt uns durch">
-                {screening.knowsCoronaSchoolFrom || "-"}
-            </Descriptions.Item>
-        </Descriptions>
+        <>
+            {screening &&
+            <Descriptions bordered size="small" column={1}>
+                <Descriptions.Item label="Verifiziert">
+                    <BooleanTag value={screening.verified}/>
+                </Descriptions.Item>
+                <Descriptions.Item label="Kommentar">
+                    {screening.comment || "-"}
+                </Descriptions.Item>
+                <Descriptions.Item label="Kennt uns durch">
+                    {screening.knowsCoronaSchoolFrom || "-"}
+                </Descriptions.Item>
+            </Descriptions>}
+            {!screening && 'Nicht gescreened.'}
+        </>
     );
 }
 
@@ -106,7 +110,7 @@ export const TutorInformationDisplay = ({studentInfo}: {studentInfo: IStudentInf
                 </Descriptions>
             </Descriptions.Item>
             <Descriptions.Item label="Screening">
-                <ScreeningDisplay screening={studentInfo?.screenings.tutor || { verified: false }} />
+                <ScreeningDisplay screening={studentInfo?.screenings.tutor} />
             </Descriptions.Item>
         </Descriptions>
     )
@@ -124,7 +128,7 @@ export const InstructorInformationDisplay = ({studentInfo}: {studentInfo: IStude
             </Descriptions.Item>
             <Descriptions.Item label="Modulstunden">{ studentInfo?.official?.hours || "-" }</Descriptions.Item>
             <Descriptions.Item label="Screening">
-                <ScreeningDisplay screening={studentInfo?.screenings.instructor || { verified: false }} />
+                <ScreeningDisplay screening={studentInfo?.screenings.instructor} />
             </Descriptions.Item>
         </Descriptions>
     )
@@ -159,7 +163,7 @@ export const JuFoInformationDisplay = ({studentInfo}: {studentInfo: IStudentInfo
                 <BooleanTag value={studentInfo?.isUniversityStudent || false} />
             </Descriptions.Item>
             <Descriptions.Item label="Screening">
-                <ScreeningDisplay screening={studentInfo?.screenings.projectCoach || { verified: false }} />
+                <ScreeningDisplay screening={studentInfo?.screenings.projectCoach} />
             </Descriptions.Item>
         </Descriptions>
     )

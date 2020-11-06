@@ -12,7 +12,6 @@ import Dashboard from './dashboard/Dashboard';
 import OpeningHours from './openingHours/OpeningHours';
 import Courses from './courses/Courses';
 import StudentInfo from './student/StudentInfo';
-import Instructors from './instructors/Instructors';
 import * as FullStory from '@fullstory/browser';
 import Login from './Login';
 
@@ -115,13 +114,6 @@ const Routes = () => {
         <div className="main">
           <Navigation />
           <Courses />
-          {isScreenerListOpen && <ScreenerList />}
-        </div>
-      </Route>
-      <Route path="/instructors">
-        <div className="main">
-          <Navigation />
-          <Instructors />
           {isScreenerListOpen && <ScreenerList />}
         </div>
       </Route>

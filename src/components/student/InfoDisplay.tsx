@@ -56,9 +56,6 @@ export const BasicStaticInformation = ({studentInfo}: {studentInfo: IStudentInfo
             <Descriptions.Item label="Name">
                 {`${studentInfo?.firstName} ${studentInfo?.lastName}`}
             </Descriptions.Item>
-            <Descriptions.Item label="E-Mail">
-                <a href={'mailto: ' + studentInfo?.email}>{studentInfo?.email}</a>
-            </Descriptions.Item>
         </Descriptions>
     );
 }
@@ -66,6 +63,9 @@ export const BasicStaticInformation = ({studentInfo}: {studentInfo: IStudentInfo
 export const BasicEditableInformationDisplay = ({studentInfo}: {studentInfo: IStudentInfo | null}) => {
     return (
         <Descriptions column={1} bordered className={classes.descriptionsStyle}>
+            <Descriptions.Item label="E-Mail">
+                <a href={'mailto: ' + studentInfo?.email}>{studentInfo?.email}</a>
+            </Descriptions.Item>
             <Descriptions.Item label="Telefonnummer">{studentInfo?.phone || "-"}</Descriptions.Item>
             <Descriptions.Item label="Nachricht">{studentInfo?.msg || "-"}</Descriptions.Item>
             <Descriptions.Item label="Feedback">{studentInfo?.feedback || "-"}</Descriptions.Item>

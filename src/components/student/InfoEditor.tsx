@@ -115,6 +115,11 @@ const ScreeningEditor = (
 export const BasicEditableInformationEditor = ({studentInfo, changeStudentInfo}: StudentInfoProps) => {
     return (
         <Descriptions column={1} bordered className={classes.descriptionsStyle}>
+            <Descriptions.Item label="E-Mail">
+                <Input
+                    value={studentInfo?.email}
+                    onChange={e => changeStudentInfo("email", e.target.value)}/>
+            </Descriptions.Item>
             <Descriptions.Item label="Telefonnummer">
                 <Input
                     value={studentInfo?.phone}

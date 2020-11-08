@@ -55,7 +55,7 @@ export const getScreeningType = (j: IJobInfo) => {
     case "waiting":
     case "active":
       if (j.data.isInstructor && j.data.screenings.instructor === undefined) {
-        screenings.push('instructor');
+        screenings.push(j.data.official ? 'intern' : 'instructor');
       }
       if (j.data.isTutor && j.data.screenings.tutor === undefined) {
         screenings.push('tutor');
@@ -67,7 +67,7 @@ export const getScreeningType = (j: IJobInfo) => {
     case "completed":
     case "rejected":
       if (j.data.isInstructor) {
-        screenings.push('instructor');
+        screenings.push(j.data.official ? 'intern' : 'instructor');
       }
       if (j.data.isTutor) {
         screenings.push('tutor');
@@ -81,12 +81,14 @@ export const getScreeningType = (j: IJobInfo) => {
 };
 export const ScreeningTypeText = new Map([
   ['instructor', 'Kursleiter*in'],
+  ['intern', 'Praktikant*in'],
   ['projectCoach', 'JuFo'],
   ['tutor', 'Tutor*in'],
 ]);
 
 export const ScreeningColorMap = new Map([
   ['instructor', 'orange'],
+  ['intern', 'magenta'],
   ['projectCoach', 'geekblue'],
   ['tutor', 'green'],
 ]);

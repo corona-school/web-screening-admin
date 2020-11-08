@@ -84,9 +84,13 @@ export const TypeDisplay = ({studentInfo}: {studentInfo: IStudentInfo | null}) =
                 <Tag color={ScreeningColorMap.get("tutor")}>
                     { ScreeningTypeText.get("tutor") }
                 </Tag> }
-                { studentInfo?.isInstructor &&
+                { (studentInfo?.isInstructor && !studentInfo.official) &&
                 <Tag color={ScreeningColorMap.get("instructor")}>
                     { ScreeningTypeText.get("instructor") }
+                </Tag> }
+                { (studentInfo?.isInstructor && !!studentInfo.official) &&
+                <Tag color={ScreeningColorMap.get("intern")}>
+                    { ScreeningTypeText.get("intern") }
                 </Tag> }
                 { studentInfo?.isProjectCoach &&
                 <Tag color={ScreeningColorMap.get("projectCoach")}>
@@ -99,7 +103,7 @@ export const TypeDisplay = ({studentInfo}: {studentInfo: IStudentInfo | null}) =
 
 export const TutorInformationDisplay = ({studentInfo}: {studentInfo: IStudentInfo | null}) => {
     return (
-        <Descriptions column={1} bordered title="Tutoren-Information" className={classes.descriptionsStyle}>
+        <Descriptions column={1} bordered title="Tutor*in" className={classes.descriptionsStyle}>
             <Descriptions.Item label="Fächer">
                 <Descriptions bordered size="small" column={1}>
                     {studentInfo?.subjects.map((s) => (
@@ -118,15 +122,19 @@ export const TutorInformationDisplay = ({studentInfo}: {studentInfo: IStudentInf
 
 export const InstructorInformationDisplay = ({studentInfo}: {studentInfo: IStudentInfo | null}) => {
     return (
-        <Descriptions column={1} bordered title="Kursleiter-Information" className={classes.descriptionsStyle}>
-            <Descriptions.Item label="Bundesland">
-                { StateLong[studentInfo?.state as State] || "-" }
-            </Descriptions.Item>
-            <Descriptions.Item label="Universität">{ studentInfo?.university || "-" }</Descriptions.Item>
-            <Descriptions.Item label="Modul-Typ">
-                { TeacherModulePretty[studentInfo?.official?.module as TeacherModule] || "-" }
-            </Descriptions.Item>
-            <Descriptions.Item label="Modulstunden">{ studentInfo?.official?.hours || "-" }</Descriptions.Item>
+        <Descriptions column={1} bordered title="Kursleiter*in/ Praktikant*in" className={classes.descriptionsStyle}>
+            { !!studentInfo?.official &&
+            <>
+                <Descriptions.Item label="Bundesland">
+                    {StateLong[studentInfo?.state as State] || "-"}
+                </Descriptions.Item>
+                <Descriptions.Item label="Universität">{studentInfo?.university || "-"}</Descriptions.Item>
+                <Descriptions.Item label="Modul-Typ">
+                    {TeacherModulePretty[studentInfo?.official?.module as TeacherModule] || "-"}
+                </Descriptions.Item>
+                <Descriptions.Item label="Modulstunden">{studentInfo?.official?.hours || "-"}</Descriptions.Item>
+            </>
+            }
             <Descriptions.Item label="Screening">
                 <ScreeningDisplay screening={studentInfo?.screenings.instructor} />
             </Descriptions.Item>
@@ -136,7 +144,7 @@ export const InstructorInformationDisplay = ({studentInfo}: {studentInfo: IStude
 
 export const JuFoInformationDisplay = ({studentInfo}: {studentInfo: IStudentInfo | null}) => {
     return (
-        <Descriptions column={1} bordered title="JuFo-Informationen" className={classes.descriptionsStyle}>
+        <Descriptions column={1} bordered title="JuFo" className={classes.descriptionsStyle}>
             <Descriptions.Item label="Projekte">
                 <Descriptions bordered size="small" column={1}>
                     {studentInfo?.projectFields.map((s) => (

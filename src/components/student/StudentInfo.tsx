@@ -108,6 +108,7 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
         }
         save(studentInfo);
         setOpenEdit(false);
+        props.history.push(`/student/${studentInfo.email}`);
     }
 
     const Abort = () => {

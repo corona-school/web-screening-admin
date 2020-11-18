@@ -52,7 +52,6 @@ const useStudent = (email: string) => {
       .then(({ data }) => {
         message.success('Student wurden erfolgreich manuel verifiziert.');
         setLoading(false);
-        reload();
       })
       .catch((err) => {
         message.error('Student konnten nicht manuel verifiziert werden.');

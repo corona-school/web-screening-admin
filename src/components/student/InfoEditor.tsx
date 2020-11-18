@@ -7,7 +7,7 @@ import {
     TeacherModulePretty,
     TutorJufoParticipationIndication
 } from "../../types/Student";
-import {Checkbox, Descriptions, Input, Select, InputNumber, Button } from "antd";
+import {Checkbox, Descriptions, Input, Select, InputNumber, Button, Modal } from "antd";
 import classes from "./StudentInfo.module.less";
 import React, {useState} from "react";
 import {knowsFromMap} from "../userList/data";
@@ -16,6 +16,7 @@ import ProjectList from "../userList/ProjectList";
 
 const {TextArea} = Input;
 const {Option} = Select;
+const {confirm} = Modal;
 
 interface StudentInfoProps {
     studentInfo: IStudentInfo | null,
@@ -114,6 +115,11 @@ const ScreeningEditor = (
 export const BasicEditableInformationEditor = ({studentInfo, changeStudentInfo}: StudentInfoProps) => {
     return (
         <Descriptions column={1} bordered className={classes.descriptionsStyle}>
+            <Descriptions.Item label="E-Mail">
+                <Input
+                    value={studentInfo?.email}
+                    onChange={e => changeStudentInfo("email", e.target.value)}/>
+            </Descriptions.Item>
             <Descriptions.Item label="Telefonnummer">
                 <Input
                     value={studentInfo?.phone}
@@ -146,7 +152,7 @@ export const TypeEditor = ({studentInfo, changeStudentInfo}: StudentInfoProps) =
                     checked={studentInfo?.isTutor}
                     onChange={event => changeStudentInfo("isTutor", event.target.checked)}/>
             </Descriptions.Item>
-            <Descriptions.Item label="Kursleiter*in">
+            <Descriptions.Item label="Kursleiter*in/ Praktikant*in">
                 <Checkbox
                     checked={studentInfo?.isInstructor}
                     onChange={event => changeStudentInfo("isInstructor", event.target.checked)}/>
@@ -162,7 +168,7 @@ export const TypeEditor = ({studentInfo, changeStudentInfo}: StudentInfoProps) =
 
 export const TutorInformationEditor = ({studentInfo, changeStudentInfo, setScreening}: StudentScreeningProps) => {
     return (
-        <Descriptions column={1} bordered title="Tutoren-Information" className={classes.descriptionsStyle}>
+        <Descriptions column={1} bordered title="Tutor*in" className={classes.descriptionsStyle}>
             <Descriptions.Item label="Fächer">
                 <SubjectList
                     subjects={studentInfo?.subjects || []}
@@ -177,33 +183,57 @@ export const TutorInformationEditor = ({studentInfo, changeStudentInfo, setScree
 }
 
 export const InstructorInformationEditor = ({studentInfo, changeStudentInfo, setScreening}: StudentScreeningProps) => {
+    console.log(!!studentInfo?.official);
     return (
-        <Descriptions column={1} bordered title="Kursleiter-Information" className={classes.descriptionsStyle}>
-            <Descriptions.Item label="Bundesland">
-                <Select
-                    value={studentInfo?.state as State}
-                    onChange={value => changeStudentInfo("state", value)}
-                    style={{ width: "300px"}}
-                    options={Object.entries(StateLong).map(e => ({ label: e[1], value: e[0]}))}/>
+        <Descriptions column={1} bordered title="Kursleiter*in/ Praktikant*in" className={classes.descriptionsStyle}>
+            <Descriptions.Item label="Praktikum">
+                <Checkbox checked={!!studentInfo?.official} onChange={event => {
+                    if (event.target.checked) {
+                        changeStudentInfo("official", {module: TeacherModule.INTERNSHIP, hours: 1})
+                    } else {
+                        confirm({
+                            title: "Willst du wirklich fortfahren?",
+                            content: "Eine Änderung des Status führt zum Verlust von Modul-Typ und Modulstunden",
+                            okText: "Ja",
+                            cancelText: "Nein",
+                            onOk() {
+                                changeStudentInfo("official", undefined)
+                            },
+                            onCancel() {}
+                        })
+
+                    }
+                }} />
             </Descriptions.Item>
-            <Descriptions.Item label="Universität">
-                <Input
-                    value={studentInfo?.university}
-                    onChange={event => changeStudentInfo("university", event.target.value)} />
-            </Descriptions.Item>
-            <Descriptions.Item label="Modul-Typ">
-                <Select
-                    value={studentInfo?.official?.module as TeacherModule}
-                    onChange={value => changeStudentInfo("official", {...studentInfo?.official, module: value})}
-                    options={Object.entries(TeacherModulePretty).map(e => ({ label: e[1], value: e[0]}))}
-                    style={{width: "120px"}} />
-            </Descriptions.Item>
-            <Descriptions.Item label="Modulstunden">
-                <InputNumber
-                    value={studentInfo?.official?.hours}
-                    onChange={value => changeStudentInfo("official", {...studentInfo?.official, hours: value})}
-                    min={0} />
-            </Descriptions.Item>
+            {!!studentInfo?.official &&
+            <>
+                <Descriptions.Item label="Bundesland">
+                    <Select
+                        value={studentInfo?.state as State}
+                        onChange={value => changeStudentInfo("state", value)}
+                        style={{width: "300px"}}
+                        options={Object.entries(StateLong).map(e => ({label: e[1], value: e[0]}))}/>
+                </Descriptions.Item>
+                <Descriptions.Item label="Universität">
+                    <Input
+                        value={studentInfo?.university}
+                        onChange={event => changeStudentInfo("university", event.target.value)}/>
+                </Descriptions.Item>
+                <Descriptions.Item label="Modul-Typ">
+                    <Select
+                        value={studentInfo?.official?.module as TeacherModule}
+                        onChange={value => changeStudentInfo("official", {...studentInfo?.official, module: value})}
+                        options={Object.entries(TeacherModulePretty).map(e => ({label: e[1], value: e[0]}))}
+                        style={{width: "120px"}}/>
+                </Descriptions.Item>
+                <Descriptions.Item label="Modulstunden">
+                    <InputNumber
+                        value={studentInfo?.official?.hours}
+                        onChange={value => changeStudentInfo("official", {...studentInfo?.official, hours: value})}
+                        min={0}/>
+                </Descriptions.Item>
+            </>
+            }
             <Descriptions.Item label="Screening">
                 <ScreeningEditor screening={studentInfo?.screenings.instructor}
                                  setScreening={setScreening}/>
@@ -214,7 +244,7 @@ export const InstructorInformationEditor = ({studentInfo, changeStudentInfo, set
 
 export const JuFoInformationEditor = ({studentInfo, changeStudentInfo, setScreening}: StudentScreeningProps) => {
     return (
-        <Descriptions column={1} bordered title="JuFo-Informationen" className={classes.descriptionsStyle}>
+        <Descriptions column={1} bordered title="JuFo" className={classes.descriptionsStyle}>
             <Descriptions.Item label="Projekte">
                     <ProjectList
                         projects={studentInfo?.projectFields || []}

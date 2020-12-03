@@ -26,6 +26,7 @@ export interface ApiCourseUpdate {
   description?: string;
   outline?: string;
   category?: CourseCategory;
+  tags?: { name?: string; identifier?: string }[];
   imageUrl?: string | null;
   screeningComment?: string | null;
   instructors?: { id: number }[];
@@ -48,10 +49,10 @@ export enum CourseCategory {
 }
 
 export interface CourseTag {
-  id: number;
-  identifier: string;
-  name: string;
-  category: string;
+  id?: number;
+  identifier?: string;
+  name?: string;
+  category?: string;
 }
 
 export interface Subcourse {

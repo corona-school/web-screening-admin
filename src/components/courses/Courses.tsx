@@ -11,6 +11,7 @@ import {
   Input,
   Dropdown,
   Menu,
+  Select,
 } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import {
@@ -42,8 +43,10 @@ import useDebounce from '../../utils/useDebounce';
 import InstructorSelector from './InstructorSelector';
 import moment from 'moment';
 import LectureEditor from './LectureEditor';
+import LabelSelector from './LabelSelector';
 
 const { TextArea } = Input;
+const { Option } = Select;
 
 const courseStates: { [key in CourseState]: string } = {
   submitted: 'Prüfen',
@@ -68,12 +71,20 @@ const Courses = () => {
 
   const [editCourse, setEditCourse] = useState<Course | null>(null);
 
-  const { courses, loadCourses, loading, updateCourse } = useCourses({
+  const {
+    courses,
+    courseTags,
+    loadCourses,
+    loading,
+    loadCourseTags,
+    updateCourse,
+  } = useCourses({
     initial: CourseState.SUBMITTED,
   });
 
   useEffect(() => {
     loadCourses({ courseState, search });
+    loadCourseTags();
   }, [courseState, search]);
 
   return (
@@ -82,6 +93,7 @@ const Courses = () => {
         <UpdateCourse
           course={editCourse}
           updateCourse={updateCourse}
+          courseTags={courseTags}
           close={() => setEditCourse(null)}
         />
       )}
@@ -209,16 +221,19 @@ function CourseTable({
 function UpdateCourse({
   course,
   updateCourse,
+  courseTags,
   close,
 }: {
   course: Course;
   updateCourse(course: Course, update: ApiCourseUpdate): Promise<void>;
+  courseTags: CourseTag[];
   close(): void;
 }) {
   const [name, setName] = useState(course.name);
   const [outline, setOutline] = useState(course.outline);
   const [description, setDescription] = useState(course.description);
   const [category, setCategory] = useState<CourseCategory>(course.category);
+  const [tags, setTags] = useState<CourseTag[]>(course.tags ?? []);
   const [imageUrl] = useState(course.imageUrl);
   const [screeningComment, setScreeningComment] = useState(
     course.screeningComment
@@ -246,6 +261,7 @@ function UpdateCourse({
   ) {
     updateCourse(course, {
       category,
+      tags,
       courseState,
       description,
       imageUrl,
@@ -345,7 +361,18 @@ function UpdateCourse({
     const categoryMenu = (
       <Menu>
         {Object.entries(categoryName).map(([category, name]) => (
-          <Menu.Item onClick={() => setCategory(category as CourseCategory)}>
+          <Menu.Item
+            onClick={() => {
+              if (
+                window.confirm(
+                  'Wenn du die Kategorie änderst, werden vorhandene Labels gelöscht.'
+                )
+              ) {
+                setTags([]);
+                setCategory(category as CourseCategory);
+              }
+            }}
+          >
             {name}
           </Menu.Item>
         ))}
@@ -389,21 +416,39 @@ function UpdateCourse({
         <Card
           title={
             <>
-              <FileTextOutlined /> Kategorie:{' '}
+              <TagOutlined /> Kategorie und Label:{' '}
             </>
           }
         >
-          {!isEditMode && categoryName[category]}
-          {isEditMode && (
-            <Dropdown.Button overlay={categoryMenu} icon={<DownOutlined />}>
-              <a
-                className="ant-dropdown-link"
-                onClick={(e) => e.preventDefault()}
-              >
-                {categoryName[category]}
-              </a>
-            </Dropdown.Button>
-          )}
+          <div className="labels">
+            {!isEditMode && <div>{categoryName[category]}</div>}
+            {isEditMode && (
+              <Dropdown.Button overlay={categoryMenu} icon={<DownOutlined />}>
+                <a
+                  className="ant-dropdown-link"
+                  onClick={(e) => e.preventDefault()}
+                >
+                  {categoryName[category]}
+                </a>
+              </Dropdown.Button>
+            )}
+            <br />
+            {!isEditMode && (
+              <div style={{ flexDirection: 'row' }}>
+                {course.tags?.map((tag) => (
+                  <Tag>{tag.name}</Tag>
+                ))}
+              </div>
+            )}
+            {isEditMode && (
+              <LabelSelector
+                category={category}
+                tags={tags}
+                setTags={setTags}
+                tagProposals={courseTags}
+              />
+            )}
+          </div>
         </Card>
         <br />
         <Card
@@ -503,17 +548,6 @@ function UpdateCourse({
                 setInstructors={setInstructors}
               />
             )}
-          </Descriptions.Item>
-          <Descriptions.Item
-            label={
-              <>
-                <TagOutlined /> Labels
-              </>
-            }
-          >
-            {course.tags?.map((tag) => (
-              <Tag>{tag.name}</Tag>
-            ))}
           </Descriptions.Item>
         </Descriptions>
       </div>

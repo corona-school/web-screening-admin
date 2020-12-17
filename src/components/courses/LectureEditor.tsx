@@ -1,14 +1,6 @@
 import { ApiAddLecture, Lecture, Subcourse } from '../../types/Course';
 import React, { useState } from 'react';
-import {
-  Tag,
-  Typography,
-  DatePicker,
-  TimePicker,
-  message,
-  Button,
-  Select,
-} from 'antd';
+import { Tag, Typography, DatePicker, Button, Select, InputNumber } from 'antd';
 import { CloseOutlined, UndoOutlined, PlusOutlined } from '@ant-design/icons';
 import moment, { Moment } from 'moment';
 import locale from 'antd/lib/calendar/locale/de_DE';
@@ -90,14 +82,6 @@ export default function LectureEditor({
       instructors[0]
     );
 
-    const onPickTime = (value: Moment | null) => {
-      if (start) {
-        setDuration(value?.diff(start, 'minute') ?? 0);
-      } else {
-        message.error('Bitte zuerst eine Startzeit wählen.');
-      }
-    };
-
     const onAddClicked = () => {
       start &&
         setNewLectures([
@@ -114,18 +98,18 @@ export default function LectureEditor({
     return (
       <div>
         <div style={{ width: 'fit-content' }}>
+          {'Beginn: '}
           <DatePicker
             format="DD.MM.YYYY HH:mm"
             showTime
             locale={locale}
             onChange={(value) => setStart(value)}
           />
-          {' - '}
-          <TimePicker
-            format="HH:mm"
-            locale={locale}
-            value={start && moment(start).add(duration, 'minute')}
-            onChange={(time) => onPickTime(time)}
+          {' Dauer: '}
+          <InputNumber
+            min={0}
+            value={duration}
+            onChange={(v) => setDuration(v ?? 0)}
           />
           <Button icon={<PlusOutlined />} onClick={onAddClicked} />
         </div>

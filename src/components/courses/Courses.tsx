@@ -133,7 +133,7 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
                 {Object.keys(courseStates).map((courseState) => {
                     return (
                         <Tabs.TabPane tab={courseStates[courseState as CourseState]} key={courseState}>
-                            <Table rowClassName={rowClassName} loading={loading} columns={columns} dataSource={courses} onRow={record => ({ onClick() { setEditCourse(record); }})} className="hover" pagination={{ current: page, onChange: setPage}}></Table>
+                            <Table rowClassName={rowClassName} loading={loading} columns={columns} dataSource={courses} onRow={record => ({ onClick() { setEditCourse(record); }})} className="hover" pagination={{ current: page, onChange: setPage, pageSize: 20 }}></Table>
                         </Tabs.TabPane>
                     );
                 })}

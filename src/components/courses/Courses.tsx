@@ -47,6 +47,8 @@ const categoryName: { [key in CourseCategory]: string } = {
 const Courses = () => {
     const [courseState, setCourseState] = useState<CourseState>(CourseState.SUBMITTED);
     const [_search, setSearch] = useState("");
+    const [page, setPage] = useState(0);
+
     const search = useDebounce(_search);
 
     const [editCourse, setEditCourse] = useState<Course | null>(null);
@@ -54,16 +56,16 @@ const Courses = () => {
     const { courses, loadCourses, loading, updateCourse } = useCourses({ initial: CourseState.SUBMITTED });
 
     useEffect(() => {
-        loadCourses({ courseState, search });
-    }, [courseState, search]);
+        loadCourses({ courseState, search, page });
+    }, [courseState, search, page]);
 
     return <div className="course-container">
         {editCourse && <UpdateCourse course={editCourse} updateCourse={updateCourse} close={() => setEditCourse(null)} />}
-        {!editCourse && <CourseTable courseState={courseState} courses={courses} loading={loading} setCourseState={setCourseState} setEditCourse={setEditCourse} setSearch={setSearch} />}
+        {!editCourse && <CourseTable courseState={courseState} courses={courses} loading={loading} setCourseState={setCourseState} setEditCourse={setEditCourse} setSearch={setSearch} page={page} setPage={setPage} />}
     </div>
 }
 
-function CourseTable({ courseState, setCourseState, courses, loading, setEditCourse, setSearch }: { courseState: CourseState, setCourseState(courseState: CourseState): void, courses: Course[], loading: boolean, setEditCourse(course: Course): void, setSearch(search: string): void }) {
+function CourseTable({ courseState, setCourseState, courses, loading, setEditCourse, setSearch, page, setPage }: { courseState: CourseState, setCourseState(courseState: CourseState): void, courses: Course[], loading: boolean, setEditCourse(course: Course): void, setSearch(search: string): void, page: number, setPage(p: number): void }) {
 
     const columns = [
         {
@@ -111,7 +113,7 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
     const searchField = <Input
         size="large"
         style={{ width: "400px" }}
-        placeholder="Suche nach Name oder Beschreibung"
+        placeholder="Suche nach Name, Autor oder Beschreibung"
         allowClear
         onChange={onSearch}
     />;
@@ -131,7 +133,7 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
                 {Object.keys(courseStates).map((courseState) => {
                     return (
                         <Tabs.TabPane tab={courseStates[courseState as CourseState]} key={courseState}>
-                            <Table rowClassName={rowClassName} loading={loading} columns={columns} dataSource={courses} onRow={record => ({ onClick() { setEditCourse(record); }})} className="hover"></Table>
+                            <Table rowClassName={rowClassName} loading={loading} columns={columns} dataSource={courses} onRow={record => ({ onClick() { setEditCourse(record); }})} className="hover" pagination={{ current: page, onChange: setPage}}></Table>
                         </Tabs.TabPane>
                     );
                 })}

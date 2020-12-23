@@ -7,7 +7,7 @@ import { baseUrl } from "./urls";
 export default function useCourses({ initial }: { initial: CourseState }) {
     const [{ courses, loading }, setState] = useState<{ courses: Course[], loading: boolean }>({ courses: [], loading: true });
 
-    async function loadCourses(query: { search?: string, courseState?: CourseState }) {
+    async function loadCourses(query: { search?: string, courseState?: CourseState, page?: number }) {
         setState({ loading: true, courses: [] });
         const { status, data: { courses } } = await Axios.get(`${baseUrl}courses`, { params: query });
 

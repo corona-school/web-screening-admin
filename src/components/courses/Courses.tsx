@@ -1,5 +1,5 @@
 import React, {useState, useEffect, ReactNode} from "react";
-import {Button, Tabs, Table, Tag, Space, Card, Descriptions, Input, Dropdown, Menu, AutoComplete} from "antd";
+import {Button, Tabs, Table, Tag, Space, Card, Descriptions, Input, Dropdown, Menu, AutoComplete, Pagination} from "antd";
 import Title from "antd/lib/typography/Title";
 import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, EditOutlined, DownOutlined, TagOutlined, PlusOutlined} from "@ant-design/icons/lib";
 
@@ -133,7 +133,8 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
                 {Object.keys(courseStates).map((courseState) => {
                     return (
                         <Tabs.TabPane tab={courseStates[courseState as CourseState]} key={courseState}>
-                            <Table rowClassName={rowClassName} loading={loading} columns={columns} dataSource={courses} onRow={record => ({ onClick() { setEditCourse(record); }})} className="hover" pagination={{ current: page, onChange: setPage, pageSize: 20, total: 20 * page + courses.length }}></Table>
+                            <Table rowClassName={rowClassName} loading={loading} columns={columns} dataSource={courses} onRow={record => ({ onClick() { setEditCourse(record); }})} className="hover" pagination={false}></Table>
+                            <Pagination current={page} pageSize={20} size="small" onChange={setPage} total={Number.POSITIVE_INFINITY} />
                         </Tabs.TabPane>
                     );
                 })}

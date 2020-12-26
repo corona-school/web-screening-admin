@@ -1,4 +1,4 @@
-export interface Student {
+export interface CourseStudent {
   id: number;
   firstname: string;
   lastname: string;
@@ -21,32 +21,10 @@ export interface SearchStudent {
   email: string;
 }
 
-export interface IRawStudent2 {
-  firstname: string;
-  lastname: string;
-  email: string;
-  subjects: string;
-  msg?: string;
-  verified: boolean;
-  alreadyScreened: boolean;
-}
-
-export interface IRawStudent {
-  firstName: string;
-  lastName: string;
-  email: string;
-  subjects: string;
-  msg?: string;
-  verified: boolean;
-  alreadyScreened: boolean;
-  phone?: string;
-  birthday?: Date;
-}
-
 export enum ScreeningStatus {
-  Unscreened = "UNSCREENED",
-  Accepted = "ACCEPTED",
-  Rejected = "REJECTED",
+  Unscreened = 'UNSCREENED',
+  Accepted = 'ACCEPTED',
+  Rejected = 'REJECTED',
 }
 
 export interface ApiScreeningResult {
@@ -60,25 +38,82 @@ export interface ApiScreeningResult {
 }
 
 export interface Screening {
-    id: number;
-    success: boolean; //verified or not verified
-    comment: string;
-    knowsCoronaSchoolFrom: string;
-    createdAt: Date;
-    updatedAt: Date;
-    screener?: any;
-    student?: Student;
+  id: number;
+  success: boolean; //verified or not verified
+  comment: string;
+  knowsCoronaSchoolFrom: string;
+  createdAt: Date;
+  updatedAt: Date;
+  screener?: any;
+  student?: CourseStudent;
+}
+
+export interface IStudentInfo {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isTutor: boolean;
+  isInstructor: boolean;
+  isProjectCoach: boolean;
+  screenings: {
+    tutor?: ScreeningInfo;
+    instructor?: ScreeningInfo;
+    projectCoach?: ScreeningInfo;
+  };
+  projectFields: ProjectFieldWithGradeInfoType[];
+  subjects: StudentSubject[];
+  feedback?: string;
+  phone?: string;
+  newsletter: boolean;
+  msg?: string;
+  university?: string;
+  state?: string;
+  isUniversityStudent?: boolean;
+  jufoPastParticipationConfirmed?: boolean;
+  wasJufoParticipant?: TutorJufoParticipationIndication;
+  hasJufoCertificate?: boolean;
+  jufoPastParticipationInfo?: string;
+  official?: {
+    hours: number;
+    module: string;
+  };
+}
+
+export interface IStudent extends IStudentInfo {
+  screenerEmail: string;
+  jitsi: string;
+}
+
+export interface ProjectFieldWithGradeInfoType {
+  name: string;
+  min?: number;
+  max?: number;
+}
+
+export interface StudentSubject {
+  name: string;
+  grade: {
+    min: number;
+    max: number;
+  };
+}
+
+export interface ScreeningInfo {
+  verified: boolean;
+  comment?: string;
+  knowsCoronaSchoolFrom?: string;
 }
 
 export enum TeacherModule {
-  INTERNSHIP = "internship",
-  SEMINAR = "seminar"
+  INTERNSHIP = 'internship',
+  SEMINAR = 'seminar',
 }
 
 export const TeacherModulePretty: { [key in TeacherModule]: string } = {
-  internship: "Praktikum",
-  seminar: "Seminar"
-}
+  internship: 'Praktikum',
+  seminar: 'Seminar',
+};
 
 export enum State {
   BW = 'bw',
@@ -97,25 +132,31 @@ export enum State {
   ST = 'st',
   SH = 'sh',
   TH = 'th',
-  OTHER = 'other'
+  OTHER = 'other',
 }
 
 export const StateLong: { [key in State]: string } = {
-  bw: "Baden-Württemberg",
-  by: "Bayern",
-  be: "Berlin",
-  bb: "Brandenburg",
-  hb: "Bremen",
-  hh: "Hamburg",
-  he: "Hessen",
-  mv: "Mecklenburg-Vorpommern",
-  ni: "Niedersachsen",
-  nw: "Nordrhein-Westfalen",
-  rp: "Rheinland-Pfalz",
-  sl: "Saarland",
-  sn: "Sachsen",
-  st: "Sachsen-Anhalt",
-  sh: "Schleswig-Holstein",
-  th: "Thüringen",
-  other: "Sonstiges"
+  bw: 'Baden-Württemberg',
+  by: 'Bayern',
+  be: 'Berlin',
+  bb: 'Brandenburg',
+  hb: 'Bremen',
+  hh: 'Hamburg',
+  he: 'Hessen',
+  mv: 'Mecklenburg-Vorpommern',
+  ni: 'Niedersachsen',
+  nw: 'Nordrhein-Westfalen',
+  rp: 'Rheinland-Pfalz',
+  sl: 'Saarland',
+  sn: 'Sachsen',
+  st: 'Sachsen-Anhalt',
+  sh: 'Schleswig-Holstein',
+  th: 'Thüringen',
+  other: 'Sonstiges',
+};
+
+export enum TutorJufoParticipationIndication {
+  YES = 'yes', //was past jufo participant
+  NO = 'no', //was no past jufo participant
+  IDK = 'idk', //don't know whether she*he was jufo participant
 }

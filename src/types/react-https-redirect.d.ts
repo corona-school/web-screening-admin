@@ -1,3 +1,3 @@
-declare module "react-https-redirect" {
-	export default any;
+declare module 'react-https-redirect' {
+  export default any;
 }

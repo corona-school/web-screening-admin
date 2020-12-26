@@ -1,43 +1,84 @@
-import { useState, useEffect } from "react";
-import { CourseState, ApiCourseUpdate, Course } from "../types/Course";
-import Axios from "axios";
-import { baseUrl } from "./urls";
-
+import { useState, useEffect } from 'react';
+import {
+  CourseState,
+  ApiCourseUpdate,
+  Course,
+  CourseTag,
+} from '../types/Course';
+import Axios from 'axios';
+import { baseUrl } from './urls';
 
 export default function useCourses({ initial }: { initial: CourseState }) {
-    const [{ courses, loading }, setState] = useState<{ courses: Course[], loading: boolean }>({ courses: [], loading: true });
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [courseTags, setCourseTags] = useState<CourseTag[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-    async function loadCourses(query: { search?: string, courseState?: CourseState, page?: number }) {
-        setState({ loading: true, courses: [] });
-        const { status, data: { courses } } = await Axios.get(`${baseUrl}courses`, { params: query });
+  async function loadCourses(query: {
+    search?: string;
+    courseState?: CourseState;
+    page?: number;
+  }) {
+    setCourses([]);
+    setLoading(true);
+    const {
+      status,
+      data: { courses },
+    } = await Axios.get(`${baseUrl}courses`, { params: query });
 
-        if(status !== 200)
-            throw new Error(`Failed to fetch courses with status ${status}`);
+    if (status !== 200)
+      throw new Error(`Failed to fetch courses with status ${status}`);
 
-        console.log("loaded courses", courses);
-        setState({ loading: false, courses });
-    }
+    console.log('loaded courses', courses);
+    setCourses(courses);
+    setLoading(false);
+  }
 
-    /* Calls the API to update the course, then updates the course list */
-    async function updateCourse({ id }: Course, update: ApiCourseUpdate) {
-        const before = courses;
+  async function loadCourseTags() {
+    setCourseTags([]);
+    setLoading(true);
+    const {
+      status,
+      data: { courseTags },
+    } = await Axios.get(`${baseUrl}courses/tags`);
 
-        // Remove this to update silently:
-        setState({ loading: true, courses: [] });
+    if (status !== 200)
+      throw new Error(`Failed to fetch course tags with status ${status}`);
 
-        const { status, data: { course } } = await Axios.post(`${baseUrl}course/${id}/update`, update);
+    setCourseTags(courseTags);
+    setLoading(false);
+  }
 
-        if(status !== 200)
-            throw new Error(`Failed to update course ${id} with status ${status}`);
+  /* Calls the API to update the course, then updates the course list */
+  async function updateCourse({ id }: Course, update: ApiCourseUpdate) {
+    const before = courses;
 
-        setState({
-            loading: false,
-            courses: before.map(it => it.id === course.id ? course : it)
-        });
-    }
+    // Remove this to update silently:
+    setCourses([]);
+    setLoading(true);
 
-    // Initially load all courses
-    useEffect(() => { loadCourses({ courseState: initial }) }, [initial]);
+    const {
+      status,
+      data: { course },
+    } = await Axios.post(`${baseUrl}course/${id}/update`, update);
 
-    return { courses, loading, loadCourses, updateCourse };
+    if (status !== 200)
+      throw new Error(`Failed to update course ${id} with status ${status}`);
+
+    setLoading(false);
+    setCourses(before.map((it) => (it.id === course.id ? course : it)));
+  }
+
+  // Initially load all courses
+  useEffect(() => {
+    loadCourses({ courseState: initial });
+  }, [initial]);
+
+  return {
+    courses,
+    courseTags,
+    loading,
+    loadCourses,
+    loadCourseTags,
+    updateCourse,
+  };
 }

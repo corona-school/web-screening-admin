@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {Button, Card, Input, Space, Table, Tabs, Descriptions, Checkbox, Typography, Tag, AutoComplete } from "antd";
+import {Button, Card, Input, Space, Table, Tabs, Descriptions, Checkbox, Typography } from "antd";
 import Markdown from "react-markdown";
 import { useHistory } from "react-router-dom"
 
@@ -19,6 +19,7 @@ import {ArrowLeftOutlined, EditOutlined, FileTextOutlined, MailOutlined, PhoneOu
 import { screeningTemplateAG, screeningTemplateIntern } from "./screeningTemplate";
 import { ISubject } from "../../api";
 import SubjectList from "../userList/SubjectList";
+import { Pagination } from "../navigation/Pagination";
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
@@ -32,6 +33,7 @@ const possibleScreeningStatus: { [key in ScreeningStatus]: string } = {
 const Instructors = () => {
     const  [screeningStatus, setScreeningStatus] = useState<ScreeningStatus>(ScreeningStatus.Unscreened);
     const  [search, setSearch] = useState<string>("");
+    const  [page, setPage] = useState(0);
     const  [editInstructor, setEditInstructor] = useState<Instructor | null>(null);
 
     const { instructors, loadInstructors, loading, updateInstructor } = useInstructors({ initialStatus: ScreeningStatus.Unscreened, initialSearch: "" });
@@ -40,7 +42,7 @@ const Instructors = () => {
     
     const debouncedSearch = useDebounce(search, 1000);
         
-    useEffect(() => { loadInstructors({ screeningStatus, search: debouncedSearch }); }, [screeningStatus, debouncedSearch]);
+    useEffect(() => { loadInstructors({ screeningStatus, search: debouncedSearch, page }); }, [screeningStatus, debouncedSearch, page]);
 
     return (
         <div className="instructor-container">
@@ -56,12 +58,14 @@ const Instructors = () => {
                 loading={loading}
                 setSearch={setSearch}
                 setEditInstructor={setEditInstructor}
+                page={page}
+                setPage={setPage}
             />}
         </div>
     )
 }
 
-function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loading, setSearch, setEditInstructor }: { screeningStatus: ScreeningStatus, setScreeningStatus(screeningStatus: ScreeningStatus): void, instructors: Instructor[], loading: boolean, setSearch(search: string): void, setEditInstructor(instructor: Instructor): void}) {
+function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loading, setSearch, setEditInstructor, page, setPage }: { screeningStatus: ScreeningStatus, setScreeningStatus(screeningStatus: ScreeningStatus): void, instructors: Instructor[], loading: boolean, setSearch(search: string): void, setEditInstructor(instructor: Instructor): void, page: number, setPage(page: number): void }) {
     const columns = [
         {
             title: "Nachname",
@@ -100,6 +104,7 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
     };
 
     const onSearch = (event: { target: { value: string; }; }) => {
+        setPage(0);
         setSearch(event.target.value);
     }
 
@@ -129,12 +134,14 @@ function InstructorTable({ screeningStatus, setScreeningStatus, instructors, loa
                             key={screeningStatus}>
                             <Space size="small" direction="vertical" style={{ width: "100%" }}>
                                 <Table
+                                    pagination={false}
                                     loading={loading}
                                     dataSource={instructors}
                                     className="hover"
                                     columns={columns}
                                     rowClassName={rowClassName}
                                     onRow={record => ({ onClick() { setEditInstructor(record); }})}/>
+                                <Pagination page={page} setPage={setPage} hasNextPage={instructors.length === 20} />
                             </Space>
                         </Tabs.TabPane>
 

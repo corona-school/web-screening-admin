@@ -8,7 +8,7 @@ export type Instructor = Student & { __instructorScreening__: Screening };
 export default function useInstructors({ initialStatus, initialSearch }: { initialStatus: ScreeningStatus, initialSearch: string }) {
     const [{ instructors, loading }, setState] = useState<{ instructors: Instructor[], loading: boolean }>({ instructors: [], loading: true });
 
-    async function loadInstructors(query: { screeningStatus: ScreeningStatus, search: string }) {
+    async function loadInstructors(query: { screeningStatus: ScreeningStatus, search: string, page?: number }) {
         setState({ loading: true, instructors: [] });
         const { status, data: { instructors } } = await Axios.get(`${baseUrl}instructors`, { params: query });
 

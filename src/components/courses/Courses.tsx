@@ -107,6 +107,7 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
     };
 
     const onSearch = (event: { target: { value: string; }; }) => {
+        setPage(0);
         setSearch(event.target.value);
     };
 
@@ -134,7 +135,7 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
                     return (
                         <Tabs.TabPane tab={courseStates[courseState as CourseState]} key={courseState}>
                             <Table rowClassName={rowClassName} loading={loading} columns={columns} dataSource={courses} onRow={record => ({ onClick() { setEditCourse(record); }})} className="hover" pagination={false}></Table>
-                            <Pagination current={page} pageSize={20} size="small" onChange={setPage} total={Number.POSITIVE_INFINITY} />
+                            <Pagination simple showTotal={() => false} current={page + 1}  onChange={p => setPage(p - 1)} total={Number.POSITIVE_INFINITY} />
                         </Tabs.TabPane>
                     );
                 })}

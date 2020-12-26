@@ -1,7 +1,7 @@
-import React, {useState, useEffect, ReactNode} from "react";
-import {Button, Tabs, Table, Tag, Space, Card, Descriptions, Input, Dropdown, Menu, AutoComplete, Pagination} from "antd";
+import React, {useState, useEffect } from "react";
+import {Button, Tabs, Table, Tag, Space, Card, Descriptions, Input, Dropdown, Menu } from "antd";
 import Title from "antd/lib/typography/Title";
-import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, EditOutlined, DownOutlined, TagOutlined, PlusOutlined} from "@ant-design/icons/lib";
+import { ArrowLeftOutlined, FileTextOutlined, CalendarOutlined, UserOutlined, EditOutlined, DownOutlined, TagOutlined } from "@ant-design/icons/lib";
 
 import "./Courses.less";
 import {
@@ -24,6 +24,7 @@ import { SearchProps } from "antd/lib/input";
 import InstructorSelector from "./InstructorSelector";
 import moment from "moment";
 import LectureEditor from "./LectureEditor";
+import { Pagination } from "../navigation/Pagination";
 
 const { Option } = Select;
 
@@ -135,7 +136,7 @@ function CourseTable({ courseState, setCourseState, courses, loading, setEditCou
                     return (
                         <Tabs.TabPane tab={courseStates[courseState as CourseState]} key={courseState}>
                             <Table rowClassName={rowClassName} loading={loading} columns={columns} dataSource={courses} onRow={record => ({ onClick() { setEditCourse(record); }})} className="hover" pagination={false}></Table>
-                            <Pagination simple showTotal={() => false} current={page + 1}  onChange={p => setPage(p - 1)} total={Number.POSITIVE_INFINITY} />
+                            <Pagination page={page} setPage={setPage} hasNextPage={courses.length === 20} />   
                         </Tabs.TabPane>
                     );
                 })}

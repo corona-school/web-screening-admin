@@ -16,6 +16,7 @@ export default function useCourses({ initial }: { initial: CourseState }) {
   async function loadCourses(query: {
     search?: string;
     courseState?: CourseState;
+    page?: number;
   }) {
     setCourses([]);
     setLoading(true);

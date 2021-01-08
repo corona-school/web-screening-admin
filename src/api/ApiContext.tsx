@@ -82,7 +82,11 @@ export interface IProviderProps {
   getJobsCall: () => void;
   studentData: IJobInfo[];
   checkLoginStatus: () => Promise<{ data: IScreenerInfo; status: number }>;
-  postChangeStatusCall: (data: IStudent, jobId: string, action: string) => Promise<any>;
+  postChangeStatusCall: (
+    data: IStudent,
+    jobId: string,
+    action: string
+  ) => Promise<any>;
   userIsLoggedIn: boolean;
   setUserIsLoggedIn: (isLoggedIn: boolean) => void;
   loginCall: (data: { email: string; password: string }) => Promise<void>;

@@ -7,9 +7,9 @@ import classes from './index.module.less';
 import { ApiContext, IJobInfo } from '../../api/ApiContext';
 import JobScreeningEdit from '../userList/JobScreeningEdit';
 import { message } from 'antd';
-import {ScreeningInfo} from "../../types/Student";
-import {getScreeningType} from "../userList/data";
-import {CleanScreenings, CompleteJob} from "../../utils/studentVerification";
+import { ScreeningInfo } from '../../types/Student';
+import { getScreeningType } from '../userList/data';
+import { CleanScreenings, CompleteJob } from '../../utils/studentVerification';
 
 interface MatchParams {
   room: string | undefined;
@@ -56,7 +56,11 @@ const Screening = (props: RouteComponentProps) => {
     CleanScreenings(completedJob.data);
 
     context
-      .postChangeStatusCall(completedJob.data, completedJob.id, screening.verified ? 'SET_DONE' : 'SET_REJECTED')
+      .postChangeStatusCall(
+        completedJob.data,
+        completedJob.id,
+        screening.verified ? 'SET_DONE' : 'SET_REJECTED'
+      )
       .then(() => {
         message.success('Änderungen wurden erfolgreich gespeichert.');
         props.history.push('/screening');

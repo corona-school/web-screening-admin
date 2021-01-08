@@ -25,6 +25,7 @@ export default function useInstructors({
   async function loadInstructors(query: {
     screeningStatus: ScreeningStatus;
     search: string;
+    page?: number;
   }) {
     setState({ loading: true, instructors: [] });
     const {

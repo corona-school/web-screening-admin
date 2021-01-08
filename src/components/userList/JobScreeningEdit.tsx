@@ -59,7 +59,10 @@ const JobScreeningEdit = ({
   const getInitialScreening = () => {
     if (screeningTypes.includes('tutor')) {
       return selectedJob.data.screenings.tutor;
-    } else if (screeningTypes.includes('instructor') || screeningTypes.includes('intern')) {
+    } else if (
+      screeningTypes.includes('instructor') ||
+      screeningTypes.includes('intern')
+    ) {
       return selectedJob.data.screenings.instructor;
     } else if (screeningTypes.includes('projectCoach')) {
       return selectedJob.data.screenings.projectCoach;
@@ -383,9 +386,9 @@ const JobScreeningEdit = ({
             Für 1:1-Lernunterstützung eintragen
           </Checkbox>
           <Tooltip
-          placement="bottom"
-          title="Hinweis: das erste Match wird nach Freischaltung automatisch zugeteilt, sofern es die freizuschaltende Person nicht in ihrem User-Bereich selbständig ändert."
-          > 
+            placement="bottom"
+            title="Hinweis: das erste Match wird nach Freischaltung automatisch zugeteilt, sofern es die freizuschaltende Person nicht in ihrem User-Bereich selbständig ändert."
+          >
             <QuestionCircleOutlined style={{ cursor: 'pointer' }} />
           </Tooltip>
         </>

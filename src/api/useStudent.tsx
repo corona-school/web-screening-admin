@@ -1,9 +1,9 @@
-import {useState, useEffect, useContext} from 'react';
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { baseUrl, studentInfoPath, studentManualVerification } from './urls';
 import { message } from 'antd';
 import { IStudent, IStudentInfo } from '../types/Student';
-import {ApiContext} from "./ApiContext";
+import { ApiContext } from './ApiContext';
 
 const useStudent = (email: string) => {
   const [studentInfo, setStudentInfo] = useState<IStudentInfo | null>(null);
@@ -40,13 +40,16 @@ const useStudent = (email: string) => {
   const save = (studentInfo: IStudentInfo) => {
     setLoading(true);
     console.log('request', baseUrl + studentManualVerification, {
-      screeningResult: {...studentInfo, screenerMail: context?.user?.email},
+      screeningResult: { ...studentInfo, screenerMail: context?.user?.email },
       studentEmail: email,
     });
 
     axios
       .post(baseUrl + studentManualVerification, {
-        screeningResult: {...studentInfo, screenerEmail: context?.user?.email},
+        screeningResult: {
+          ...studentInfo,
+          screenerEmail: context?.user?.email,
+        },
         studentEmail: email,
       })
       .then(({ data }) => {

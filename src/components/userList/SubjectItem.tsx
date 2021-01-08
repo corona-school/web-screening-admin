@@ -53,7 +53,10 @@ const SubjectItem = ({
           placeholder="Minimum"
           onChange={(v) => {
             if (v) {
-              changeSubjectRange(subject, [Math.min(Math.max(v, 1), subject.grade?.max ?? 13), subject.grade?.max]);
+              changeSubjectRange(subject, [
+                Math.min(Math.max(v, 1), subject.grade?.max ?? 13),
+                subject.grade?.max,
+              ]);
             }
           }}
         />
@@ -75,7 +78,10 @@ const SubjectItem = ({
           value={subject.grade?.max}
           onChange={(v) => {
             if (v) {
-              changeSubjectRange(subject, [subject.grade?.min, Math.min(Math.max(v, subject.grade?.min ?? 1), 13)]);
+              changeSubjectRange(subject, [
+                subject.grade?.min,
+                Math.min(Math.max(v, subject.grade?.min ?? 1), 13),
+              ]);
             }
           }}
           style={{

@@ -52,20 +52,23 @@ export const getScreeningType = (j: IJobInfo) => {
   const screenings = [];
 
   switch (j.status) {
-    case "waiting":
-    case "active":
+    case 'waiting':
+    case 'active':
       if (j.data.isInstructor && j.data.screenings.instructor === undefined) {
         screenings.push(j.data.official ? 'intern' : 'instructor');
       }
       if (j.data.isTutor && j.data.screenings.tutor === undefined) {
         screenings.push('tutor');
       }
-      if (j.data.isProjectCoach && j.data.screenings.projectCoach === undefined) {
+      if (
+        j.data.isProjectCoach &&
+        j.data.screenings.projectCoach === undefined
+      ) {
         screenings.push('projectCoach');
       }
       return screenings;
-    case "completed":
-    case "rejected":
+    case 'completed':
+    case 'rejected':
       if (j.data.isInstructor) {
         screenings.push(j.data.official ? 'intern' : 'instructor');
       }
@@ -77,7 +80,6 @@ export const getScreeningType = (j: IJobInfo) => {
       }
       return screenings;
   }
-
 };
 export const ScreeningTypeText = new Map([
   ['instructor', 'Kursleiter*in'],
@@ -130,11 +132,11 @@ export const knowsFromMap = new Map([
 ]);
 
 export const ProjectFields = [
-  "Arbeitswelt",
-  "Biologie",
-  "Chemie",
-  "Geo-und-Raumwissenschaften",
-  "Mathematik/Informatik",
-  "Physik",
-  "Technik"
-]
+  'Arbeitswelt',
+  'Biologie',
+  'Chemie',
+  'Geo-und-Raumwissenschaften',
+  'Mathematik/Informatik',
+  'Physik',
+  'Technik',
+];

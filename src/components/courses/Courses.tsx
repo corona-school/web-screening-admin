@@ -44,6 +44,7 @@ import InstructorSelector from './InstructorSelector';
 import moment from 'moment';
 import LectureEditor from './LectureEditor';
 import LabelSelector from './LabelSelector';
+import { Pagination } from '../navigation/Pagination';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -68,6 +69,7 @@ const Courses = () => {
   );
   const [_search, setSearch] = useState('');
   const search = useDebounce(_search);
+  const [page, setPage] = useState(0);
 
   const [editCourse, setEditCourse] = useState<Course | null>(null);
 
@@ -83,9 +85,9 @@ const Courses = () => {
   });
 
   useEffect(() => {
-    loadCourses({ courseState, search });
+    loadCourses({ courseState, search, page });
     loadCourseTags();
-  }, [courseState, search]);
+  }, [courseState, search, page]);
 
   return (
     <div className="course-container">
@@ -105,6 +107,8 @@ const Courses = () => {
           setCourseState={setCourseState}
           setEditCourse={setEditCourse}
           setSearch={setSearch}
+          page={page}
+          setPage={setPage}
         />
       )}
     </div>
@@ -118,6 +122,8 @@ function CourseTable({
   loading,
   setEditCourse,
   setSearch,
+  page,
+  setPage,
 }: {
   courseState: CourseState;
   setCourseState(courseState: CourseState): void;
@@ -125,6 +131,8 @@ function CourseTable({
   loading: boolean;
   setEditCourse(course: Course): void;
   setSearch(search: string): void;
+  page: number;
+  setPage(page: number): void;
 }) {
   const columns = [
     {
@@ -209,7 +217,13 @@ function CourseTable({
                   },
                 })}
                 className="hover"
+                pagination={false}
               ></Table>
+              <Pagination
+                page={page}
+                setPage={setPage}
+                hasNextPage={courses.length === 20}
+              />
             </Tabs.TabPane>
           );
         })}

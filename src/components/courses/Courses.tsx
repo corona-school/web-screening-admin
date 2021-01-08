@@ -89,6 +89,11 @@ const Courses = () => {
     loadCourseTags();
   }, [courseState, search, page]);
 
+  /* When switching tabs or searching, start with page 0 again */
+  useEffect(() => {
+    setPage(0);
+  }, [courseState, search]);
+
   return (
     <div className="course-container">
       {editCourse && (

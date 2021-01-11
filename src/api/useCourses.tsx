@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   CourseState,
   ApiCourseUpdate,
@@ -8,18 +8,33 @@ import {
 import Axios from 'axios';
 import { baseUrl } from './urls';
 
+interface Query {
+  search?: string;
+  courseState?: CourseState;
+  page?: number;
+}
 export default function useCourses({ initial }: { initial: CourseState }) {
   const [courses, setCourses] = useState<Course[]>([]);
   const [courseTags, setCourseTags] = useState<CourseTag[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const previousState = useRef<Query>({
+    courseState: initial,
+    search: undefined,
+    page: undefined,
+  });
 
-  async function loadCourses(query: {
-    search?: string;
-    courseState?: CourseState;
-    page?: number;
-  }) {
-    setCourses([]);
-    setLoading(true);
+  async function loadCourses(query: Query) {
+    if (
+      previousState.current.courseState !== query.courseState ||
+      previousState.current.page !== query.page ||
+      previousState.current.search !== query.search
+    ) {
+      /* Hide the loading spinner if we only refresh the courses */
+      setCourses([]);
+      setLoading(true);
+    }
+    previousState.current = query;
+
     const {
       status,
       data: { courses },
@@ -34,8 +49,6 @@ export default function useCourses({ initial }: { initial: CourseState }) {
   }
 
   async function loadCourseTags() {
-    setCourseTags([]);
-    setLoading(true);
     const {
       status,
       data: { courseTags },

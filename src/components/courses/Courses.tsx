@@ -85,9 +85,18 @@ const Courses = () => {
   });
 
   useEffect(() => {
-    loadCourses({ courseState, search, page });
-    loadCourseTags();
-  }, [courseState, search, page]);
+    function update() {
+      /* do not reload table if course is edited at the moment */
+      if (editCourse) return;
+      loadCourses({ courseState, search, page });
+      loadCourseTags();
+    }
+    update();
+
+    /* refresh every 10 seconds, unless the user navigates, in that case reset timer to 10s */
+    const timer = setInterval(update, /* every 10s */ 10 * 1000);
+    return () => clearInterval(timer);
+  }, [courseState, search, page, editCourse]);
 
   /* When switching tabs or searching, start with page 0 again */
   useEffect(() => {

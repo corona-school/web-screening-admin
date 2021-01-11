@@ -49,8 +49,6 @@ export default function useCourses({ initial }: { initial: CourseState }) {
   }
 
   async function loadCourseTags() {
-    setCourseTags([]);
-    setLoading(true);
     const {
       status,
       data: { courseTags },

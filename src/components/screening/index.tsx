@@ -37,7 +37,10 @@ const Screening = (props: RouteComponentProps) => {
       return;
     }
     const job = context?.studentData.find((s) => s.data.email === params.email);
-    if (job) {
+
+    // only re set the selectedJob if a different job was chosen,
+    // as otherwise changes might be lost through the refresh
+    if (job && selectedJob?.data.email !== job.email) {
       setSelectedJob(job);
     }
   }, [params.email, context]);

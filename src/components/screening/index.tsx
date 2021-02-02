@@ -40,7 +40,7 @@ const Screening = (props: RouteComponentProps) => {
 
     // only re set the selectedJob if a different job was chosen,
     // as otherwise changes might be lost through the refresh
-    if (job && selectedJob?.data.email !== job.email) {
+    if (job && selectedJob?.data.email !== job.data.email) {
       setSelectedJob(job);
     }
   }, [params.email, context]);

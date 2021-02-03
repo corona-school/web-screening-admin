@@ -32,9 +32,11 @@ export function CompleteJob({
         tutor: screeningTypes.includes('tutor')
           ? screening
           : job.data.screenings.tutor,
-        instructor: screeningTypes.includes('instructor')
-          ? screening
-          : job.data.screenings.instructor,
+        instructor:
+          screeningTypes.includes('instructor') ||
+          screeningTypes.includes('intern')
+            ? screening
+            : job.data.screenings.instructor,
         projectCoach: screeningTypes.includes('projectCoach')
           ? screening
           : job.data.screenings.projectCoach,

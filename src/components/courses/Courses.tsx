@@ -22,6 +22,7 @@ import {
   EditOutlined,
   DownOutlined,
   TagOutlined,
+  ReloadOutlined,
 } from '@ant-design/icons/lib';
 
 import './Courses.less';
@@ -79,23 +80,32 @@ const Courses = () => {
     loadCourses,
     loading,
     loadCourseTags,
-    updateCourse,
+    updateCourse: _updateCourse,
   } = useCourses({
     initial: CourseState.SUBMITTED,
   });
 
+  const [hasLocalChanges, setHasLocalChanges] = useState(true);
+
+  async function updateCourse(course: Course, update: ApiCourseUpdate) {
+    setHasLocalChanges(true);
+    await _updateCourse(course, update);
+  }
+
+  async function update() {
+    /* do not reload table if course is edited at the moment */
+    if (editCourse) return;
+    await loadCourses({ courseState, search, page });
+    await loadCourseTags();
+    setHasLocalChanges(false);
+  }
+
   useEffect(() => {
-    function update() {
-      /* do not reload table if course is edited at the moment */
-      if (editCourse) return;
-      loadCourses({ courseState, search, page });
-      loadCourseTags();
-    }
     update();
 
     /* refresh every 10 seconds, unless the user navigates, in that case reset timer to 10s */
-    const timer = setInterval(update, /* every 10s */ 10 * 1000);
-    return () => clearInterval(timer);
+    // const timer = setInterval(update, /* every 10s */ 10 * 1000);
+    // return () => clearInterval(timer);
   }, [courseState, search, page, editCourse]);
 
   /* When switching tabs or searching, start with page 0 again */
@@ -123,6 +133,8 @@ const Courses = () => {
           setSearch={setSearch}
           page={page}
           setPage={setPage}
+          hasLocalChanges={hasLocalChanges}
+          refresh={update}
         />
       )}
     </div>
@@ -138,6 +150,8 @@ function CourseTable({
   setSearch,
   page,
   setPage,
+  hasLocalChanges,
+  refresh,
 }: {
   courseState: CourseState;
   setCourseState(courseState: CourseState): void;
@@ -147,6 +161,8 @@ function CourseTable({
   setSearch(search: string): void;
   page: number;
   setPage(page: number): void;
+  hasLocalChanges: boolean;
+  refresh(): void;
 }) {
   const columns = [
     {
@@ -233,11 +249,24 @@ function CourseTable({
                 className="hover"
                 pagination={false}
               ></Table>
-              <Pagination
-                page={page}
-                setPage={setPage}
-                hasNextPage={courses.length === 20}
-              />
+              {!hasLocalChanges && (
+                <Pagination
+                  page={page}
+                  setPage={setPage}
+                  hasNextPage={courses.length === 20}
+                />
+              )}
+              {hasLocalChanges && (
+                <>
+                  <Button
+                    onClick={refresh}
+                    type="primary"
+                    icon={<ReloadOutlined />}
+                  >
+                    Erfrische die Seite
+                  </Button>
+                </>
+              )}
             </Tabs.TabPane>
           );
         })}

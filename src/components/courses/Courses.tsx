@@ -46,6 +46,7 @@ import moment from 'moment';
 import LectureEditor from './LectureEditor';
 import LabelSelector from './LabelSelector';
 import { Pagination } from '../navigation/Pagination';
+import Search from 'antd/lib/transfer/search';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -68,8 +69,8 @@ const Courses = () => {
   const [courseState, setCourseState] = useState<CourseState>(
     CourseState.SUBMITTED
   );
-  const [_search, setSearch] = useState('');
-  const search = useDebounce(_search);
+  const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search);
   const [page, setPage] = useState(0);
 
   const [editCourse, setEditCourse] = useState<Course | null>(null);
@@ -95,7 +96,7 @@ const Courses = () => {
   async function update() {
     /* do not reload table if course is edited at the moment */
     if (editCourse) return;
-    await loadCourses({ courseState, search, page });
+    await loadCourses({ courseState, search: debouncedSearch, page });
     await loadCourseTags();
     setHasLocalChanges(false);
   }
@@ -106,7 +107,7 @@ const Courses = () => {
     /* refresh every 10 seconds, unless the user navigates, in that case reset timer to 10s */
     // const timer = setInterval(update, /* every 10s */ 10 * 1000);
     // return () => clearInterval(timer);
-  }, [courseState, search, page /* editCourse */]);
+  }, [courseState, debouncedSearch, page /* editCourse */]);
 
   /* When switching tabs or searching, start with page 0 again */
   useEffect(() => {
@@ -130,6 +131,7 @@ const Courses = () => {
           loading={loading}
           setCourseState={setCourseState}
           setEditCourse={setEditCourse}
+          search={search}
           setSearch={setSearch}
           page={page}
           setPage={setPage}
@@ -147,6 +149,7 @@ function CourseTable({
   courses,
   loading,
   setEditCourse,
+  search,
   setSearch,
   page,
   setPage,
@@ -158,6 +161,7 @@ function CourseTable({
   courses: Course[];
   loading: boolean;
   setEditCourse(course: Course): void;
+  search: string;
   setSearch(search: string): void;
   page: number;
   setPage(page: number): void;
@@ -214,6 +218,7 @@ function CourseTable({
       placeholder="Suche nach Name oder Beschreibung"
       allowClear
       onChange={onSearch}
+      value={search}
     />
   );
 

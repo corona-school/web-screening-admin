@@ -106,7 +106,7 @@ const Courses = () => {
     /* refresh every 10 seconds, unless the user navigates, in that case reset timer to 10s */
     // const timer = setInterval(update, /* every 10s */ 10 * 1000);
     // return () => clearInterval(timer);
-  }, [courseState, search, page, editCourse]);
+  }, [courseState, search, page /* editCourse */]);
 
   /* When switching tabs or searching, start with page 0 again */
   useEffect(() => {

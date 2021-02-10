@@ -86,7 +86,7 @@ const Courses = () => {
     initial: CourseState.SUBMITTED,
   });
 
-  const [hasLocalChanges, setHasLocalChanges] = useState(true);
+  const [hasLocalChanges, setHasLocalChanges] = useState(false);
 
   async function updateCourse(course: Course, update: ApiCourseUpdate) {
     setHasLocalChanges(true);

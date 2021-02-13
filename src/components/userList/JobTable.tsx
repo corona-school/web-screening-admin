@@ -168,7 +168,7 @@ const JobTable = ({
           return (
             <Tag
               color={ScreeningColorMap.get(type)}
-              key={job.id}
+              key={type}
               style={{ margin: '4px' }}
             >
               {ScreeningTypeText.get(type)}

@@ -5,6 +5,7 @@ export const SchoolSubjects = [
   'Informatik',
   'Physik',
   'Chemie',
+  'Sachkunde',
   'Politik',
   'Wirtschaft',
   'Geschichte',
@@ -20,6 +21,7 @@ export const SchoolSubjects = [
   'Spanisch',
   'Italienisch',
   'Chinesisch',
+  'Deutsch als Zweitsprache',
 ];
 
 export const SchoolClasses = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];

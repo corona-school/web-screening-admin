@@ -108,16 +108,6 @@ const Navigation = (props: RouteComponentProps) => {
                 Bereitschaftstabelle
               </a>
             </Menu.Item>
-            <Menu.Item key="/mentoring-list">
-              <UserOutlined />
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://docs.google.com/spreadsheets/d/1GFb-AVmymDoDMQ_rzdD5GwD1zqz8Pk-7mBLxcBeFywg/edit#gid=0"
-              >
-                Mentoren Liste
-              </a>
-            </Menu.Item>
             <Menu.Item key="/socialmedia">
               <LikeOutlined />
               <a

@@ -401,7 +401,7 @@ const JobScreeningEdit = ({
             key="back"
             onClick={() => done(selectedJob, comment, knowsFrom, false)}
           >
-            Ablehen
+            Ablehnen
           </Button>
           <Button
             style={{ margin: '4px' }}

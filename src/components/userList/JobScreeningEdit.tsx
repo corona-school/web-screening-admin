@@ -301,6 +301,9 @@ const JobScreeningEdit = ({
         <Option value="TikTok"> Über TikTok</Option>
         <Option value="Suchmaschine"> Über eine Suchmaschinen-Suche</Option>
         <Option value="Werbeanzeige"> Über eine Werbeanzeige</Option>
+        <Option value="Stipendium"> Über ein Stipendium</Option>
+        <Option value="JuFo-Alumni"> Über einen JuFo-Alumni</Option>
+        <Option value="Newsletter"> Über den Newsletter</Option>
         <Option value="13"> anders</Option>
       </Select>
       {draftKnowsFrom === '13' && (

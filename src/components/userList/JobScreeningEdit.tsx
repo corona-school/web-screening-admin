@@ -289,22 +289,26 @@ const JobScreeningEdit = ({
         defaultValue={knowsFrom}
         style={{ marginBottom: '16px', width: '100%' }}
       >
-        <Option value="Bekannte"> Über Bekannte/Familie</Option>
-        <Option value="Empfehlung"> Über eine Empfehlung</Option>
-        <Option value="Schule"> Über Lehrer*in/Schule</Option>
-        <Option value="Universität"> Über die Universität</Option>
-        <Option value="Pressebericht"> Über einen Pressebericht</Option>
-        <Option value="Radiobeitrag"> Über einen Radiobeitrag</Option>
-        <Option value="Fernsehbeitrag"> Über einen Fernsehbeitrag</Option>
-        <Option value="Facebook"> Über Facebook</Option>
-        <Option value="Instagram"> Über Instagram</Option>
-        <Option value="TikTok"> Über TikTok</Option>
-        <Option value="Suchmaschine"> Über eine Suchmaschinen-Suche</Option>
-        <Option value="Werbeanzeige"> Über eine Werbeanzeige</Option>
-        <Option value="Stipendium"> Über ein Stipendium</Option>
-        <Option value="JuFo-Alumni"> Über einen JuFo-Alumni</Option>
-        <Option value="Newsletter"> Über den Newsletter</Option>
-        <Option value="13"> anders</Option>
+        <Option value="Bekannte">Freund:innen/Bekannte</Option>
+        <Option value="Universität">Universität/Hochschule/Lehrpersonen</Option>
+        <Option value="Stipendium Stiftung">Stipendium/Stiftung</Option>
+        <Option value="Schule">Schule/Lehrer:in</Option>
+        <Option value="Mediale Berichte">
+          mediale Berichte (Radio, Fernsehen, Zeitung)
+        </Option>
+        <Option value="Suchmaschine">Suchmaschinen-Suche</Option>
+        <Option value="Jugend Forscht">Jugend Forscht</Option>
+        <Option value="Jodel">Jodel</Option>
+        <Option value="Instagram">Instagram</Option>
+        <Option value="Facebook">Facebook</Option>
+        <Option value="LinkedIn">LinkedIn</Option>
+        <Option value="YouTube">YouTube</Option>
+        <Option value="Twitter">Twitter</Option>
+        <Option value="Social Media Sonstige">
+          sonstige Social-Media-Kanäle
+        </Option>
+        <Option value="Merch">Merch</Option>
+        <Option value="13">anders</Option>
       </Select>
       {draftKnowsFrom === '13' && (
         <TextArea

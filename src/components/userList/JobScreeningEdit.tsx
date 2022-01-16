@@ -33,6 +33,7 @@ import {
 import ProjectList from './ProjectList';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import { getJufoParticipantStatus } from '../../utils/student';
+import Text from 'antd/lib/typography/Text';
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -325,6 +326,9 @@ const JobScreeningEdit = ({
       {screeningTypes.includes('tutor') && (
         <>
           <div className="label">Fächer: </div>
+          {selectedJob.data.isCodu && (
+            <Text style={{ color: 'red' }}>CoDu-Teilnehmer:in</Text>
+          )}
           <SubjectList
             subjects={selectedJob.data.subjects}
             setSubjects={(subjects) => changeJob('subjects', subjects)}

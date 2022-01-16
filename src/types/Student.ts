@@ -78,6 +78,7 @@ export interface IStudentInfo {
     hours: number;
     module: string;
   };
+  isCodu?: boolean;
 }
 
 export interface IStudent extends IStudentInfo {

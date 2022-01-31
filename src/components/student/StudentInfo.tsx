@@ -1,9 +1,8 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import classes from './StudentInfo.module.less';
 import useStudent from '../../api/useStudent';
 import { Button, Spin, Typography, Modal, Space } from 'antd';
-import { ApiContext } from '../../api/ApiContext';
 import { IStudentInfo, ScreeningInfo } from '../../types/Student';
 import {
   BasicEditableInformationEditor,
@@ -21,6 +20,7 @@ import {
   TutorInformationDisplay,
   TypeDisplay,
 } from './InfoDisplay';
+import Text from 'antd/lib/typography/Text';
 
 const { Title } = Typography;
 const { confirm } = Modal;
@@ -151,6 +151,12 @@ const StudentInfo = (props: RouteComponentProps<MatchParams>) => {
               className={classes.button}
             />
           </Space>
+        )}
+      </div>
+
+      <div className={classes.warning}>
+        {studentInfo?.isCodu && (
+          <Text style={{ color: 'red' }}>CoDu-Teilnehmer:in</Text>
         )}
       </div>
 

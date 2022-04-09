@@ -37,7 +37,7 @@
     "express-favicon": "^2.0.1",
     "less": "^3.11.1",
     "less-loader": "^6.0.0",
-    "moment": "2.25.3",
+    "moment": "2.29.2",
     "moment-range": "^4.0.2",
     "push.js": "^1.0.12",
     "react": "^16.13.1",
